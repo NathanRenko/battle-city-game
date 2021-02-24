@@ -10,10 +10,10 @@ class Figure {
         this.height = height;
     }
     getX1() {
-        return this.x + this.width;
+        return this.x + this.width - 1;
     }
     getY1() {
-        return this.y + this.height;
+        return this.y + this.height - 1;
     }
 }
 

@@ -7,7 +7,7 @@ class GameEntity {
     globalShift: Point;
 
     constructor() {
-        this.player = new Figure(120, 100, 20, 20);
+        this.player = new Figure(121, 100, 20, 20);
         this.obsacle = new Figure(100, 100, 20, 200);
         this.globalShift = new Point(0, 0);
     }

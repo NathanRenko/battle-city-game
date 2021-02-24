@@ -16,10 +16,10 @@ class MovementHandler {
     keyPressEngine(dt: number) {
         // console.log(this.info);
 
-        let playerSpeed = 50;
+        let playerSpeed = 20;
         this.gameEntity.globalShift = new Point(0, 0);
-        let shift = Math.round(playerSpeed * dt);
-        // console.log(playerSpeed * dt);
+        let shift = Math.round(playerSpeed);
+        
 
         if (this.InputHandler.isDown('ArrowDown')) {
             this.gameEntity.globalShift.y += shift;
