@@ -16,50 +16,71 @@ class MovementHandler {
     keyPressEngine(dt: number) {
         // console.log(this.info);
 
-        let playerSpeed = 20;
-        this.gameEntity.globalShift = new Point(0, 0);
-        let shift = Math.round(playerSpeed);
-        
+        let playerSpeed = 2;
+        let shift = Math.round(playerSpeed * dt * 100);
 
         if (this.InputHandler.isDown('ArrowDown')) {
-            this.gameEntity.globalShift.y += shift;
+            let step = new Point(0, shift);
+            let availableStep = this.getMinimalStep(step);
+            this.gameEntity.applyStep(availableStep);
+            // return;
         }
 
         if (this.InputHandler.isDown('ArrowUp')) {
-            this.gameEntity.globalShift.y -= shift;
+            let step = new Point(0, -shift);
+            let availableStep = this.getMinimalStep(step);
+            this.gameEntity.applyStep(availableStep);
+            // return;
         }
 
         if (this.InputHandler.isDown('ArrowLeft')) {
-            this.gameEntity.globalShift.x -= shift;
+            let step = new Point(-shift, 0);
+            let availableStep = this.getMinimalStep(step);
+            this.gameEntity.applyStep(availableStep);
+            // return;
         }
 
         if (this.InputHandler.isDown('ArrowRight')) {
-            this.gameEntity.globalShift.x += shift;
+            let step = new Point(shift, 0);
+            let availableStep = this.getMinimalStep(step);
+            this.gameEntity.applyStep(availableStep);
+            // return;
         }
 
-        this.checkPlayerBounds(this.gameEntity.player, this.gameEntity.globalShift, this.canvas);
-        this.checkPlayerObs(this.gameEntity.player, this.gameEntity.globalShift, this.gameEntity.obsacle);
+        // this.checkPlayerBounds(this.gameEntity.player, this.gameEntity.globalShift, this.canvas);
+        // this.checkPlayerObs(this.gameEntity.player, this.gameEntity.globalShift, this.gameEntity.obsacle);
+    }
+    getMinimalStep(step: Point) {
+        if (
+            !this.hasObstacleCollision(this.gameEntity.player, step, this.gameEntity.obsacle) &&
+            !this.hasBoundsCollision(this.gameEntity.player, step, this.canvas)
+        ) {
+            return step;
+        } else {
+            while (
+                this.hasObstacleCollision(this.gameEntity.player, step, this.gameEntity.obsacle) ||
+                this.hasBoundsCollision(this.gameEntity.player, step, this.canvas)
+            ) {
+                if (step.x !== 0) {
+                    step.x -= Math.sign(step.x);
+                } else {
+                    step.y -= Math.sign(step.y);
+                }
+            }
+            return step;
+        }
+    }
+    hasBoundsCollision(player: Figure, globalShift: Point, canvas: HTMLCanvasElement) {
+        return (
+            player.x + globalShift.x < 0 ||
+            player.x + globalShift.x > canvas.width - player.width ||
+            player.y + globalShift.y < 0 ||
+            player.y + globalShift.y > canvas.height - player.height
+        );
     }
 
-    checkPlayerBounds(player: Figure, globalShift: Point, canvas: HTMLCanvasElement) {
-        if (player.x + globalShift.x < 0) {
-            globalShift.x = 0;
-        } else if (player.x + globalShift.x > canvas.width - player.width) {
-            globalShift.x = 0;
-        }
-
-        if (player.y + globalShift.y < 0) {
-            globalShift.y = 0;
-        } else if (player.y + globalShift.y > canvas.height - player.height) {
-            globalShift.y = 0;
-        }
-    }
-
-    checkPlayerObs(player: Figure, globalShift: Point, obsacle: Figure) {
-        if (!this.intersects(player, globalShift, obsacle)) {
-            globalShift.x = 0;
-            globalShift.y = 0;
-        }
+    hasObstacleCollision(player: Figure, globalShift: Point, obsacle: Figure): boolean {
+        return !this.intersects(player, globalShift, obsacle);
     }
 
     intersects = function (firstRect: Figure, globalShift: Point, secondRect: Figure) {

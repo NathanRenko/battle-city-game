@@ -24,7 +24,7 @@ class GameEngine {
         //make step
         let dt = this.getDt();
         this.movementHandler.keyPressEngine(dt);
-        this.gameEntity.applyStep();
+        // this.gameEntity.applyStep();
 
         // render player
         player = this.gameEntity.getPlayerPosition();

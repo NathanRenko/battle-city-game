@@ -11,9 +11,15 @@ class GameEntity {
         this.obsacle = new Figure(100, 100, 20, 200);
         this.globalShift = new Point(0, 0);
     }
-    applyStep() {
-        this.player.x += this.globalShift.x;
-        this.player.y += this.globalShift.y;
+    // applyStep() {
+    //     this.player.x += this.globalShift.x;
+    //     this.player.y += this.globalShift.y;
+    //     this.globalShift = new Point(0, 0);
+    // }
+    applyStep(shift:Point) {
+        this.player.x += shift.x;
+        this.player.y += shift.y;
+        
         this.globalShift = new Point(0, 0);
     }
     getPlayerPosition() {
