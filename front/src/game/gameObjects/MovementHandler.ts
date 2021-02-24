@@ -1,35 +1,59 @@
 import Figure from '../gameClasses/figure';
 import GameEntity from './gameEntity';
 import Point from '../gameClasses/Point';
+import InputHandler from './inputHandler';
 
-class InputHandlerRules {
+class MovementHandler {
     gameEntity: GameEntity;
     canvas: HTMLCanvasElement;
+    InputHandler: InputHandler
+    info: any;
 
-    constructor(gameEntity: GameEntity, canvas: HTMLCanvasElement) {
+    constructor(gameEntity: GameEntity, canvas: HTMLCanvasElement, info:any) {
         this.gameEntity = gameEntity;
         this.canvas = canvas;
+        this.InputHandler = new InputHandler();
+        this.info = info
     }
-    keyPressEngine(keyEvent: any) {
-        let key = keyEvent.key;
+    keyPressEngine(dt:number) {
+        // console.log(this.info);
+        
+        let playerSpeed = 50;
         this.gameEntity.globalShift = new Point(0, 0);
         let shift = 1;
-        switch (key) {
-            case 'ArrowUp':
-                this.gameEntity.globalShift.y -= shift;
-                break;
-            case 'ArrowDown':
-                this.gameEntity.globalShift.y += shift;
-                break;
-            case 'ArrowLeft':
-                this.gameEntity.globalShift.x -= shift;
-                break;
-            case 'ArrowRight':
-                this.gameEntity.globalShift.x += shift;
-                break;
-            default:
-                break;
+        // console.log(this.info.dt);
+        
+        if(this.InputHandler.isDown('ArrowDown')) {
+            this.gameEntity.globalShift.y += playerSpeed * dt;
         }
+    
+        if(this.InputHandler.isDown('ArrowUp') ) {
+            this.gameEntity.globalShift.y -= playerSpeed * dt;
+        }
+    
+        if(this.InputHandler.isDown('ArrowLeft')) {
+            this.gameEntity.globalShift.x -= playerSpeed * dt;
+        }
+    
+        if(this.InputHandler.isDown('ArrowRight')) {
+            this.gameEntity.globalShift.x += playerSpeed * dt;
+        }
+        // switch (key) {
+        //     case 'ArrowUp':
+        //         this.gameEntity.globalShift.y -= shift;
+        //         break;
+        //     case 'ArrowDown':
+        //         this.gameEntity.globalShift.y += shift;
+        //         break;
+        //     case 'ArrowLeft':
+        //         this.gameEntity.globalShift.x -= shift;
+        //         break;
+        //     case 'ArrowRight':
+        //         this.gameEntity.globalShift.x += shift;
+        //         break;
+        //     default:
+        //         break;
+        // }
         this.checkPlayerBounds(this.gameEntity.player, this.gameEntity.globalShift, this.canvas);
         this.checkPlayerObs(this.gameEntity.player, this.gameEntity.globalShift, this.gameEntity.obsacle);
     }
@@ -63,4 +87,4 @@ class InputHandlerRules {
     };
 }
 
-export default InputHandlerRules;
+export default MovementHandler;
