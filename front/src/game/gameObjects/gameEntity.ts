@@ -5,13 +5,11 @@ class GameEntity {
     player: Figure;
     obsacle: Figure;
     globalShift: Point;
-    prevPos: Point[];
 
     constructor() {
-        this.player = new Figure(0, 0, 20, 20);
+        this.player = new Figure(120, 100, 20, 20);
         this.obsacle = new Figure(100, 100, 20, 200);
         this.globalShift = new Point(0, 0);
-        this.prevPos = [];
     }
     applyStep() {
         this.player.x += this.globalShift.x;
