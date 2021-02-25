@@ -14,41 +14,25 @@ class MovementHandler {
         this.InputHandler = new InputHandler();
     }
     keyPressEngine(dt: number) {
-        // console.log(this.info);
-
-        let playerSpeed = 2;
-        let shift = Math.round(playerSpeed * dt * 100);
-
-        if (this.InputHandler.isDown('ArrowDown')) {
-            let step = new Point(0, shift);
+        const playerSpeed = 20;
+        const shift = Math.round(playerSpeed * dt * 10);
+        const movement = {
+            ArrowDown: new Point(0, shift),
+            ArrowUp: new Point(0, -shift),
+            ArrowLeft: new Point(-shift, 0),
+            ArrowRight: new Point(shift, 0),
+        };
+        for (const move in movement) {
+            // @ts-ignore
+            this.handlePressIfExist(move, movement[move]);
+        }
+    }
+    handlePressIfExist(button: any, step: Point) {
+        if (this.InputHandler.isDown(button)) {
             let availableStep = this.getMinimalStep(step);
             this.gameEntity.applyStep(availableStep);
             // return;
         }
-
-        if (this.InputHandler.isDown('ArrowUp')) {
-            let step = new Point(0, -shift);
-            let availableStep = this.getMinimalStep(step);
-            this.gameEntity.applyStep(availableStep);
-            // return;
-        }
-
-        if (this.InputHandler.isDown('ArrowLeft')) {
-            let step = new Point(-shift, 0);
-            let availableStep = this.getMinimalStep(step);
-            this.gameEntity.applyStep(availableStep);
-            // return;
-        }
-
-        if (this.InputHandler.isDown('ArrowRight')) {
-            let step = new Point(shift, 0);
-            let availableStep = this.getMinimalStep(step);
-            this.gameEntity.applyStep(availableStep);
-            // return;
-        }
-
-        // this.checkPlayerBounds(this.gameEntity.player, this.gameEntity.globalShift, this.canvas);
-        // this.checkPlayerObs(this.gameEntity.player, this.gameEntity.globalShift, this.gameEntity.obsacle);
     }
     getMinimalStep(step: Point) {
         if (
@@ -80,13 +64,21 @@ class MovementHandler {
     }
 
     hasObstacleCollision(player: Figure, globalShift: Point, obsacle: Figure): boolean {
-        return !this.intersects(player, globalShift, obsacle);
+        return this.hasIntersects(player, globalShift, obsacle);
     }
 
-    intersects = function (firstRect: Figure, globalShift: Point, secondRect: Figure) {
-        let a = new Figure(firstRect.x + globalShift.x, firstRect.y + globalShift.y, firstRect.width, firstRect.height);
-        return (
-            a.y > secondRect.getY1() || a.getY1() < secondRect.y || a.getX1() < secondRect.x || a.x > secondRect.getX1()
+    hasIntersects = function (firstRect: Figure, globalShift: Point, secondRect: Figure): boolean {
+        let shiftedRectangle = new Figure(
+            firstRect.x + globalShift.x,
+            firstRect.y + globalShift.y,
+            firstRect.width,
+            firstRect.height
+        );
+        return !(
+            shiftedRectangle.y > secondRect.getY1() ||
+            shiftedRectangle.getY1() < secondRect.y ||
+            shiftedRectangle.getX1() < secondRect.x ||
+            shiftedRectangle.x > secondRect.getX1()
         );
     };
 }

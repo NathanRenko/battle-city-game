@@ -4,23 +4,14 @@ import Point from '../gameClasses/Point';
 class GameEntity {
     player: Figure;
     obsacle: Figure;
-    globalShift: Point;
 
     constructor() {
         this.player = new Figure(121, 100, 20, 20);
         this.obsacle = new Figure(100, 100, 20, 200);
-        this.globalShift = new Point(0, 0);
     }
-    // applyStep() {
-    //     this.player.x += this.globalShift.x;
-    //     this.player.y += this.globalShift.y;
-    //     this.globalShift = new Point(0, 0);
-    // }
-    applyStep(shift:Point) {
+    applyStep(shift: Point) {
         this.player.x += shift.x;
         this.player.y += shift.y;
-        
-        this.globalShift = new Point(0, 0);
     }
     getPlayerPosition() {
         return this.player;
