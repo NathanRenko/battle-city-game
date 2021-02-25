@@ -1,20 +1,14 @@
 import Figure from '../gameClasses/figure';
 import Point from '../gameClasses/Point';
+import Player from '../gameObjects/player';
 
 class GameEntity {
-    player: Figure;
+    player: Player;
     obsacle: Figure;
 
     constructor() {
-        this.player = new Figure(121, 100, 20, 20);
+        this.player = new Player(121, 100, 20, 20);
         this.obsacle = new Figure(100, 100, 20, 200);
-    }
-    applyStep(shift: Point) {
-        this.player.x += shift.x;
-        this.player.y += shift.y;
-    }
-    getPlayerPosition() {
-        return this.player;
     }
 }
 

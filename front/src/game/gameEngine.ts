@@ -1,14 +1,14 @@
 import Figure from './gameClasses/figure';
-import GameEntity from './gameObjects/gameEntity';
-import MovementHandler from './gameObjects/MovementHandler';
+import GameEntity from './gameRules/gameEntity';
+import MovementHandler from './engineModules/MovementHandler';
 import Point from './gameClasses/Point';
-import InputHandler from './gameObjects/inputHandler';
+import InputHandler from './engineModules/inputHandler';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
     gameEntity: GameEntity;
     movementHandler: MovementHandler;
-    lastTime: any;
+    lastTime: number;
     constructor() {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         this.canvasContext = canvas.getContext('2d') || new CanvasRenderingContext2D();
@@ -18,23 +18,17 @@ class GameEngine {
     }
     draw() {
         //unrender player
-        let player = this.gameEntity.getPlayerPosition();
-        this.canvasContext.clearRect(player.x, player.y, player.width, player.height);
+        let playerPosition = this.gameEntity.player.getPlayerPosition();
+        this.canvasContext.clearRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
 
         //make step
         let dt = this.getDt();
         this.movementHandler.keyPressEngine(dt);
-        // this.gameEntity.applyStep();
 
         // render player
-        player = this.gameEntity.getPlayerPosition();
+        playerPosition = this.gameEntity.player.getPlayerPosition();
         this.canvasContext.fillStyle = 'rgb(200,0,0)';
-        this.canvasContext.fillRect(
-            this.gameEntity.player.x,
-            this.gameEntity.player.y,
-            this.gameEntity.player.width,
-            this.gameEntity.player.height
-        );
+        this.canvasContext.fillRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
     }
     getDt() {
         let now = Date.now();

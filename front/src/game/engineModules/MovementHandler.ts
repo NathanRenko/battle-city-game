@@ -1,5 +1,5 @@
 import Figure from '../gameClasses/figure';
-import GameEntity from './gameEntity';
+import GameEntity from '../gameRules/gameEntity';
 import Point from '../gameClasses/Point';
 import InputHandler from './inputHandler';
 
@@ -30,47 +30,40 @@ class MovementHandler {
     handlePressIfExist(button: any, step: Point) {
         if (this.InputHandler.isDown(button)) {
             let availableStep = this.getMinimalStep(step);
-            this.gameEntity.applyStep(availableStep);
+            this.gameEntity.player.applyStep(availableStep);
             // return;
         }
     }
     getMinimalStep(step: Point) {
-        if (
-            !this.hasObstacleCollision(this.gameEntity.player, step, this.gameEntity.obsacle) &&
-            !this.hasBoundsCollision(this.gameEntity.player, step, this.canvas)
+        while (
+            this.hasObstacleCollision(this.gameEntity.player, step, this.gameEntity.obsacle) ||
+            this.hasBoundsCollision(this.gameEntity.player, step, this.canvas)
         ) {
-            return step;
-        } else {
-            while (
-                this.hasObstacleCollision(this.gameEntity.player, step, this.gameEntity.obsacle) ||
-                this.hasBoundsCollision(this.gameEntity.player, step, this.canvas)
-            ) {
-                if (step.x !== 0) {
-                    step.x -= Math.sign(step.x);
-                } else {
-                    step.y -= Math.sign(step.y);
-                }
+            if (step.x !== 0) {
+                step.x -= Math.sign(step.x);
+            } else {
+                step.y -= Math.sign(step.y);
             }
-            return step;
         }
+        return step;
     }
-    hasBoundsCollision(player: Figure, globalShift: Point, canvas: HTMLCanvasElement) {
+    hasBoundsCollision(player: Figure, step: Point, canvas: HTMLCanvasElement) {
         return (
-            player.x + globalShift.x < 0 ||
-            player.x + globalShift.x > canvas.width - player.width ||
-            player.y + globalShift.y < 0 ||
-            player.y + globalShift.y > canvas.height - player.height
+            player.x + step.x < 0 ||
+            player.x + step.x > canvas.width - player.width ||
+            player.y + step.y < 0 ||
+            player.y + step.y > canvas.height - player.height
         );
     }
 
-    hasObstacleCollision(player: Figure, globalShift: Point, obsacle: Figure): boolean {
-        return this.hasIntersects(player, globalShift, obsacle);
+    hasObstacleCollision(player: Figure, step: Point, obsacle: Figure): boolean {
+        return this.hasIntersects(player, step, obsacle);
     }
 
-    hasIntersects = function (firstRect: Figure, globalShift: Point, secondRect: Figure): boolean {
+    hasIntersects = function (firstRect: Figure, step: Point, secondRect: Figure): boolean {
         let shiftedRectangle = new Figure(
-            firstRect.x + globalShift.x,
-            firstRect.y + globalShift.y,
+            firstRect.x + step.x,
+            firstRect.y + step.y,
             firstRect.width,
             firstRect.height
         );
