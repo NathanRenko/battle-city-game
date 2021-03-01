@@ -1,4 +1,4 @@
-import Figure from '../gameClasses/figure';
+import GameObject from '../gameClasses/gameObject';
 import GameEntity from '../gameRules/gameEntity';
 import Point from '../gameClasses/Point';
 import InputHandler from './inputHandler';
@@ -24,15 +24,17 @@ class MovementHandler {
         };
         for (const move in movement) {
             // @ts-ignore
-            this.handlePressIfExist(move, movement[move]);
+            if (this.handlePressIfExist(move, movement[move])) break;
         }
     }
     handlePressIfExist(button: any, step: Point) {
         if (this.InputHandler.isDown(button)) {
             let availableStep = this.getMinimalStep(step);
             this.gameEntity.player.applyStep(availableStep);
-            // return;
+            this.gameEntity.player.changeDirection(button);
+            return true;
         }
+        return false;
     }
     getMinimalStep(step: Point) {
         while (
@@ -47,7 +49,7 @@ class MovementHandler {
         }
         return step;
     }
-    hasBoundsCollision(player: Figure, step: Point, canvas: HTMLCanvasElement) {
+    hasBoundsCollision(player: GameObject, step: Point, canvas: HTMLCanvasElement) {
         return (
             player.x + step.x < 0 ||
             player.x + step.x > canvas.width - player.width ||
@@ -56,12 +58,12 @@ class MovementHandler {
         );
     }
 
-    hasObstacleCollision(player: Figure, step: Point, obsacle: Figure): boolean {
+    hasObstacleCollision(player: GameObject, step: Point, obsacle: GameObject): boolean {
         return this.hasIntersects(player, step, obsacle);
     }
 
-    hasIntersects = function (firstRect: Figure, step: Point, secondRect: Figure): boolean {
-        let shiftedRectangle = new Figure(
+    hasIntersects = function (firstRect: GameObject, step: Point, secondRect: GameObject): boolean {
+        let shiftedRectangle = new GameObject(
             firstRect.x + step.x,
             firstRect.y + step.y,
             firstRect.width,

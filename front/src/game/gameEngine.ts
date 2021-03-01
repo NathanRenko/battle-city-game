@@ -1,4 +1,4 @@
-import Figure from './gameClasses/figure';
+import GameObject from './gameClasses/gameObject';
 import GameEntity from './gameRules/gameEntity';
 import MovementHandler from './engineModules/MovementHandler';
 import Point from './gameClasses/Point';
@@ -27,8 +27,29 @@ class GameEngine {
 
         // render player
         playerPosition = this.gameEntity.player.getPlayerPosition();
-        this.canvasContext.fillStyle = 'rgb(200,0,0)';
-        this.canvasContext.fillRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
+        let img = new Image(); // Создает новый элемент изображения
+        // img.src = this.gameEntity.player.skin;
+        img.src = './assets/tankSM.png';
+       
+        // this.canvasContext.fillStyle = 'rgb(200,0,0)';
+        // this.canvasContext.fillRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
+
+        this.drawRotated(
+            this.canvasContext,
+            img,
+            playerPosition.x,
+            playerPosition.y,
+            // @ts-ignore
+            this.gameEntity.player.direction,
+            0
+        );
+        // this.canvasContext.drawImage(
+        //     img,
+        //     playerPosition.x,
+        //     playerPosition.y,
+        //     playerPosition.width,
+        //     playerPosition.height
+        // );
     }
     getDt() {
         let now = Date.now();
@@ -43,6 +64,15 @@ class GameEngine {
         this.canvasContext.fillRect(obsacle.x, obsacle.y, obsacle.width, obsacle.height);
         this.lastTime = Date.now();
         setInterval(() => this.draw(), 1000 / 60);
+    }
+    drawRotated(context: any, image: any, x: any, y: any, degrees: any, flip: any) {
+        if (!context || !image) return;
+        context.save();
+        context.translate(x + image.width / 2, y + image.height / 2);
+        context.rotate((degrees * Math.PI) / 180);
+        // context.scale(flip,1);
+        context.drawImage(image, -image.width / 2, -image.height / 2);
+        context.restore();
     }
 }
 
