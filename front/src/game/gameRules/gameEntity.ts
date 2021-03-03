@@ -1,14 +1,18 @@
 import GameObject from '../gameClasses/gameObject';
 import Point from '../gameClasses/Point';
-import Player from '../gameObjects/player';
+import Particle from '../gameObjects/particle';
+import Shell from '../gameObjects/shell';
+import Tank from '../gameObjects/tank';
+import SteelWall from '../gameObjects/steel-wall';
 
 class GameEntity {
-    player: Player;
-    obsacle: GameObject;
-
+    player: Tank;
+    obsacle: SteelWall[];
+    shell: Shell[] = []
+    particles: Particle[] = []
     constructor() {
-        this.player = new Player(121, 100, 20, 20);
-        this.obsacle = new GameObject(100, 100, 20, 200);
+        this.player = new Tank(121, 100);
+        this.obsacle = [new SteelWall(100, 100), new SteelWall(100, 116), new SteelWall(100, 132), new SteelWall(100, 148), new SteelWall(100, 164)];
     }
 }
 

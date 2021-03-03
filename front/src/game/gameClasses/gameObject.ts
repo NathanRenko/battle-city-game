@@ -3,16 +3,13 @@
 class GameObject {
     x: number;
     y: number;
-    width: number;
-    height: number;
-    // skin: string;
+    width!: number;
+    height!: number;
+    skin!: string;
 
-    constructor(x: number, y: number, width: number, height: number) {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        // this.skin = img;
     }
     getX1() {
         return this.x + this.width - 1;

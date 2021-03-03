@@ -3,6 +3,7 @@ import GameEntity from './gameRules/gameEntity';
 import MovementHandler from './engineModules/MovementHandler';
 import Point from './gameClasses/Point';
 import InputHandler from './engineModules/inputHandler';
+import Tank from './gameObjects/tank';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -17,62 +18,51 @@ class GameEngine {
         this.lastTime = 0;
     }
     draw() {
-        //unrender player
-        let playerPosition = this.gameEntity.player.getPlayerPosition();
-        this.canvasContext.clearRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
+        this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+        // render obsacle
+        for (const obsacle of this.gameEntity.obsacle) {
+            this.renderEntity(this.canvasContext, obsacle);
+        }
 
         //make step
-        let dt = this.getDt();
+        const dt = this.getDt();
         this.movementHandler.keyPressEngine(dt);
-
+        for (const shell of this.gameEntity.shell) {
+            this.drawRotated(this.canvasContext, shell);
+        }
+        for (const particle of this.gameEntity.particles) {
+            this.renderEntity(this.canvasContext, particle);
+        }
         // render player
-        playerPosition = this.gameEntity.player.getPlayerPosition();
-        let img = new Image(); // Создает новый элемент изображения
-        // img.src = this.gameEntity.player.skin;
-        img.src = './assets/tankSM.png';
-       
-        // this.canvasContext.fillStyle = 'rgb(200,0,0)';
-        // this.canvasContext.fillRect(playerPosition.x, playerPosition.y, playerPosition.width, playerPosition.height);
-
-        this.drawRotated(
-            this.canvasContext,
-            img,
-            playerPosition.x,
-            playerPosition.y,
-            // @ts-ignore
-            this.gameEntity.player.direction,
-            0
-        );
-        // this.canvasContext.drawImage(
-        //     img,
-        //     playerPosition.x,
-        //     playerPosition.y,
-        //     playerPosition.width,
-        //     playerPosition.height
-        // );
+        this.drawRotated(this.canvasContext, this.gameEntity.player);
     }
     getDt() {
-        let now = Date.now();
-        let dt = (now - this.lastTime) / 1000.0;
+        const now = Date.now();
+        const dt = (now - this.lastTime) / 1000.0;
         this.lastTime = now;
         return dt;
     }
 
     start() {
-        let obsacle = this.gameEntity.obsacle;
-        this.canvasContext.fillStyle = 'rgb(100,0,100)';
-        this.canvasContext.fillRect(obsacle.x, obsacle.y, obsacle.width, obsacle.height);
         this.lastTime = Date.now();
         setInterval(() => this.draw(), 1000 / 60);
     }
-    drawRotated(context: any, image: any, x: any, y: any, degrees: any, flip: any) {
-        if (!context || !image) return;
+    drawRotated(context: CanvasRenderingContext2D, entity: Tank) {
+        if (!entity) {
+            return;
+        }
         context.save();
-        context.translate(x + image.width / 2, y + image.height / 2);
-        context.rotate((degrees * Math.PI) / 180);
-        // context.scale(flip,1);
-        context.drawImage(image, -image.width / 2, -image.height / 2);
+        context.translate(entity.x + entity.width / 2, entity.y + entity.height / 2);
+        context.rotate((entity.direction * Math.PI) / 180);
+        const img = new Image(entity.width, entity.height);
+        img.src = entity.skin;
+        context.drawImage(img, -entity.width / 2, -entity.height / 2, entity.width, entity.height);
         context.restore();
+    }
+    renderEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {
+        const img = new Image();
+        img.src = entity.skin;
+        ctx.drawImage(img, entity.x, entity.y, entity.width, entity.height);
     }
 }
 

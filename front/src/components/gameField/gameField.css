@@ -1,4 +1,5 @@
 .gameField{
-    background-color: antiquewhite;
+    background-color: white;
     margin-top: 50px;
+    border: solid 1px black;
 }
