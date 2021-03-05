@@ -26,7 +26,8 @@ class GameEngine {
 
         //make step
         const dt = this.getDt();
-        this.movementHandler.keyPressEngine(dt);
+        this.movementHandler.frameEngine(dt);
+        this.drawRotated(this.canvasContext, this.gameEntity.player);
         for (const shell of this.gameEntity.shell) {
             this.drawRotated(this.canvasContext, shell);
         }
@@ -34,7 +35,6 @@ class GameEngine {
             this.renderEntity(this.canvasContext, particle);
         }
         // render player
-        this.drawRotated(this.canvasContext, this.gameEntity.player);
     }
     getDt() {
         const now = Date.now();
