@@ -1,50 +1,48 @@
-import GameObject from './gameClasses/gameObject';
-import GameEntity from './gameRules/gameEntity';
-import MovementHandler from './engineModules/MovementHandler';
-import Point from './gameClasses/Point';
-import InputHandler from './engineModules/inputHandler';
-import Tank from './gameObjects/tank';
+import GameObject from '../gameClasses/gameObject';
+import Field from './engineModules/Field';
+import ModelHandler from './engineModules/ModelHandler';
+import Tank from '../gameObjects/tank';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
-    gameEntity: GameEntity;
-    movementHandler: MovementHandler;
-    lastTime: number;
+    field: Field;
+    movementHandler: ModelHandler;
+    lastFrameTime: number;
     constructor() {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         this.canvasContext = canvas.getContext('2d') || new CanvasRenderingContext2D();
-        this.gameEntity = new GameEntity();
-        this.movementHandler = new MovementHandler(this.gameEntity, canvas);
-        this.lastTime = 0;
+        this.field = new Field();
+        this.movementHandler = new ModelHandler(this.field);
+        this.lastFrameTime = 0;
     }
     draw() {
         this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
         // render obsacle
-        for (const obsacle of this.gameEntity.obsacle) {
+        for (const obsacle of this.field.obsacle) {
             this.renderEntity(this.canvasContext, obsacle);
         }
 
         //make step
         const dt = this.getDt();
         this.movementHandler.frameEngine(dt);
-        this.drawRotated(this.canvasContext, this.gameEntity.player);
-        for (const shell of this.gameEntity.shell) {
+        this.drawRotated(this.canvasContext, this.field.player);
+        for (const shell of this.field.shell) {
             this.drawRotated(this.canvasContext, shell);
         }
-        for (const particle of this.gameEntity.particles) {
+        for (const particle of this.field.particles) {
             this.renderEntity(this.canvasContext, particle);
         }
         // render player
     }
     getDt() {
         const now = Date.now();
-        const dt = (now - this.lastTime) / 1000.0;
-        this.lastTime = now;
+        const dt = (now - this.lastFrameTime) / 1000.0;
+        this.lastFrameTime = now;
         return dt;
     }
 
     start() {
-        this.lastTime = Date.now();
+        this.lastFrameTime = Date.now();
         setInterval(() => this.draw(), 1000 / 60);
     }
     drawRotated(context: CanvasRenderingContext2D, entity: Tank) {

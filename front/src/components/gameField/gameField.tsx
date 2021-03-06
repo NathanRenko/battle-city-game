@@ -1,6 +1,6 @@
 import './gameField.css';
 import React, { useState, useEffect } from 'react';
-import GameEngine from '../../game/gameEngine';
+import GameEngine from '../../game/gameEngine/gameEngine';
 
 function GameField() {
     let engine: GameEngine;

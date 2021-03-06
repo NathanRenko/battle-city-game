@@ -1,16 +1,17 @@
-import GameEntity from '../gameRules/gameEntity';
-import Point from '../gameClasses/Point';
+import Field from './Field';
+import Point from '../../gameClasses/Point';
 import InputHandler from './inputHandler';
+import EntityHandlers from './entityHandlers';
 
-class MovementHandler {
-    gameEntity: GameEntity;
-    canvas: HTMLCanvasElement;
+class ModelHandler {
+    field: Field;
     InputHandler: InputHandler;
+    entityHandler: EntityHandlers;
 
-    constructor(gameEntity: GameEntity, canvas: HTMLCanvasElement) {
-        this.gameEntity = gameEntity;
-        this.canvas = canvas;
+    constructor(field: Field) {
+        this.field = field;
         this.InputHandler = new InputHandler();
+        this.entityHandler = new EntityHandlers(this.field);
     }
     frameEngine(dt: number) {
         this.handleMovementKeyPressing(dt);
@@ -35,7 +36,7 @@ class MovementHandler {
 
     handleShotPress() {
         if (this.InputHandler.isDown(' ')) {
-            this.gameEntity.handleShoot(this.gameEntity.player.direction);
+            this.entityHandler.handleShoot(this.field.player.direction);
         }
     }
 
@@ -48,24 +49,24 @@ class MovementHandler {
             '-90': new Point(-shellShift, 0),
             '90': new Point(shellShift, 0),
         };
-        for (const shell of this.gameEntity.shell) {
-            this.gameEntity.handleShellMovements(shell, directions[shell.direction]);
+        for (const shell of this.field.shell) {
+            this.entityHandler.handleShellMovements(shell, directions[shell.direction]);
         }
     }
 
     handleParticleChanging(dt: number) {
-        for (const particle of this.gameEntity.particles) {
-            this.gameEntity.handleParticle(particle, dt);
+        for (const particle of this.field.particles) {
+            this.entityHandler.handleParticle(particle, dt);
         }
     }
 
     handleMovements(button: any, step: Point) {
         if (this.InputHandler.isDown(button)) {
-            this.gameEntity.handleMovements(button, step);
+            this.entityHandler.handleMovements(button, step);
             return true;
         }
         return false;
     }
 }
 
-export default MovementHandler;
+export default ModelHandler;
