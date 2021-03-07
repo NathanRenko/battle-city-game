@@ -15,25 +15,20 @@ class GameEngine {
         this.movementHandler = new ModelHandler(this.field);
         this.lastFrameTime = 0;
     }
-    draw() {
-        this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-        // render obsacle
-        for (const obsacle of this.field.obsacle) {
-            this.renderEntity(this.canvasContext, obsacle);
-        }
 
-        //make step
+    start() {
+        this.lastFrameTime = Date.now();
+        setInterval(() => {
+            this.updateModel();
+            this.draw();
+        }, 1000 / 60);
+    }
+
+    updateModel() {
         const dt = this.getDt();
         this.movementHandler.frameEngine(dt);
-        this.drawRotated(this.canvasContext, this.field.player);
-        for (const shell of this.field.shell) {
-            this.drawRotated(this.canvasContext, shell);
-        }
-        for (const particle of this.field.particles) {
-            this.renderEntity(this.canvasContext, particle);
-        }
-        // render player
     }
+
     getDt() {
         const now = Date.now();
         const dt = (now - this.lastFrameTime) / 1000.0;
@@ -41,11 +36,37 @@ class GameEngine {
         return dt;
     }
 
-    start() {
-        this.lastFrameTime = Date.now();
-        setInterval(() => this.draw(), 1000 / 60);
+    draw() {
+        this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+        this.renderObstacles();
+        this.renderTanks();
+        this.renderShells();
+        this.renderParticles();
     }
-    drawRotated(context: CanvasRenderingContext2D, entity: Tank) {
+
+    renderObstacles() {
+        for (const obsacle of this.field.obsacle) {
+            this.drawEntity(this.canvasContext, obsacle);
+        }
+    }
+
+    renderTanks() {
+        this.drawRotatedEntity(this.canvasContext, this.field.player);
+    }
+
+    renderShells() {
+        for (const shell of this.field.shell) {
+            this.drawRotatedEntity(this.canvasContext, shell);
+        }
+    }
+
+    renderParticles() {
+        for (const particle of this.field.particles) {
+            this.drawEntity(this.canvasContext, particle);
+        }
+    }
+
+    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank) {
         if (!entity) {
             return;
         }
@@ -57,7 +78,8 @@ class GameEngine {
         context.drawImage(img, -entity.width / 2, -entity.height / 2, entity.width, entity.height);
         context.restore();
     }
-    renderEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {
+
+    drawEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {
         const img = new Image();
         img.src = entity.skin;
         ctx.drawImage(img, entity.x, entity.y, entity.width, entity.height);
