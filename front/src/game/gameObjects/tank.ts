@@ -6,6 +6,7 @@ class Tank extends GameObject {
     width = 32;
     height = 32;
     skin = './assets/tank.png';
+    hp = 2;
     applyStep(shift: Point) {
         this.x += shift.x;
         this.y += shift.y;

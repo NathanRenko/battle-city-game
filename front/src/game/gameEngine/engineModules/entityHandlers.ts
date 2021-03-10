@@ -53,7 +53,7 @@ class EntityHandlers {
                 spawnPoint = new Point(playerCenter.x - halfShellSize, playerCenter.y + this.field.player.height / 2);
                 break;
             case -90:
-                spawnPoint = new Point(playerCenter.x - this.field.player.width / 2, playerCenter.y - halfShellSize);
+                spawnPoint = new Point(playerCenter.x - this.field.player.width / 2 - halfShellSize, playerCenter.y - halfShellSize);
                 break;
         }
         let shell = new Shell(spawnPoint.x, spawnPoint.y, shootDirection);

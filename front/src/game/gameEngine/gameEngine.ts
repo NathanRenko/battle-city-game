@@ -2,6 +2,7 @@ import GameObject from '../gameClasses/gameObject';
 import Field from './engineModules/Field';
 import ModelHandler from './engineModules/ModelHandler';
 import Tank from '../gameObjects/tank';
+import Shell from '../gameObjects/shell';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -45,13 +46,15 @@ class GameEngine {
     }
 
     renderObstacles() {
-        for (const obsacle of this.field.obsacle) {
-            this.drawEntity(this.canvasContext, obsacle);
+        for (const obstacle of this.field.obstacle) {
+            this.drawEntity(this.canvasContext, obstacle);
         }
     }
 
     renderTanks() {
-        this.drawRotatedEntity(this.canvasContext, this.field.player);
+        for (const tank of this.field.tanks) {
+            this.drawRotatedEntity(this.canvasContext, tank);
+        }
     }
 
     renderShells() {
@@ -66,7 +69,7 @@ class GameEngine {
         }
     }
 
-    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank) {
+    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank | Shell) {
         if (!entity) {
             return;
         }
