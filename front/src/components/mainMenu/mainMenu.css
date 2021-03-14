@@ -1,0 +1,16 @@
+.mainMenuContainer {
+    display: flex;
+    flex-direction: column;
+    width: 800px;
+    margin: 60px auto;
+}
+
+.playButton{
+    display: inline;
+    margin: 10px auto;
+    flex-grow: 0;
+}
+
+.nameInput{
+    margin-left: 5px;
+}

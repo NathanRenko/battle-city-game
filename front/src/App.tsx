@@ -1,12 +1,10 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import GameField from './components/gameField/gameField'
+import MainMenu from './components/mainMenu/mainMenu';
 
 function App() {
   return (
-    <div className="App">
-      <GameField/>
+    <div id='App' className="App">
+      <MainMenu></MainMenu>
     </div>
   );
 }

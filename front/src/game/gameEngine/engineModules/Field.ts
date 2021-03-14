@@ -7,35 +7,32 @@ import SteelWall from '../../gameObjects/steel-wall';
 import Figure from '../../gameClasses/figure';
 import BrickWall from '../../gameObjects/brick-wall';
 import Base from '../../gameObjects/base';
+import EntityClasses from './entityClasses';
 
 class Field {
     tanks: Tank[];
     player: Tank;
     obstacle: (SteelWall | BrickWall | Base | Tank)[];
     shell: Shell[] = [];
+    base: Base[] = [];
     particles: Particle[] = [];
-    mapSize = { width: 600, height: 400 };
+    mapSize: { width: number; height: number };
     lastShooted: number = 0;
-    constructor() {
-        this.tanks = [new Tank(121, 100), new Tank(300, 150)];
-        this.obstacle = [
-            new SteelWall(100, 100),
-            new SteelWall(100, 116),
-            new SteelWall(100, 132),
-            new SteelWall(100, 148),
-            new SteelWall(100, 164),
-            new BrickWall(200, 100),
-            new BrickWall(200, 108),
-            new BrickWall(200, 116),
-            new BrickWall(200, 124),
-            new BrickWall(200, 132),
-            new BrickWall(200, 140),
-            new BrickWall(200, 148),
-            new BrickWall(200, 156),
-            new BrickWall(200, 164),
-            new Base(240, 150),
-        ];
+    constructor(mapWidth: number, mapHeight: number) {
+        this.mapSize = { width: mapWidth, height: mapHeight };
+        this.tanks = [new Tank(120, 200), new Tank(350, 40)];
+        this.obstacle = [];
+        for (let index = 0; index < 5; index++) {
+            this.obstacle.push(new SteelWall(50, 200 + index * 16));
+        }
+        for (let index = 0; index < 65; index++) {
+            this.obstacle.push(new BrickWall(index * 8, 100));
+        }
+        for (let index = 0; index < 65; index++) {
+            this.obstacle.push(new BrickWall(index * 8, 130));
+        }
         this.player = this.tanks[0];
+        this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
     }
 
     getMinimalStep(step: Point, gameObject: GameObject) {
@@ -57,14 +54,16 @@ class Field {
         }
         if (collisionBlock && gameObject.constructor.name === 'Shell' && minimalStep.x === 0 && minimalStep.y === 0) {
             let parentCollection = this.getParentCollection(collisionBlock);
-            if (collisionBlock.constructor.name === 'BrickWall') {
-                parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
-            } else if ('hp' in collisionBlock) {
+            if ('hp' in collisionBlock) {
                 if (collisionBlock.hp !== 0) {
                     collisionBlock.hp--;
                 }
                 if (collisionBlock.hp === 0) {
-                    parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
+                    if ('team' in collisionBlock) {
+                        collisionBlock.setDeathState();
+                    } else {
+                        parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
+                    }
                 }
             }
         }
@@ -74,6 +73,7 @@ class Field {
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
         return (
             this.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
+            this.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
             this.tanks.find((tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank))
         );
     }
@@ -105,20 +105,43 @@ class Field {
             shiftedRectangle.x > secondRect.getX1()
         );
     }
-    getParentCollection(child: GameObject) {
-        switch (child.constructor.name) {
-            case 'SteelWall':
-            case 'BrickWall':
-            case 'Base':
+    getParentCollection(child: GameObject | string) {
+        let className = typeof child === 'string' ? child : child.constructor.name;
+
+        switch (className) {
+            case EntityClasses.SteelWall:
+            case EntityClasses.BrickWall:
                 return this.obstacle;
-            case 'Tank':
+            case EntityClasses.Base:
+                return this.base;
+            case EntityClasses.Tank:
                 return this.tanks;
-            case 'Shell':
+            case EntityClasses.Shell:
                 return this.shell;
-            case 'Particle':
+            case EntityClasses.Particle:
                 return this.particles;
             default:
                 alert(child.constructor.name);
+                throw Error('Unknown type');
+        }
+    }
+    createEntity(entityClass: string, coords: Array<[number, number]>) {
+        switch (entityClass) {
+            case EntityClasses.SteelWall:
+            case EntityClasses.BrickWall:
+            case EntityClasses.Base:
+                // for (const coord of coords) {
+                //     this.obstacle.push;
+                // }
+                break;
+            case EntityClasses.Tank:
+                return this.tanks;
+            case EntityClasses.Shell:
+                return this.shell;
+            case EntityClasses.Particle:
+                return this.particles;
+            default:
+                alert(entityClass);
                 throw Error('Unknown type');
         }
     }

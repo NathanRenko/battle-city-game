@@ -1,15 +1,14 @@
 import GameObject from '../gameClasses/gameObject';
+import EntitySkins from '../gameEngine/engineModules/entitySkins';
 
 class Particle extends GameObject {
-    animationStep = ['./assets/hit1.png', './assets/hit2.png', './assets/hit3.png'];
+    animationStep = [EntitySkins.hit1, EntitySkins.hit2, EntitySkins.hit3];
     width = 32;
     height = 32;
     skin = this.animationStep[0];
     timeCreation = 0;
     animationOver = false;
-    constructor(x: number, y: number) {
-        super(x, y);
-    }
+    
     changeStep(dt: number) {
         this.timeCreation += dt * 9;
         if (this.timeCreation > 2) {

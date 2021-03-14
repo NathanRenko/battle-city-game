@@ -1,11 +1,12 @@
 import GameObject from '../gameClasses/gameObject';
 import Point from '../gameClasses/Point';
+import EntitySkins from '../gameEngine/engineModules/entitySkins';
 
 class Shell extends GameObject {
     width = 8;
     height = 8;
     direction: number;
-    skin = './assets/shell.png';
+    skin = EntitySkins.Shell;
     constructor(x: number, y: number, shootDirection: number) {
         super(x, y);
         this.direction = shootDirection;

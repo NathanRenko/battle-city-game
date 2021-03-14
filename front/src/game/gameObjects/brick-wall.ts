@@ -1,9 +1,11 @@
 import GameObject from '../gameClasses/gameObject';
+import EntitySkins from '../gameEngine/engineModules/entitySkins';
 
 class BrickWall extends GameObject {
     width = 8;
     height = 8;
-    skin = './assets/brick-wall.png';
+    skin = EntitySkins.BrickWall;
+    hp = 1;
 }
 
 export default BrickWall;

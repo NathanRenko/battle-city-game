@@ -7,7 +7,6 @@ class InputHandler {
     }
     setKey(event: KeyboardEvent, status: boolean) {
         let key = event.key;
-        console.log(key);
         if (key in this.keys) {
             //@ts-ignore
             this.keys[key] = status;

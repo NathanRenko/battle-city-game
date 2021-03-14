@@ -1,11 +1,12 @@
 import GameObject from '../gameClasses/gameObject';
 import Point from '../gameClasses/Point';
+import EntitySkins from '../gameEngine/engineModules/entitySkins';
 
 class Tank extends GameObject {
     direction: number = 0;
     width = 32;
     height = 32;
-    skin = './assets/tank.png';
+    skin = EntitySkins.Tank;
     hp = 2;
     applyStep(shift: Point) {
         this.x += shift.x;

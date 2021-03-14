@@ -44,7 +44,7 @@ class EntityHandlers {
         let halfShellSize = 4;
         switch (this.field.player.direction) {
             case 0:
-                spawnPoint = new Point(playerCenter.x - halfShellSize, playerCenter.y - this.field.player.height / 2);
+                spawnPoint = new Point(playerCenter.x - halfShellSize, playerCenter.y - this.field.player.height / 2 - halfShellSize * 2);
                 break;
             case 90:
                 spawnPoint = new Point(playerCenter.x + this.field.player.width / 2, playerCenter.y - halfShellSize);
@@ -53,7 +53,7 @@ class EntityHandlers {
                 spawnPoint = new Point(playerCenter.x - halfShellSize, playerCenter.y + this.field.player.height / 2);
                 break;
             case -90:
-                spawnPoint = new Point(playerCenter.x - this.field.player.width / 2 - halfShellSize, playerCenter.y - halfShellSize);
+                spawnPoint = new Point(playerCenter.x - this.field.player.width / 2 - halfShellSize * 2, playerCenter.y - halfShellSize);
                 break;
         }
         let shell = new Shell(spawnPoint.x, spawnPoint.y, shootDirection);

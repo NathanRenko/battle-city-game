@@ -1,0 +1,9 @@
+.infoPanel{
+    border: solid 1px black;
+    margin: 0;
+}
+
+.infoContainer{
+    display: flex;
+    flex-direction: column;
+}
