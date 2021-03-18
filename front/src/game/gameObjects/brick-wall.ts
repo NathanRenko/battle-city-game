@@ -1,5 +1,5 @@
 import GameObject from '../gameClasses/gameObject';
-import EntitySkins from '../gameEngine/engineModules/entitySkins';
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 
 class BrickWall extends GameObject {
     width = 8;

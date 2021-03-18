@@ -2,6 +2,7 @@ import Field from './Field';
 import Point from '../../gameClasses/Point';
 import InputHandler from './inputHandler';
 import EntityHandlers from './entityHandlers';
+import { entityDirections } from './constObjects/DirectionHandler';
 
 class ModelHandler {
     field: Field;
@@ -43,11 +44,12 @@ class ModelHandler {
     handleShellsMovement(dt: number) {
         const shellSpeed = 30;
         const shellShift = Math.round(shellSpeed * dt * 10);
-        const directions: { [index: number]: Point } = {
-            '180': new Point(0, shellShift),
-            '0': new Point(0, -shellShift),
-            '-90': new Point(-shellShift, 0),
-            '90': new Point(shellShift, 0),
+
+        const directions: { [index: string]: Point } = {
+            [entityDirections.Down]: new Point(0, shellShift),
+            [entityDirections.Up]: new Point(0, -shellShift),
+            [entityDirections.Left]: new Point(-shellShift, 0),
+            [entityDirections.Right]: new Point(shellShift, 0),
         };
         for (const shell of this.field.shell) {
             this.entityHandler.handleShellMovements(shell, directions[shell.direction]);

@@ -3,8 +3,9 @@ import Field from './engineModules/Field';
 import ModelHandler from './engineModules/ModelHandler';
 import Tank from '../gameObjects/tank';
 import Shell from '../gameObjects/shell';
-import EntityClasses from './engineModules/entityClasses';
+import EntityClasses from './engineModules/constObjects/entityClasses';
 import SkinCollection from './engineModules/skinCollection';
+import {directionToAngle} from './engineModules/constObjects/DirectionHandler';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -127,7 +128,7 @@ class GameEngine {
         }
         context.save();
         context.translate(entity.x + entity.width / 2, entity.y + entity.height / 2);
-        context.rotate((entity.direction * Math.PI) / 180);
+        context.rotate((directionToAngle[entity.direction] * Math.PI) / 180);
         context.drawImage(
             this.skinCollection.get(entity.skin),
             -entity.width / 2,

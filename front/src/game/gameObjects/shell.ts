@@ -1,13 +1,13 @@
 import GameObject from '../gameClasses/gameObject';
 import Point from '../gameClasses/Point';
-import EntitySkins from '../gameEngine/engineModules/entitySkins';
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 
 class Shell extends GameObject {
     width = 8;
     height = 8;
-    direction: number;
+    direction: string;
     skin = EntitySkins.Shell;
-    constructor(x: number, y: number, shootDirection: number) {
+    constructor(x: number, y: number, shootDirection: string) {
         super(x, y);
         this.direction = shootDirection;
     }
@@ -16,14 +16,7 @@ class Shell extends GameObject {
         this.y += shift.y;
     }
     changeDirection(direction: string) {
-        const movementDirection: { [index: string]: number } = {
-            ArrowDown: 180,
-            ArrowUp: 0,
-            ArrowLeft: -90,
-            ArrowRight: 90,
-        };
-
-        this.direction = movementDirection[direction];
+        this.direction = direction;
     }
     getPlayerPosition() {
         return { x: this.x, y: this.y, width: this.width, height: this.height };

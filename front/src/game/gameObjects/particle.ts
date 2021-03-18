@@ -1,5 +1,5 @@
 import GameObject from '../gameClasses/gameObject';
-import EntitySkins from '../gameEngine/engineModules/entitySkins';
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 
 class Particle extends GameObject {
     animationStep = [EntitySkins.hit1, EntitySkins.hit2, EntitySkins.hit3];

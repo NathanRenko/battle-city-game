@@ -1,6 +1,4 @@
-.gameField{
-    background-color: white;
+.gameField {
     border: solid 1px black;
     display: block;
-    
 }

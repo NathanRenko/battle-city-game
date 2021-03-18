@@ -1,9 +1,10 @@
 import GameObject from '../gameClasses/gameObject';
 import Point from '../gameClasses/Point';
-import EntitySkins from '../gameEngine/engineModules/entitySkins';
+import {entityDirections} from '../gameEngine/engineModules/constObjects/DirectionHandler';
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 
 class Tank extends GameObject {
-    direction: number = 0;
+    direction: string = entityDirections.Up;
     width = 32;
     height = 32;
     skin = EntitySkins.Tank;
@@ -13,14 +14,7 @@ class Tank extends GameObject {
         this.y += shift.y;
     }
     changeDirection(direction: string) {
-        const movementDirection: { [index: string]: number } = {
-            ArrowDown: 180,
-            ArrowUp: 0,
-            ArrowLeft: -90,
-            ArrowRight: 90,
-        };
-
-        this.direction = movementDirection[direction];
+        this.direction = direction;
     }
     getPlayerPosition() {
         return { x: this.x, y: this.y, width: this.width, height: this.height };

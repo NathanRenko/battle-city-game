@@ -7,7 +7,7 @@ import SteelWall from '../../gameObjects/steel-wall';
 import Figure from '../../gameClasses/figure';
 import BrickWall from '../../gameObjects/brick-wall';
 import Base from '../../gameObjects/base';
-import EntityClasses from './entityClasses';
+import EntityClasses from './constObjects/entityClasses';
 
 class Field {
     tanks: Tank[];
