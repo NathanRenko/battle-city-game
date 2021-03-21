@@ -1,15 +1,15 @@
-const assetsRoot = './assets/';
+const assetsRoot = "./assets/";
 
 const EntitySkins = {
-    Base: assetsRoot + 'base.png',
-    BaseHit: assetsRoot + 'base-hit.png',
-    BrickWall: assetsRoot + 'brick-wall.png',
-    SteelWall: assetsRoot + 'steel-wall.png',
-    Tank: assetsRoot + 'tank.png',
-    Shell: assetsRoot + 'shell.png',
-    hit1: assetsRoot + 'hit1.png',
-    hit2: assetsRoot + 'hit2.png',
-    hit3: assetsRoot + 'hit3.png',
+  Base: assetsRoot + "base.svg",
+  BaseHit: assetsRoot + "base-hit.svg",
+  BrickWall: assetsRoot + "brick-wall.svg",
+  SteelWall: assetsRoot + "steel-wall.svg",
+  Tank: assetsRoot + "tank.svg",
+  Shell: assetsRoot + "shell.svg",
+  hit1: assetsRoot + "hit1.svg",
+  hit2: assetsRoot + "hit2.svg",
+  hit3: assetsRoot + "hit3.svg",
 };
 
 export default EntitySkins;
