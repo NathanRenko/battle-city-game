@@ -3,8 +3,7 @@ import Point from "../gameClasses/Point";
 import EntitySkins from "../gameEngine/engineModules/constObjects/entitySkins";
 
 class Shell extends GameObject {
-  width = 6;
-  height = 14;
+  size = 6;
   direction: string;
   skin = EntitySkins.Shell;
   constructor(x: number, y: number, shootDirection: string) {
@@ -19,7 +18,7 @@ class Shell extends GameObject {
     this.direction = direction;
   }
   getPlayerPosition() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height };
+    return { x: this.x, y: this.y, width: this.size, height: this.size };
   }
 }
 

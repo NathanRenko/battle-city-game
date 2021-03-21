@@ -5,8 +5,7 @@ import EntitySkins from "../gameEngine/engineModules/constObjects/entitySkins";
 
 class Tank extends GameObject {
   direction: string = entityDirections.Up;
-  width = 40;
-  height = 70;
+  size = 40;
   skin = EntitySkins.Tank;
   hp = 2;
   applyStep(shift: Point) {
@@ -17,7 +16,7 @@ class Tank extends GameObject {
     this.direction = direction;
   }
   getPlayerPosition() {
-    return { x: this.x, y: this.y, width: this.width, height: this.height };
+    return { x: this.x, y: this.y, width: this.size, height: this.size };
   }
 }
 

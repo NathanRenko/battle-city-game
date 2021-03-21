@@ -2,8 +2,7 @@ import GameObject from "../gameClasses/gameObject";
 import EntitySkins from "../gameEngine/engineModules/constObjects/entitySkins";
 
 class Base extends GameObject {
-  width = 50;
-  height = 50;
+  size = 50;
   skin = EntitySkins.Base;
   hp = 5;
   team: 0 | 1;

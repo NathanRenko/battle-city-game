@@ -102,9 +102,9 @@ class Field {
   ) {
     return (
       player.x + step.x < 0 ||
-      player.x + step.x > mapSize.width - player.width ||
+      player.x + step.x > mapSize.width - player.size ||
       player.y + step.y < 0 ||
-      player.y + step.y > mapSize.height - player.height
+      player.y + step.y > mapSize.height - player.size
     );
   }
 
@@ -124,8 +124,8 @@ class Field {
     let shiftedRectangle = new Figure(
       firstRect.x + step.x,
       firstRect.y + step.y,
-      firstRect.width,
-      firstRect.height
+      firstRect.size,
+      firstRect.size
     );
     return !(
       shiftedRectangle.y > secondRect.getY1() ||
