@@ -33,7 +33,7 @@ class GameEngine {
 
     start() {
         this.lastFrameTime = Date.now();
-        requestAnimationFrame(this.gameEngine.bind(this));
+        requestAnimationFrame(() => this.gameEngine());
     }
     gameEngine() {
         if (this.checkIsGameOver()) {
@@ -42,7 +42,7 @@ class GameEngine {
             this.updateModel();
             this.draw();
             this.updateGameInfo();
-            requestAnimationFrame(this.gameEngine.bind(this));
+            requestAnimationFrame(() => this.gameEngine());
         }
     }
     checkIsGameOver() {
