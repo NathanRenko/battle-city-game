@@ -33,24 +33,23 @@ class GameEngine {
 
     start() {
         this.lastFrameTime = Date.now();
-        let timer = setInterval(() => {
-            if (this.checkIsGameOver()) {
-                this.finishGame(timer);
-            } else {
-                this.updateModel();
-                this.draw();
-                this.updateGameInfo();
-            }
-        }, 1000 / 60);
-        // requestAnimationFrame(this.gameEngine.bind(this));
+        requestAnimationFrame(this.gameEngine.bind(this));
     }
-
+    gameEngine() {
+        if (this.checkIsGameOver()) {
+            this.finishGame();
+        } else {
+            this.updateModel();
+            this.draw();
+            this.updateGameInfo();
+            requestAnimationFrame(this.gameEngine.bind(this));
+        }
+    }
     checkIsGameOver() {
         return this.field.base[0].hp === 0 || this.field.base[1].hp === 0;
     }
 
-    finishGame(timer: NodeJS.Timer) {
-        clearInterval(timer);
+    finishGame() {
         if (this.field.base[0].hp === 0) {
             alert('Поражение!');
         } else {
@@ -78,20 +77,6 @@ class GameEngine {
             this.tankHp.textContent = this.field.tanks[0].hp.toString();
         }
     }
-    // gameEngine() {
-    //     this.updateModel();
-    //     this.draw();
-    //     if (
-    //         this.infoTable &&
-    //         this.field.base &&
-    //         this.field.base[0] &&
-    //         this.infoTable.textContent !== this.field.base[0].hp.toString()
-    //     ) {
-    //         this.infoTable.textContent = this.field.base[0].hp.toString();
-    //     }
-    //     console.log(1);
-    //     requestAnimationFrame(this.gameEngine.bind(this));
-    // }
 
     updateModel() {
         const dt = this.getDt();
