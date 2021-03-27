@@ -1,20 +1,37 @@
 class InputHandler {
-    keys: { ArrowUp: boolean; ArrowDown: boolean; ArrowLeft: boolean; ArrowRight: boolean; ' ': boolean };
+    movementKeys: { ArrowUp: boolean; ArrowDown: boolean; ArrowLeft: boolean; ArrowRight: boolean };
+    shootStatus: boolean;
+    shootButton = ' ';
+    inputs: string[];
     constructor() {
-        this.keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
+        this.movementKeys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        this.shootStatus = false;
+        this.inputs = [];
         document.addEventListener('keydown', (e) => this.setKey(e, true));
         document.addEventListener('keyup', (e) => this.setKey(e, false));
     }
-    setKey(event: KeyboardEvent, status: boolean) {
-        let key = event.key;
-        if (key in this.keys) {
-            //@ts-ignore
-            this.keys[key] = status;
+
+    setKey(event: KeyboardEvent, isKeyDown: boolean) {
+        const key = event.key;
+        if (key in this.movementKeys) {
+            if (!this.inputs.includes(key) && isKeyDown) {
+                this.inputs.push(key);
+            } else if (!isKeyDown) {
+                this.inputs.splice(this.inputs.indexOf(key), 1);
+            }
+        } else if (key === this.shootButton) {
+            this.shootStatus = isKeyDown;
         }
     }
+
     isDown(key: string): boolean {
-        //@ts-ignore
-        return this.keys[key];
+        if (key === this.shootButton) {
+            return this.shootStatus;
+        }
+        if (key in this.movementKeys) {
+            return this.inputs[this.inputs.length - 1] === key;
+        }
+        return false;
     }
 }
 
