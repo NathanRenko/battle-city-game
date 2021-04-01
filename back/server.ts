@@ -11,6 +11,7 @@ io.use((socket, next) => {
     // if (!username) {
     //     return next(new Error("invalid username"));
     // }
+    // @ts-ignore
     socket.username = username;
     next();
 });
@@ -18,10 +19,12 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
     const users = [];
     let numberId = [];
+    // @ts-ignore
     for (let [id, socket] of io.of('/').sockets) {
         numberId.push(id);
         users.push({
             userID: id,
+            // @ts-ignore
             username: socket.username,
         });
     }
@@ -43,6 +46,7 @@ io.on('connection', (socket) => {
     // notify existing users
     socket.broadcast.emit('user connected', {
         userID: socket.id,
+        // @ts-ignore
         username: socket.username,
     });
     // console.log(io.allSockets());
