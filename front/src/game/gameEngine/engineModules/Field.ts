@@ -11,7 +11,7 @@ import EntityClasses from './constObjects/entityClasses';
 
 class Field {
     tanks: Tank[];
-    player: Tank;
+    // player: Tank;
     obstacle: (SteelWall | BrickWall | Base | Tank)[];
     shell: Shell[] = [];
     base: Base[] = [];
@@ -28,7 +28,7 @@ class Field {
         for (let index = 0; index < 65; index++) {
             this.obstacle.push(new BrickWall(index * 50, 130));
         }
-        this.player = this.tanks[0];
+        // this.player = this.tanks[0];
         this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
     }
 

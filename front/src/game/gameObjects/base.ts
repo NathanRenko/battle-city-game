@@ -5,6 +5,7 @@ class Base extends GameObject {
   size = 50;
   skin = EntitySkins.Base;
   hp = 5;
+  maxHp = this.hp;
   team: 0 | 1;
 
   constructor(x: number, y: number, team: 0 | 1) {

@@ -1,14 +1,17 @@
 import Point from '../../gameClasses/Point';
 import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
+import Tank from '../../gameObjects/tank';
 import { entityDirections, buttonsToDirections } from './constObjects/DirectionHandler';
 import Field from './Field';
 
 class EntityHandlers {
     field: Field;
+    currentPlayer: Tank;
 
-    constructor(field: Field) {
+    constructor(field: Field, currentPlayer: Tank) {
         this.field = field;
+        this.currentPlayer = currentPlayer;
     }
 
     handleParticle(particle: Particle, dt: number) {
@@ -19,9 +22,9 @@ class EntityHandlers {
     }
 
     handleMovements(button: any, step: Point) {
-        let availableStep = this.field.getMinimalStep(step, this.field.player);
-        this.field.player.applyStep(availableStep);
-        this.field.player.changeDirection(buttonsToDirections[button]);
+        let availableStep = this.field.getMinimalStep(step, this.currentPlayer);
+        this.currentPlayer.applyStep(availableStep);
+        this.currentPlayer.changeDirection(buttonsToDirections[button]);
     }
     handleShellMovements(shell: Shell, step: Point) {
         let availableStep = this.field.getMinimalStep(step, shell);
@@ -53,37 +56,34 @@ class EntityHandlers {
             shell.applyStep(availableStep);
         }
     }
-    handleShoot(shootDirection: string) {
+    canShoot() {
         let now = Date.now();
         if ((now - this.field.lastShooted) / 1000 < 1) {
-            return;
+            return false;
         } else {
             this.field.lastShooted = now;
+            return true;
         }
+    }
+    makeShoot(shootPlayer: Tank) {
         let spawnPoint = new Point(0, 0);
         const shellSize = 8;
-        const sizeDelta = this.field.player.size - shellSize;
-        switch (this.field.player.direction) {
+        const sizeDelta = shootPlayer.size - shellSize;
+        switch (shootPlayer.direction) {
             case entityDirections.Up:
-                spawnPoint = new Point(this.field.player.x + sizeDelta / 2, this.field.player.y - shellSize);
+                spawnPoint = new Point(shootPlayer.x + sizeDelta / 2, shootPlayer.y - shellSize);
                 break;
             case entityDirections.Right:
-                spawnPoint = new Point(
-                    this.field.player.x + this.field.player.size,
-                    this.field.player.y + sizeDelta / 2
-                );
+                spawnPoint = new Point(shootPlayer.x + shootPlayer.size, shootPlayer.y + sizeDelta / 2);
                 break;
             case entityDirections.Down:
-                spawnPoint = new Point(
-                    this.field.player.x + sizeDelta / 2,
-                    this.field.player.y + this.field.player.size
-                );
+                spawnPoint = new Point(shootPlayer.x + sizeDelta / 2, shootPlayer.y + shootPlayer.size);
                 break;
             case entityDirections.Left:
-                spawnPoint = new Point(this.field.player.x - shellSize, this.field.player.y + sizeDelta / 2);
+                spawnPoint = new Point(shootPlayer.x - shellSize, shootPlayer.y + sizeDelta / 2);
                 break;
         }
-        let shell = new Shell(spawnPoint.x, spawnPoint.y, shootDirection);
+        let shell = new Shell(spawnPoint.x, spawnPoint.y, shootPlayer.direction);
         this.field.shell.push(shell);
     }
 }

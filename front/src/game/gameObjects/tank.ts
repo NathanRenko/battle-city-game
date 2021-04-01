@@ -8,6 +8,7 @@ class Tank extends GameObject {
   size = 40;
   skin = EntitySkins.Tank;
   hp = 2;
+  maxHp = this.hp;
   applyStep(shift: Point) {
     this.x += shift.x;
     this.y += shift.y;

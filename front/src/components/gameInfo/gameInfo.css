@@ -1,9 +1,13 @@
-.infoPanel{
-    border: solid 1px black;
+.infoPanel {
     margin: 0;
 }
 
-.infoContainer{
+.infoContainer {
     display: flex;
+    align-items: center;
+    padding: 5px;
+    align-content: center;
     flex-direction: column;
+    color: white;
+    background-color: #393636;
 }
