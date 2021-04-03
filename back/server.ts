@@ -1,4 +1,5 @@
-const { Server } = require('socket.io');
+import { Server } from 'socket.io';
+
 const io = new Server(3001, {
     cors: {
         origin: 'http://localhost:3000',
@@ -29,17 +30,44 @@ io.on('connection', (socket) => {
         });
     }
 
-    console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
+    // console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
     socket.emit(
         'connection',
         Array.from(io.sockets.sockets)
             .map((item) => item[0])
-            .indexOf(socket.id)
+            .indexOf(socket.id) % 2
     );
-    if (Array.from(io.sockets.sockets).length === 2) {
-        io.sockets.emit('start');
+    console.log(
+        'Номер: ' +
+            (Array.from(io.sockets.sockets)
+                .map((item) => item[0])
+                .indexOf(socket.id) %
+                2)
+    );
+
+    // if (Array.from(io.sockets.sockets).length === 2) {
+    //     io.sockets.emit('start');
+    // }
+
+    const socketsAmount = Array.from(io.sockets.sockets).length;
+    // socket.join('room');
+    // io.sockets.in('room').emit('start');
+    // console.log(socketsAmount);
+    if (socketsAmount % 2 === 0) {
+        const roomName = 'room_' + socketsAmount / 2;
+        Array.from(io.sockets.sockets)[socketsAmount - 1][1].join(roomName);
+        Array.from(io.sockets.sockets)[socketsAmount - 2][1].join(roomName);
+        io.to(roomName).emit('start');
+        console.log(socket.rooms);
+        // io.sockets.in(roomName).emit('start');
+        // io.sockets.to(roomName).broadcast.emit('start');
+        // io.sockets.emit('start');
+        // console.log(123);
+
+        // console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
+
+        // console.log(io.sockets.adapter.rooms);
     }
-    // ...
 });
 
 io.on('connection', (socket) => {
@@ -54,12 +82,13 @@ io.on('connection', (socket) => {
 
     socket.on('move', (...args) => {
         // console.log(args);
-        socket.broadcast.emit('move', args);
+        socket.broadcast.to(Array.from(socket.rooms)[1]).emit('move', args);
         // io.sockets.connected[io.allSockets()[1]]
     });
     socket.on('shoot', (...args) => {
         // console.log(args);
-        socket.broadcast.emit('shoot', args);
+
+        socket.broadcast.to(Array.from(socket.rooms)[1]).emit('shoot', args);
         // io.sockets.connected[io.allSockets()[1]]
     });
 });
