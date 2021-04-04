@@ -7,31 +7,34 @@ import Store from '../../game/gameEngine/store';
 import MapChooser from '../mapChooser/mapChooser';
 
 function MainMenu() {
-    const startGame = () => {
-        findPlayer();
-    };
-    const startTestGame = () => {
-        Store.isSinglePlayer = true;
-        ReactDOM.render(<GameSection></GameSection>, document.getElementById('root'));
-    };
-    return (
-        <div className='mainMenuContainer'>
-            <label htmlFor=''>
-                Enter you're name:
-                <input className='nameInput' type='text' />
-            </label>
-            <button className='playButton' onClick={startTestGame}>
-                Test Game
-            </button>
-            <button className='playButton' onClick={startGame}>
-                Find Game
-            </button>
-        </div>
+  const startGame = () => {
+    findPlayer();
+  };
+  const startTestGame = () => {
+    Store.isSinglePlayer = true;
+    ReactDOM.render(
+      <GameSection></GameSection>,
+      document.getElementById("root")
     );
+  };
+  return (
+    <div className="mainMenuContainer">
+      <label htmlFor="">
+        Enter your name:
+        <input className="nameInput" type="text" />
+      </label>
+      <button className="playButton" onClick={startTestGame}>
+        Test Game
+      </button>
+      <button className="playButton" onClick={startGame}>
+        Find Game
+      </button>
+    </div>
+  );
 }
 
 function WaitingTable() {
-    let [seconds, changeSeconds] = useState(10);
+  let [seconds, changeSeconds] = useState(10);
 
     useEffect(() => {
         if (seconds > 0) {

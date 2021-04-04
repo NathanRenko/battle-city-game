@@ -1,14 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import MainMenu from './components/mainMenu/mainMenu';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import MainMenu from "./components/mainMenu/mainMenu";
 
 ReactDOM.render(
-    <React.StrictMode>
-        <MainMenu />
-    </React.StrictMode>,
-    document.getElementById('root')
+  <React.StrictMode>
+    <MainMenu />
+  </React.StrictMode>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

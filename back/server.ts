@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import { v4 as uuidv4 } from 'uuid';
 
 const io = new Server(3001, {
     cors: {
@@ -56,17 +57,12 @@ io.on('connection', (socket) => {
     // io.sockets.in('room').emit('start');
     // console.log(socketsAmount);
     if (socketsAmount % 2 === 0) {
-        const roomName = 'room_' + socketsAmount / 2;
+        const roomName = uuidv4();
         Array.from(io.sockets.sockets)[socketsAmount - 1][1].join(roomName);
         Array.from(io.sockets.sockets)[socketsAmount - 2][1].join(roomName);
-        io.to(roomName).emit('start');
-        console.log(socket.rooms);
-        // io.sockets.in(roomName).emit('start');
-        // io.sockets.to(roomName).broadcast.emit('start');
-        // io.sockets.emit('start');
-        // console.log(123);
 
         // console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
+        io.to(roomName).emit('start');
         console.log('rooms');
         console.log(io.sockets.adapter.rooms);
     }
@@ -92,6 +88,7 @@ io.on('connection', (socket) => {
         // console.log(args);
 
         socket.broadcast.to(Array.from(socket.rooms)[1]).emit('shoot', args);
+
         // io.sockets.connected[io.allSockets()[1]]
     });
     socket.on('vote', (...args) => {
@@ -119,7 +116,10 @@ io.on('connection', (socket) => {
                     console.log('voteEnd');
                     console.log(results);
                     if (results[0] !== results[1]) {
-                        io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [geetRandomArrayElement(results), 'two not same']);
+                        io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [
+                            geetRandomArrayElement(results),
+                            'two not same',
+                        ]);
                     } else {
                         io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [results[0], 'two same']);
                     }
@@ -139,6 +139,19 @@ io.on('connection', (socket) => {
             readySockets = new Map();
             userVotes = new Map();
         }
+    });
+    socket.on('disconnecting', () => {
+        for (let room of socket.rooms) {
+            console.log('left from ' + room);
+            socket.to(room).emit('opponent disconnected');
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log(io.sockets.adapter.rooms);
+        //socket.rooms.size === 0;
+
+        //socket.to('some room').emit('some event');
     });
 });
 

@@ -39,14 +39,6 @@ class GameEngine {
         this.init();
     }
 
-    init() {
-        this.field = new Field(canvas.width, canvas.height, Store.choosenMap);
-        this.ModelHandler = new ModelHandler(this.field);
-        this.lastFrameTime = 0;
-        this.skinCollection = new SkinCollection();
-        this.skinCollection.load();
-    }
-
     start() {
         this.lastFrameTime = Date.now();
         // setInterval(()=>this.gameEngine(), 1000/20)
@@ -66,16 +58,35 @@ class GameEngine {
         return this.field.base[0].hp === 0 || this.field.base[1].hp === 0;
     }
 
+    init() {
+        this.field = new Field(canvas.width, canvas.height, Store.choosenMap);
+        this.ModelHandler = new ModelHandler(this.field);
+        this.lastFrameTime = 0;
+        this.skinCollection = new SkinCollection();
+        this.skinCollection.load();
+    }
     finishGame() {
         if (this.field.base[0].hp === 0) {
-            alert('Поражение!');
+            alert('You lost :<');
+            //React.render(
+            //<StateSwitcher message={"You lost."}></StateSwitcher>,
+            //"root"
+            //);
         } else {
-            alert('Победа!');
+            alert('You won owo');
+            //React.render(
+            //<StateSwitcher message={"You won."}></StateSwitcher>,
+            //"root"
+            //);
         }
-        let needRestart = window.confirm('Restart?');
-        if (needRestart) {
-            this.init();
-            this.start();
+        if (Store.socket) {
+            Store.socket.disconnect();
+        } else {
+            let needRestart = window.confirm('Restart?');
+            if (needRestart) {
+                this.init();
+                this.start();
+            }
         }
     }
 
