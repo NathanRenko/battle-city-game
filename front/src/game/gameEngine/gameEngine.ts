@@ -10,6 +10,7 @@ import Figure from '../gameClasses/figure';
 import Point from '../gameClasses/Point';
 import Base from '../gameObjects/base';
 import Store from './store';
+import backToMainMenu from './StageSwitcher';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -28,14 +29,18 @@ class GameEngine {
 
         canvas.style.backgroundColor = '#212F3C';
         this.canvasContext = canvas.getContext('2d') || new CanvasRenderingContext2D();
-        // let ptrn = this.canvasContext.createPattern(background_img, 'repeat');
-        // @ts-ignore
 
-        // console.log(ptrn);
 
+        // https://stackoverflow.com/questions/46430787/createpatternthis-image-repeat-returns-null-when-image-is-locally-saved
+        let ptrn = this.canvasContext.createPattern(background_img, 'repeat');
         // @ts-ignore
-        // this.canvasContext.fillStyle = ptrn;
-        // this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        console.log(ptrn);
+        // @ts-ignore
+        this.canvasContext.fillStyle = ptrn;
+        this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+
+
         this.init();
     }
 
@@ -66,14 +71,18 @@ class GameEngine {
         this.skinCollection.load();
     }
     finishGame() {
-        if (this.field.base[0].hp === 0) {
-            alert('You lost :<');
+        if (this.ModelHandler.playerBase.hp === 0) {
+            // alert('You lost :<');
+
+            backToMainMenu('You lost :<');
             //React.render(
             //<StateSwitcher message={"You lost."}></StateSwitcher>,
             //"root"
             //);
         } else {
-            alert('You won owo');
+            // alert('You won owo');
+            backToMainMenu('You won owo');
+            // backToMainMenu('You won owo');
             //React.render(
             //<StateSwitcher message={"You won."}></StateSwitcher>,
             //"root"

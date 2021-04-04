@@ -67,6 +67,9 @@ class Field {
                     if ('team' in collisionBlock) {
                         collisionBlock.setDeathState();
                     } else {
+                        // if (collisionBlock.constructor.name !== 'Base') {
+                        //     parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
+                        // }
                         parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
                     }
                 }
