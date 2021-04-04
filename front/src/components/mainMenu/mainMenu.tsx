@@ -1,13 +1,10 @@
 import './mainMenu.css';
 import ReactDOM from 'react-dom';
 import GameSection from '../gameSection/gameSection';
-import { ReactPropTypes, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import Store from '../../game/gameEngine/store';
-
-// socket.onAny((event, ...args) => {
-//     console.log(event, args);
-// });
+import MapChooser from '../mapChooser/mapChooser';
 
 function MainMenu() {
     const startGame = () => {
@@ -37,18 +34,23 @@ function WaitingTable() {
     let [seconds, changeSeconds] = useState(10);
 
     useEffect(() => {
-        let timerID = setInterval(() => {
-            changeSeconds((seconds) => seconds - 1);
-            if (seconds === 0) {
-                clearInterval(timerID);
-                ReactDOM.render(<GameSection></GameSection>, document.getElementById('root'));
-            }
-        }, 1000);
-
-        return () => clearInterval(timerID);
+        if (seconds > 0) {
+            setTimeout(() => changeSeconds(seconds - 1), 1000);
+        } else {
+            Store.socket.emit('voteEnd', 'test');
+        }
     }, [seconds]);
 
-    return <p>{'Игрок найден, до начала боя осталось ' + seconds + ' секунд'}</p>;
+    return (
+        <div>
+            <p>{'Игрок найден, до начала боя осталось ' + seconds + ' секунд'}</p>
+            <MapChooser></MapChooser>
+        </div>
+    );
+}
+
+function startGame() {
+    ReactDOM.render(<GameSection></GameSection>, document.getElementById('root'));
 }
 
 function findPlayer() {
@@ -63,13 +65,30 @@ function findPlayer() {
     Store.socket.on('connection', (args: any) => {
         Store.socketID = args;
     });
+    Store.socket.on('vote', (args: any) => {
+        console.log(args);
+        lightUpEnemySelectedCard(args);
+    });
+    Store.socket.on('voteEnd', (args: any) => {
+        console.log('start');
+        console.log(args);
+        Store.choosenMap = args;
+        startGame();
+    });
     ReactDOM.render(<p>Поиск игрока...</p>, document.querySelector('.mainMenuContainer'));
-    // let timerId = setInterval(() => console.log('Игрок не найден'), 1000);
     Store.socket.on('start', () => {
-        // clearInterval(timerId);
         Store.isSinglePlayer = false;
         ReactDOM.render(<WaitingTable />, document.querySelector('.mainMenuContainer'));
     });
+}
+
+function lightUpEnemySelectedCard(choise: string) {
+    let allOverlays = Array.from(document.querySelectorAll('.overlay'));
+    console.log(allOverlays);
+    allOverlays.forEach((item) => (item.textContent = ''));
+    let choosenMap = document.querySelector('#overlay_' + choise);
+    //@ts-ignore
+    choosenMap.textContent = 'Выбор вашего оппонента';
 }
 
 export default MainMenu;

@@ -10,16 +10,24 @@ import Base from '../../gameObjects/base';
 import EntityClasses from './constObjects/entityClasses';
 
 class Field {
-    tanks: Tank[];
+    tanks!: Tank[];
     // player: Tank;
-    obstacle: (SteelWall | BrickWall | Base | Tank)[];
+    obstacle!: (SteelWall | BrickWall | Base | Tank)[];
     shell: Shell[] = [];
     base: Base[] = [];
     particles: Particle[] = [];
     mapSize: { width: number; height: number };
     lastShooted: number = 0;
-    constructor(mapWidth: number, mapHeight: number) {
+    constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
+        // TODO choosenMap
         this.mapSize = { width: mapWidth, height: mapHeight };
+        if (choosenMap) {
+            // insert some logic
+        }
+        this.buildFirstTypeMap();
+    }
+
+    buildFirstTypeMap = () => {
         this.tanks = [new Tank(120, 200), new Tank(350, 20)];
         this.obstacle = [];
         for (let index = 0; index < 5; index++) {
@@ -30,7 +38,7 @@ class Field {
         }
         // this.player = this.tanks[0];
         this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
-    }
+    };
 
     getMinimalStep(step: Point, gameObject: GameObject) {
         let minimalStep = Object.assign({}, step);

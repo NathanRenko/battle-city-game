@@ -6,6 +6,8 @@ const io = new Server(3001, {
     },
 });
 
+const mapPool = ['first', 'second'];
+
 io.use((socket, next) => {
     // console.log(socket.handshake.auth);
     const username = socket.handshake.auth.username;
@@ -65,11 +67,12 @@ io.on('connection', (socket) => {
         // console.log(123);
 
         // console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
-
-        // console.log(io.sockets.adapter.rooms);
+        console.log('rooms');
+        console.log(io.sockets.adapter.rooms);
     }
 });
-
+let userVotes = new Map();
+let readySockets = new Map();
 io.on('connection', (socket) => {
     // notify existing users
     socket.broadcast.emit('user connected', {
@@ -91,7 +94,62 @@ io.on('connection', (socket) => {
         socket.broadcast.to(Array.from(socket.rooms)[1]).emit('shoot', args);
         // io.sockets.connected[io.allSockets()[1]]
     });
+    socket.on('vote', (...args) => {
+        // console.log(args);
+        console.log('vote', args);
+        userVotes.set(socket.id, args[0]);
+        socket.broadcast.to(Array.from(socket.rooms)[1]).emit('vote', args);
+        // io.sockets.connected[io.allSockets()[1]]
+    });
+
+    socket.on('voteEnd', (...args) => {
+        if (!readySockets.has(socket.rooms[0])) {
+            readySockets.set(socket.rooms[0], { readyCount: 1 });
+        } else {
+            readySockets.set(socket.rooms[0], { readyCount: readySockets.get(socket.rooms[0]).readyCount + 1 });
+        }
+        // console.log('voteEnd');
+        // console.log(readySockets.values());
+        if (readySockets.get(socket.rooms[0]).readyCount === 2) {
+            // console.log('inside');
+            // console.log(userVotes.values());
+            let results = Array.from(userVotes.values());
+            switch (userVotes.size) {
+                case 2:
+                    console.log('voteEnd');
+                    console.log(results);
+                    if (results[0] !== results[1]) {
+                        io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [geetRandomArrayElement(results), 'two not same']);
+                    } else {
+                        io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [results[0], 'two same']);
+                    }
+                    break;
+                case 1:
+                    io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [results[0], 'one']);
+                    break;
+                case 0:
+                    io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [geetRandomArrayElement(mapPool), 'zero']);
+                    break;
+                default:
+                    break;
+            }
+
+            // socket.broadcast.to(Array.from(socket.rooms)[1]).emit('voteEnd', args);
+            // io.sockets.connected[io.allSockets()[1]]
+            readySockets = new Map();
+            userVotes = new Map();
+        }
+    });
 });
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function geetRandomArrayElement(arr) {
+    let key = getRandomInt(0, arr.length - 1);
+    return arr[key];
+}
 
 // socket.on("private message", ({ content, to }) => {
 //     socket.to(to).emit("private message", {

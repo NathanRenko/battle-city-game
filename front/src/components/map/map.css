@@ -1,0 +1,36 @@
+.cardContainer {
+    position: relative;
+}
+
+.card {
+    margin: 0 10px;
+    cursor: pointer;
+    border: solid 3px transparent;
+}
+
+.card:hover {
+    /* border: solid 3px green; */
+    outline: 3px solid green;
+}
+
+.overlay {
+    margin: 0 10px;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.185);
+}
+
+[type='radio'] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+[type='radio'] + .cardContainer {
+    cursor: pointer;
+}
+
+[type='radio']:checked + .cardContainer .card {
+    outline: 3px solid #f00;
+    /* border: solid 3px #f00; */
+}

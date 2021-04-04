@@ -9,6 +9,7 @@ import { directionToAngle, entityDirections } from './engineModules/constObjects
 import Figure from '../gameClasses/figure';
 import Point from '../gameClasses/Point';
 import Base from '../gameObjects/base';
+import Store from './store';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -39,7 +40,7 @@ class GameEngine {
     }
 
     init() {
-        this.field = new Field(canvas.width, canvas.height);
+        this.field = new Field(canvas.width, canvas.height, Store.choosenMap);
         this.ModelHandler = new ModelHandler(this.field);
         this.lastFrameTime = 0;
         this.skinCollection = new SkinCollection();
