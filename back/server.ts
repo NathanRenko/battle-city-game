@@ -163,10 +163,11 @@ io.on('connection', (socket) => {
         console.log(io.sockets.adapter.rooms);
         //socket.rooms.size === 0;
 
-        //socket.to('some room').emit('some event');
+        socket.on('disconnect', () => {
+            console.log(io.sockets.adapter.rooms);
+        });
     });
 });
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -175,10 +176,3 @@ function geetRandomArrayElement(arr) {
     let key = getRandomInt(0, arr.length - 1);
     return arr[key];
 }
-
-// socket.on("private message", ({ content, to }) => {
-//     socket.to(to).emit("private message", {
-//         content,
-//         from: socket.id,
-//     });
-// });
