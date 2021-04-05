@@ -9,6 +9,8 @@ const io = new Server(3001, {
 
 const mapPool = ['first', 'second'];
 
+const roomData: Map<string, { userVotes: Map<string, string>; readySockets: number }> = new Map();
+
 io.use((socket, next) => {
     // console.log(socket.handshake.auth);
     const username = socket.handshake.auth.username;
@@ -60,15 +62,15 @@ io.on('connection', (socket) => {
         const roomName = uuidv4();
         Array.from(io.sockets.sockets)[socketsAmount - 1][1].join(roomName);
         Array.from(io.sockets.sockets)[socketsAmount - 2][1].join(roomName);
-
+        roomData.set(roomName, { userVotes: new Map(), readySockets: 0 });
         // console.log(Array.from(io.sockets.sockets).map((item) => item[0]));
         io.to(roomName).emit('start');
         console.log('rooms');
         console.log(io.sockets.adapter.rooms);
     }
 });
-let userVotes = new Map();
-let readySockets = new Map();
+// let userVotes = new Map();
+// let readySockets = new Map();
 io.on('connection', (socket) => {
     // notify existing users
     socket.broadcast.emit('user connected', {
@@ -94,24 +96,31 @@ io.on('connection', (socket) => {
     socket.on('vote', (...args) => {
         // console.log(args);
         console.log('vote', args);
-        userVotes.set(socket.id, args[0]);
+        // userVotes.set(socket.id, args[0]);
+        console.log('----------');
+        console.log('roomData: ' + roomData);
+        console.log(Array.from(socket.rooms));
+        roomData.get(Array.from(socket.rooms)[1]).userVotes.set(socket.id, args[0]);
         socket.broadcast.to(Array.from(socket.rooms)[1]).emit('vote', args);
         // io.sockets.connected[io.allSockets()[1]]
     });
 
     socket.on('voteEnd', (...args) => {
-        if (!readySockets.has(socket.rooms[0])) {
-            readySockets.set(socket.rooms[0], { readyCount: 1 });
-        } else {
-            readySockets.set(socket.rooms[0], { readyCount: readySockets.get(socket.rooms[0]).readyCount + 1 });
-        }
+        roomData.get(Array.from(socket.rooms)[1]).readySockets++;
+
+        // if (!readySockets.has(socket.rooms[0])) {
+        //     readySockets.set(socket.rooms[0], { readyCount: 1 });
+        // } else {
+        //     readySockets.set(socket.rooms[0], { readyCount: readySockets.get(socket.rooms[0]).readyCount + 1 });
+        // }
         // console.log('voteEnd');
         // console.log(readySockets.values());
-        if (readySockets.get(socket.rooms[0]).readyCount === 2) {
+        if (roomData.get(Array.from(socket.rooms)[1]).readySockets === 2) {
             // console.log('inside');
             // console.log(userVotes.values());
-            let results = Array.from(userVotes.values());
-            switch (userVotes.size) {
+            let results = Array.from(roomData.get(Array.from(socket.rooms)[1]).userVotes.values());
+            // let results = Array.from(userVotes.values());
+            switch (results.length) {
                 case 2:
                     console.log('voteEnd');
                     console.log(results);
@@ -136,8 +145,11 @@ io.on('connection', (socket) => {
 
             // socket.broadcast.to(Array.from(socket.rooms)[1]).emit('voteEnd', args);
             // io.sockets.connected[io.allSockets()[1]]
-            readySockets = new Map();
-            userVotes = new Map();
+
+            // TODO delete only started room
+            // readySockets = new Map();
+            roomData.get(Array.from(socket.rooms)[1]).readySockets = 0;
+            roomData.get(Array.from(socket.rooms)[1]).userVotes.clear();
         }
     });
     socket.on('disconnecting', () => {
