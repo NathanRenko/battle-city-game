@@ -5,6 +5,7 @@ const EntityClasses = {
     Tank: 'Tank',
     Shell: 'Shell',
     Particle: 'Particle',
+    House: 'House'
 };
 
 export default EntityClasses;

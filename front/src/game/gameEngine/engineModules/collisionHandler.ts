@@ -2,6 +2,7 @@ import GameObject from '../../gameClasses/gameObject';
 import Point from '../../gameClasses/Point';
 import Base from '../../gameObjects/base';
 import BrickWall from '../../gameObjects/brick-wall';
+import House from '../../gameObjects/house';
 import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
 import SteelWall from '../../gameObjects/steel-wall';
@@ -11,7 +12,7 @@ import Field from './Field';
 
 export default class CollisionHandler {
     handleShellСollision(
-        collisionBlock: Tank | SteelWall | BrickWall | Base | undefined,
+        collisionBlock: Tank | SteelWall | BrickWall | Base | House | undefined,
         gameObject: Shell,
         field: Field
     ) {
@@ -21,6 +22,9 @@ export default class CollisionHandler {
             if ('hp' in collisionBlock) {
                 if (collisionBlock.hp !== 0) {
                     collisionBlock.hp--;
+                    if ('step' in collisionBlock) {
+                        collisionBlock.changeStep()
+                    }
                 }
                 if (collisionBlock.hp === 0) {
                     if ('team' in collisionBlock) {

@@ -8,6 +8,7 @@ import Figure from '../../gameClasses/figure';
 import BrickWall from '../../gameObjects/brick-wall';
 import Base from '../../gameObjects/base';
 import EntityClasses from './constObjects/entityClasses';
+import House from '../../gameObjects/house';
 
 class Field {
     tanks!: Tank[];
@@ -15,6 +16,7 @@ class Field {
     obstacle!: (SteelWall | BrickWall | Base | Tank)[];
     shell: Shell[] = [];
     base: Base[] = [];
+    houses: House[] = [];
     particles: Particle[] = [];
     mapSize: { width: number; height: number };
     constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
@@ -37,6 +39,7 @@ class Field {
         }
         // this.player = this.tanks[0];
         this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
+        this.houses = [new House(240, 250)];
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
@@ -62,6 +65,7 @@ class Field {
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
         return (
             this.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
+            this.houses.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
             this.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
             this.tanks.find((tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank))
         );
@@ -104,6 +108,8 @@ class Field {
                 return this.shell;
             case EntityClasses.Particle:
                 return this.particles;
+            case EntityClasses.House:
+                return this.houses;
             default:
                 alert(child.constructor.name);
                 throw Error('Unknown type');
@@ -125,6 +131,8 @@ class Field {
                 return this.shell;
             case EntityClasses.Particle:
                 return this.particles;
+            case EntityClasses.House:
+                return this.houses;
             default:
                 alert(entityClass);
                 throw Error('Unknown type');
