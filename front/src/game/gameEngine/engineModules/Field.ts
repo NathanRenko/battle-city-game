@@ -17,7 +17,6 @@ class Field {
     base: Base[] = [];
     particles: Particle[] = [];
     mapSize: { width: number; height: number };
-    lastShooted: number = 0;
     constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
         // TODO choosenMap
         this.mapSize = { width: mapWidth, height: mapHeight };
@@ -40,7 +39,7 @@ class Field {
         this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
     };
 
-    getMinimalStep(step: Point, gameObject: GameObject) {
+    getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
         let minimalStep = Object.assign({}, step);
         // let minimalStep = { ...step };
         let collisionBlock = this.findCollisionBlock(minimalStep, gameObject);
@@ -57,25 +56,7 @@ class Field {
                 minimalStep.y -= Math.sign(minimalStep.y);
             }
         }
-        if (collisionBlock && gameObject.constructor.name === 'Shell' && minimalStep.x === 0 && minimalStep.y === 0) {
-            let parentCollection = this.getParentCollection(collisionBlock);
-            if ('hp' in collisionBlock) {
-                if (collisionBlock.hp !== 0) {
-                    collisionBlock.hp--;
-                }
-                if (collisionBlock.hp === 0) {
-                    if ('team' in collisionBlock) {
-                        collisionBlock.setDeathState();
-                    } else {
-                        // if (collisionBlock.constructor.name !== 'Base') {
-                        //     parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
-                        // }
-                        parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
-                    }
-                }
-            }
-        }
-        return minimalStep;
+        return [minimalStep, collisionBlock];
     }
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
@@ -108,9 +89,9 @@ class Field {
             shiftedRectangle.x > secondRect.getX1()
         );
     }
+
     getParentCollection(child: GameObject | string) {
         let className = typeof child === 'string' ? child : child.constructor.name;
-
         switch (className) {
             case EntityClasses.SteelWall:
             case EntityClasses.BrickWall:
@@ -128,6 +109,7 @@ class Field {
                 throw Error('Unknown type');
         }
     }
+
     createEntity(entityClass: string, coords: Array<[number, number]>) {
         switch (entityClass) {
             case EntityClasses.SteelWall:

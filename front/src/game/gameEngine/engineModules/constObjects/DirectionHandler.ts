@@ -1,9 +1,9 @@
-const entityDirections = {
-    Up: 'up',
-    Right: 'right',
-    Down: 'down',
-    Left: 'left',
-};
+enum entityDirections {
+    Up = 'up',
+    Right = 'right',
+    Down = 'down',
+    Left = 'left',
+}
 
 const directionToAngle: { [index: string]: number } = {
     [entityDirections.Down]: 180,
@@ -12,7 +12,7 @@ const directionToAngle: { [index: string]: number } = {
     [entityDirections.Right]: 90,
 };
 
-const buttonsToDirections: { [index: string]: string } = {
+const buttonsToDirections: { [index: string]: entityDirections } = {
     ArrowDown: entityDirections.Down,
     ArrowUp: entityDirections.Up,
     ArrowLeft: entityDirections.Left,

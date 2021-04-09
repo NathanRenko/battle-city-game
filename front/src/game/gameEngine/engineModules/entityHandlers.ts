@@ -1,17 +1,24 @@
+import GameObject from '../../gameClasses/gameObject';
 import Point from '../../gameClasses/Point';
+import Base from '../../gameObjects/base';
+import BrickWall from '../../gameObjects/brick-wall';
 import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
+import SteelWall from '../../gameObjects/steel-wall';
 import Tank from '../../gameObjects/tank';
+import CollisionHandler from './collisionHandler';
 import { entityDirections, buttonsToDirections } from './constObjects/DirectionHandler';
 import Field from './Field';
 
 class EntityHandlers {
     field: Field;
     currentPlayer: Tank;
+    collisionHandler: CollisionHandler;
 
     constructor(field: Field, currentPlayer: Tank) {
         this.field = field;
         this.currentPlayer = currentPlayer;
+        this.collisionHandler = new CollisionHandler();
     }
 
     handleParticle(particle: Particle, dt: number) {
@@ -21,50 +28,35 @@ class EntityHandlers {
         }
     }
 
-    handleMovements(button: any, step: Point) {
-        let availableStep = this.field.getMinimalStep(step, this.currentPlayer);
-        this.currentPlayer.applyStep(availableStep);
-        this.currentPlayer.changeDirection(buttonsToDirections[button]);
-    }
-    handleShellMovements(shell: Shell, step: Point) {
-        let availableStep = this.field.getMinimalStep(step, shell);
+    handleTankMovements(tank: Tank, direction: entityDirections, step: Point) {
+        let [availableStep, collisionBlock] = this.field.getMinimalStep(step, tank);
         if (availableStep.x === 0 && availableStep.y === 0) {
-            this.field.shell.splice(this.field.shell.indexOf(shell), 1);
-            let spawnPoint = new Point(0, 0);
-            const particleWidth = new Particle(spawnPoint.x, spawnPoint.y, shell.direction).size;
-            const sizeDelta = particleWidth - shell.size;
-            switch (shell.direction) {
-                case entityDirections.Up:
-                    spawnPoint = new Point(shell.x - sizeDelta / 2, shell.y);
-                    break;
-                case entityDirections.Right:
-                    spawnPoint = new Point(shell.x - sizeDelta, shell.y - sizeDelta / 2);
-                    break;
-                case entityDirections.Down:
-                    spawnPoint = new Point(shell.x - sizeDelta / 2, shell.y - sizeDelta);
-                    break;
-                case entityDirections.Left:
-                    spawnPoint = new Point(shell.x, shell.y - sizeDelta / 2);
-                    break;
-                default:
-                    throw new Error();
-                    break;
-            }
-            let particle = new Particle(spawnPoint.x, spawnPoint.y, shell.direction);
-            this.field.particles.push(particle);
+            // this.handleСollision();
+        } else {
+            tank.applyStep(availableStep);
+        }
+        tank.changeDirection(direction);
+    }
+
+    handleShellMovements(shell: Shell, step: Point) {
+        let [availableStep, collisionBlock] = this.field.getMinimalStep(step, shell);
+        if (availableStep.x === 0 && availableStep.y === 0) {
+            this.collisionHandler.handleShellСollision(collisionBlock, shell, this.field);
         } else {
             shell.applyStep(availableStep);
         }
     }
-    canShoot() {
+
+    canShoot(tank: Tank) {
         let now = Date.now();
-        if ((now - this.field.lastShooted) / 1000 < 1) {
+        if ((now - tank.lastShooted) / 1000 < 1) {
             return false;
         } else {
-            this.field.lastShooted = now;
+            tank.lastShooted = now;
             return true;
         }
     }
+
     makeShoot(shootPlayer: Tank) {
         let spawnPoint = new Point(0, 0);
         const shellSize = 8;

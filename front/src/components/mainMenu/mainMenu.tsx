@@ -66,7 +66,7 @@ function findPlayer() {
         query: {},
     });
     Store.socket.on('connection', (args: any) => {
-        Store.socketID = args;
+        Store.playerNumber = args;
     });
     Store.socket.on('vote', (args: any) => {
         console.log(args);

@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
 
 // @ts-ignore
-const Store: { socket: SocketIOClient.Socket, socketID:number, isSinglePlayer:boolean,  choosenMap: string } = { socket: undefined, socketID: undefined, isSinglePlayer: undefined, choosenMap: undefined };
+const Store: { socket: SocketIOClient.Socket, playerNumber:number, isSinglePlayer:boolean,  choosenMap: string } = { socket: undefined, playerNumber: undefined, isSinglePlayer: undefined, choosenMap: undefined };
 export default Store;
