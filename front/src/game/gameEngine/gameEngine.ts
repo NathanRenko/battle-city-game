@@ -83,8 +83,11 @@ class GameEngine {
     }
 
     finishGame() {
-        Store.socket.off('opponent disconnected');
-        Store.socket.disconnect();
+        if (!Store.isSinglePlayer) {
+            Store.socket.off('opponent disconnected');
+            Store.socket.disconnect();
+        }
+
         if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.entityHandler.currentPlayer.hp === 0) {
             backToMainMenu('You were defeated.');
         } else {

@@ -20,30 +20,32 @@ class ModelHandler {
         this.InputHandler = new InputHandler();
         if (Store.isSinglePlayer) {
             this.entityHandler = new EntityHandlers(this.field, this.field.tanks[0]);
+            this.playerBase = this.field.base[0];
             return;
+        } else {
+            // TODO
+            this.socketId = Store.playerNumber;
+            console.log('socket: ' + this.socketId);
+
+            this.entityHandler = new EntityHandlers(this.field, this.field.tanks[this.socketId]);
+            this.playerBase = this.field.base[this.socketId];
+            Store.socket.on('move', (event: any, ...args: any) => {
+                this.field.tanks[1 - this.socketId].x = event[0].player.x;
+                this.field.tanks[1 - this.socketId].y = event[0].player.y;
+                this.field.tanks[1 - this.socketId].direction = event[0].player.direction;
+            });
+            Store.socket.on('shoot', (event: any, ...args: any) => {
+                this.entityHandler.makeShoot(this.field.tanks[1 - this.socketId]);
+            });
+
+            Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
+                backToMainMenu('Your opponent disconnected.');
+                Store.socket.disconnect();
+            });
+
+            // this.socketId - underfined, т.к. socket.on выполняется позже
+            console.log('socket: ' + this.socketId);
         }
-        // TODO
-        this.socketId = Store.playerNumber;
-        console.log('socket: ' + this.socketId);
-
-        this.entityHandler = new EntityHandlers(this.field, this.field.tanks[this.socketId]);
-        this.playerBase = this.field.base[this.socketId];
-        Store.socket.on('move', (event: any, ...args: any) => {
-            this.field.tanks[1 - this.socketId].x = event[0].player.x;
-            this.field.tanks[1 - this.socketId].y = event[0].player.y;
-            this.field.tanks[1 - this.socketId].direction = event[0].player.direction;
-        });
-        Store.socket.on('shoot', (event: any, ...args: any) => {
-            this.entityHandler.makeShoot(this.field.tanks[1 - this.socketId]);
-        });
-
-        Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
-            backToMainMenu('Your opponent disconnected.');
-            Store.socket.disconnect();
-        });
-
-        // this.socketId - underfined, т.к. socket.on выполняется позже
-        console.log('socket: ' + this.socketId);
     }
 
     frameEngine(dt: number) {
