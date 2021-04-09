@@ -21,24 +21,30 @@ class GameEngine {
     enemyBaseHp = document.getElementById('enemyBaseHp');
     tankHp = document.getElementById('tankHp');
     skinCollection!: SkinCollection;
+    background_img!: HTMLImageElement;
+    canvasPattern!: CanvasPattern | null;
+
     constructor() {
-        const background_img = new Image();
-        background_img.src = './assets/ground.svg';
-
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
+        // canvas.style.backgroundColor = '#212F3C';
+        //@ts-ignore
+        this.canvasContext = canvas.getContext('2d');
 
-        canvas.style.backgroundColor = '#212F3C';
-        this.canvasContext = canvas.getContext('2d') || new CanvasRenderingContext2D();
+        this.background_img = new Image();
 
-        // https://stackoverflow.com/questions/46430787/createpatternthis-image-repeat-returns-null-when-image-is-locally-saved
-        let ptrn = this.canvasContext.createPattern(background_img, 'repeat');
-        // @ts-ignore
-        console.log(ptrn);
-        // @ts-ignore
-        this.canvasContext.fillStyle = ptrn;
-        this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+        // this.canvasContext.fillRect(0, 0, 100, 100);
+        // this.canvasContext.restore();
+        // this.background_img.addEventListener('load', () => this.mange());
+        this.background_img.src = './assets/ground.svg';
 
-        this.init();
+        this.background_img.onload = () => {
+            this.canvasPattern = this.canvasContext.createPattern(this.background_img, 'repeat');
+            //@ts-ignore
+            this.canvasContext.fillStyle = this.canvasPattern;
+            this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+            this.init();
+            this.start();
+        };
     }
 
     start() {
@@ -46,6 +52,7 @@ class GameEngine {
         // setInterval(()=>this.gameEngine(), 1000/20)
         requestAnimationFrame(() => this.gameEngine());
     }
+
     gameEngine() {
         if (this.checkIsGameOver()) {
             this.finishGame();
@@ -56,6 +63,7 @@ class GameEngine {
             requestAnimationFrame(() => this.gameEngine());
         }
     }
+
     checkIsGameOver() {
         // TODO improve rules
         return (
@@ -73,6 +81,7 @@ class GameEngine {
         this.skinCollection = new SkinCollection();
         this.skinCollection.load();
     }
+
     finishGame() {
         Store.socket.off('opponent disconnected');
         Store.socket.disconnect();
@@ -113,6 +122,9 @@ class GameEngine {
 
     draw() {
         this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+        //@ts-ignore
+        this.canvasContext.fillStyle = this.canvasPattern;
+        this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
         for (const entityType in EntityClasses) {
             const entityCollection = this.field.getParentCollection(entityType);
             const isDirectionable = entityCollection.length !== 0 && 'direction' in entityCollection[0];

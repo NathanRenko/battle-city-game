@@ -6,7 +6,6 @@ function GameField() {
   let engine: GameEngine;
   useEffect(() => {
     engine = new GameEngine();
-    engine.start();
   }, []);
   return <canvas width="1000" height="600" className="gameField"></canvas>;
 }
