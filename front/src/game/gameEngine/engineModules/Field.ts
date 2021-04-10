@@ -39,7 +39,7 @@ class Field {
         }
         // this.player = this.tanks[0];
         this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
-        this.houses = [new House(240, 250)];
+        this.houses = [new House(340, 250)];
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {

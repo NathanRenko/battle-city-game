@@ -4,7 +4,7 @@ import { IHealth } from '../gameEngine/engineModules/interfaces/interfaces';
 
 class House extends GameObject implements IHealth {
     stateStep = [EntitySkins.house1, EntitySkins.house2, EntitySkins.house3, EntitySkins.house4];
-    size = 50;
+    size = 100;
     skin = this.stateStep[0];
     hp = 4;
     maxHp = this.hp;
