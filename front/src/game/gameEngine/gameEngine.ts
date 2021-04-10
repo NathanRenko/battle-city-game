@@ -21,30 +21,16 @@ class GameEngine {
     enemyBaseHp = document.getElementById('enemyBaseHp');
     tankHp = document.getElementById('tankHp');
     skinCollection!: SkinCollection;
-    background_img!: HTMLImageElement;
-    canvasPattern!: CanvasPattern | null;
 
     constructor() {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
-        // canvas.style.backgroundColor = '#212F3C';
-        //@ts-ignore
+        // @ts-ignore
         this.canvasContext = canvas.getContext('2d');
-
-        this.background_img = new Image();
-
-        // this.canvasContext.fillRect(0, 0, 100, 100);
-        // this.canvasContext.restore();
-        // this.background_img.addEventListener('load', () => this.mange());
-        this.background_img.src = './assets/ground.svg';
-
-        this.background_img.onload = () => {
-            this.canvasPattern = this.canvasContext.createPattern(this.background_img, 'repeat');
-            //@ts-ignore
-            this.canvasContext.fillStyle = this.canvasPattern;
-            this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-            this.init();
-            this.start();
-        };
+        let backgroundImage = './assets/ground.svg';
+        canvas.style.backgroundImage = `url(${backgroundImage})`;
+        canvas.style.backgroundRepeat = 'repeat';
+        this.init();
+        this.start();
     }
 
     start() {
@@ -125,9 +111,6 @@ class GameEngine {
 
     draw() {
         this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-        //@ts-ignore
-        this.canvasContext.fillStyle = this.canvasPattern;
-        this.canvasContext.fillRect(0, 0, canvas.width, canvas.height);
         for (const entityType in EntityClasses) {
             const entityCollection = this.field.getParentCollection(entityType);
             const isDirectionable = entityCollection.length !== 0 && 'direction' in entityCollection[0];
