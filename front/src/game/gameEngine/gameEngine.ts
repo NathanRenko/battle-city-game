@@ -26,7 +26,7 @@ class GameEngine {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         // @ts-ignore
         this.canvasContext = canvas.getContext('2d');
-        let backgroundImage = './assets/grass.svg';
+        let backgroundImage = './assets/RPG_Nature_Tileset_Autumn.png';
         canvas.style.backgroundImage = `url(${backgroundImage})`;
         canvas.style.backgroundRepeat = 'repeat';
         this.init();
