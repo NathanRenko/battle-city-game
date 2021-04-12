@@ -6,17 +6,21 @@ import { IDirection, IHealth } from '../gameEngine/engineModules/interfaces/inte
 
 class Tank extends GameObject implements IHealth, IDirection {
     direction: entityDirections = entityDirections.Up;
-    size = 40;
+    size = 35;
     skin = EntitySkins.Tank;
     respawnCount = 2;
     hp = 2;
     maxHp = this.hp;
     lastShooted: number = 0;
     spawnPoint: Point;
+    shootAudio: HTMLAudioElement;
 
     constructor(x: number, y: number) {
         super(x, y);
         this.spawnPoint = new Point(x, y);
+        this.shootAudio = new Audio();
+        this.shootAudio.preload = 'auto';
+        this.shootAudio.src = './assets/146730__leszek-szary__shoot.wav';
     }
 
     applyStep(shift: Point) {

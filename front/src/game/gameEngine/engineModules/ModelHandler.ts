@@ -61,7 +61,7 @@ class ModelHandler {
     }
 
     handleMovementKeyPressing(dt: number) {
-        const playerSpeed = 20;
+        const playerSpeed = 15;
         const shift = Math.round(playerSpeed * dt * 10);
         const movement: { [index: string]: Point } = {
             ArrowDown: new Point(0, shift),

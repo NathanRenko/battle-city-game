@@ -7,7 +7,7 @@ function GameField() {
   useEffect(() => {
     engine = new GameEngine();
   }, []);
-  return <canvas width="1000" height="600" className="gameField"></canvas>;
+  return <canvas width="1000" height="800" className="gameField"></canvas>;
 }
 
 export default GameField;

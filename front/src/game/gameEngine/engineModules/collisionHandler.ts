@@ -23,11 +23,12 @@ export default class CollisionHandler {
                 if (collisionBlock.hp !== 0) {
                     collisionBlock.hp--;
                     if ('step' in collisionBlock) {
-                        collisionBlock.changeStep()
+                        collisionBlock.changeStep();
                     }
                 }
                 if (collisionBlock.hp === 0) {
                     if ('team' in collisionBlock) {
+                        collisionBlock.deathAudio.play();
                         collisionBlock.setDeathState();
                     } else if ('respawnCount' in collisionBlock) {
                         // TODO make respawn logic

@@ -58,6 +58,7 @@ class EntityHandlers {
     }
 
     makeShoot(shootPlayer: Tank) {
+        shootPlayer.shootAudio.play();
         let spawnPoint = new Point(0, 0);
         const shellSize = 8;
         const sizeDelta = shootPlayer.size - shellSize;

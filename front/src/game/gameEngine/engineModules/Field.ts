@@ -29,17 +29,23 @@ class Field {
     }
 
     buildFirstTypeMap = () => {
-        this.tanks = [new Tank(120, 200), new Tank(350, 20)];
+        this.tanks = [new Tank(120, 700), new Tank(350, 20)];
         this.obstacle = [];
         for (let index = 0; index < 5; index++) {
-            this.obstacle.push(new SteelWall(50, 200 + index * 50));
+            this.obstacle.push(new SteelWall(350 + index * 50, 670));
+        }
+        for (let index = 0; index < 5; index++) {
+            this.obstacle.push(new SteelWall(350 + index * 50, 80));
+        }
+        for (let index = 0; index < 65; index++) {
+            this.obstacle.push(new BrickWall(index * 50, 620));
         }
         for (let index = 0; index < 65; index++) {
             this.obstacle.push(new BrickWall(index * 50, 130));
         }
         // this.player = this.tanks[0];
-        this.base = [new Base(240, 350, 0), new Base(240, 40, 1)];
-        this.houses = [new House(340, 250)];
+        this.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
+        this.houses = [new House(450, 350)];
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
