@@ -19,23 +19,23 @@ class ModelHandler {
         this.field = field;
         this.InputHandler = new InputHandler();
         if (Store.isSinglePlayer) {
-            this.entityHandler = new EntityHandlers(this.field, this.field.tanks[0]);
-            this.playerBase = this.field.base[0];
+            this.entityHandler = new EntityHandlers(this.field, this.field.mapObjects.tanks[0]);
+            this.playerBase = this.field.mapObjects.base[0];
             return;
         } else {
             // TODO
             this.socketId = Store.playerNumber;
             console.log('socket: ' + this.socketId);
 
-            this.entityHandler = new EntityHandlers(this.field, this.field.tanks[this.socketId]);
-            this.playerBase = this.field.base[this.socketId];
+            this.entityHandler = new EntityHandlers(this.field, this.field.mapObjects.tanks[this.socketId]);
+            this.playerBase = this.field.mapObjects.base[this.socketId];
             Store.socket.on('move', (event: any, ...args: any) => {
-                this.field.tanks[1 - this.socketId].x = event[0].player.x;
-                this.field.tanks[1 - this.socketId].y = event[0].player.y;
-                this.field.tanks[1 - this.socketId].direction = event[0].player.direction;
+                this.field.mapObjects.tanks[1 - this.socketId].x = event[0].player.x;
+                this.field.mapObjects.tanks[1 - this.socketId].y = event[0].player.y;
+                this.field.mapObjects.tanks[1 - this.socketId].direction = event[0].player.direction;
             });
             Store.socket.on('shoot', (event: any, ...args: any) => {
-                this.entityHandler.makeShoot(this.field.tanks[1 - this.socketId]);
+                this.entityHandler.makeShoot(this.field.mapObjects.tanks[1 - this.socketId]);
             });
 
             Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
@@ -56,7 +56,7 @@ class ModelHandler {
         if (Store.isSinglePlayer) {
             return;
         } else {
-            Store.socket.emit('move', { player: this.field.tanks[this.socketId] });
+            Store.socket.emit('move', { player: this.field.mapObjects.tanks[this.socketId] });
         }
     }
 
@@ -99,13 +99,13 @@ class ModelHandler {
             [entityDirections.Left]: new Point(-shellShift, 0),
             [entityDirections.Right]: new Point(shellShift, 0),
         };
-        for (const shell of this.field.shell) {
+        for (const shell of this.field.mapObjects.shell) {
             this.entityHandler.handleShellMovements(shell, directions[shell.direction]);
         }
     }
 
     handleParticleChanging(dt: number) {
-        for (const particle of this.field.particles) {
+        for (const particle of this.field.mapObjects.particles) {
             this.entityHandler.handleParticle(particle, dt);
         }
     }

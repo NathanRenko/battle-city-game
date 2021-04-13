@@ -10,9 +10,11 @@ class GameObject {
         this.x = x;
         this.y = y;
     }
+
     getX1() {
         return this.x + this.size - 1;
     }
+
     getY1() {
         return this.y + this.size - 1;
     }

@@ -1,4 +1,4 @@
-const assetsRoot = './assets/';
+const assetsRoot = './assets/images/';
 
 const EntitySkins = {
     Base: assetsRoot + 'base.svg',
@@ -14,6 +14,7 @@ const EntitySkins = {
     house2: assetsRoot + 'village_house_2.svg',
     house3: assetsRoot + 'village_house_3.svg',
     house4: assetsRoot + 'village_house_4.svg',
+    water: assetsRoot + 'water.svg',
 };
 
 export default EntitySkins;

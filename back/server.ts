@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const io = new Server(3001, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
     },
 });
 

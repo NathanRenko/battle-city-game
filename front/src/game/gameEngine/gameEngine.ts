@@ -3,7 +3,7 @@ import Field from './engineModules/Field';
 import ModelHandler from './engineModules/ModelHandler';
 import Tank from '../gameObjects/tank';
 import Shell from '../gameObjects/shell';
-import EntityClasses from './engineModules/constObjects/entityClasses';
+import { EntityClasses } from './engineModules/constObjects/entityClasses';
 import SkinCollection from './engineModules/skinCollection';
 import { directionToAngle, entityDirections } from './engineModules/constObjects/DirectionHandler';
 import Figure from '../gameClasses/figure';
@@ -26,7 +26,7 @@ class GameEngine {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         // @ts-ignore
         this.canvasContext = canvas.getContext('2d');
-        let backgroundImage = './assets/RPG_Nature_Tileset_Autumn.png';
+        let backgroundImage = './assets/images/RPG_Nature_Tileset_Autumn.png';
         canvas.style.backgroundImage = `url(${backgroundImage})`;
         canvas.style.backgroundRepeat = 'repeat';
         this.init();
@@ -53,10 +53,10 @@ class GameEngine {
     checkIsGameOver() {
         // TODO improve rules
         return (
-            this.field.base[0].hp === 0 ||
-            this.field.base[1].hp === 0 ||
-            (this.field.tanks[0].respawnCount === 0 && this.field.tanks[0].hp === 0) ||
-            (this.field.tanks[1].respawnCount === 0 && this.field.tanks[1].hp === 0)
+            this.field.mapObjects.base[0].hp === 0 ||
+            this.field.mapObjects.base[1].hp === 0 ||
+            (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
+            (this.field.mapObjects.tanks[1].respawnCount === 0 && this.field.mapObjects.tanks[1].hp === 0)
         );
     }
 
@@ -82,18 +82,26 @@ class GameEngine {
     }
 
     updateGameInfo() {
-        if (this.baseHp && this.field.base[0] && this.baseHp.textContent !== this.field.base[0].hp.toString()) {
-            this.baseHp.textContent = this.field.base[0].hp.toString();
+        if (
+            this.baseHp &&
+            this.field.mapObjects.base[0] &&
+            this.baseHp.textContent !== this.field.mapObjects.base[0].hp.toString()
+        ) {
+            this.baseHp.textContent = this.field.mapObjects.base[0].hp.toString();
         }
         if (
             this.enemyBaseHp &&
-            this.field.base[1] &&
-            this.enemyBaseHp.textContent !== this.field.base[1].hp.toString()
+            this.field.mapObjects.base[1] &&
+            this.enemyBaseHp.textContent !== this.field.mapObjects.base[1].hp.toString()
         ) {
-            this.enemyBaseHp.textContent = this.field.base[1].hp.toString();
+            this.enemyBaseHp.textContent = this.field.mapObjects.base[1].hp.toString();
         }
-        if (this.tankHp && this.field.tanks[0] && this.tankHp.textContent !== this.field.tanks[0].hp.toString()) {
-            this.tankHp.textContent = this.field.tanks[0].hp.toString();
+        if (
+            this.tankHp &&
+            this.field.mapObjects.tanks[0] &&
+            this.tankHp.textContent !== this.field.mapObjects.tanks[0].hp.toString()
+        ) {
+            this.tankHp.textContent = this.field.mapObjects.tanks[0].hp.toString();
         }
     }
 
@@ -111,8 +119,7 @@ class GameEngine {
 
     draw() {
         this.canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-        for (const entityType in EntityClasses) {
-            const entityCollection = this.field.getParentCollection(entityType);
+        for (const entityCollection of this.field.getAllMapObjects()) {
             const isDirectionable = entityCollection.length !== 0 && 'direction' in entityCollection[0];
 
             if (isDirectionable) {

@@ -24,7 +24,7 @@ class EntityHandlers {
     handleParticle(particle: Particle, dt: number) {
         particle.changeStep(dt);
         if (particle.animationOver) {
-            this.field.particles.splice(this.field.particles.indexOf(particle), 1);
+            this.field.mapObjects.particles.splice(this.field.mapObjects.particles.indexOf(particle), 1);
         }
     }
 
@@ -77,7 +77,7 @@ class EntityHandlers {
                 break;
         }
         let shell = new Shell(spawnPoint.x, spawnPoint.y, shootPlayer.direction);
-        this.field.shell.push(shell);
+        this.field.mapObjects.shell.push(shell);
     }
 }
 

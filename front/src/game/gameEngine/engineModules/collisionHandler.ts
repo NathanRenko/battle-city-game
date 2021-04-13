@@ -7,49 +7,76 @@ import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
 import SteelWall from '../../gameObjects/steel-wall';
 import Tank from '../../gameObjects/tank';
+import Water from '../../gameObjects/water';
 import { entityDirections } from './constObjects/DirectionHandler';
+import { obstacleType } from './constObjects/entityClasses';
 import Field from './Field';
 
 export default class CollisionHandler {
     handleShellСollision(
-        collisionBlock: Tank | SteelWall | BrickWall | Base | House | undefined,
+        collisionBlock: Tank | obstacleType | Base | undefined,
         gameObject: Shell,
         field: Field
     ) {
         this.shellToParticle(gameObject, field);
         if (collisionBlock) {
-            let parentCollection = field.getParentCollection(collisionBlock);
             if ('hp' in collisionBlock) {
-                if (collisionBlock.hp !== 0) {
-                    collisionBlock.hp--;
-                    if ('step' in collisionBlock) {
-                        collisionBlock.changeStep();
-                    }
-                }
-                if (collisionBlock.hp === 0) {
-                    if ('team' in collisionBlock) {
-                        collisionBlock.deathAudio.play();
-                        collisionBlock.setDeathState();
-                    } else if ('respawnCount' in collisionBlock) {
-                        // TODO make respawn logic
-                        if (collisionBlock.respawnCount !== 0) {
-                            collisionBlock.x = collisionBlock.spawnPoint.x;
-                            collisionBlock.y = collisionBlock.spawnPoint.y;
-                            collisionBlock.hp = collisionBlock.maxHp;
-                            collisionBlock.respawnCount--;
-                        }
-
-                        console.log('now: ' + collisionBlock.respawnCount);
-                    } else {
-                        parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
-                    }
-                }
+                this.decreaseHp(collisionBlock, field);
             }
         }
     }
 
+    decreaseHp(collisionBlock: Tank | BrickWall | Base | House, field: Field) {
+        if (collisionBlock.hp !== 0) {
+            collisionBlock.hp--;
+            if ('stateNumber' in collisionBlock) {
+                collisionBlock.changeState();
+            }
+        }
+        if (collisionBlock.hp === 0) {
+            this.deathHandler(collisionBlock, field);
+        }
+    }
+
+    deathHandler(collisionBlock: Base | Tank | obstacleType, field: Field) {
+        if (collisionBlock.constructor === Base) {
+            collisionBlock.deathAudio.play();
+            collisionBlock.setDeathState();
+            return;
+        }
+        if (collisionBlock.constructor === Tank) {
+            collisionBlock.deathAudio.play();
+            field.mapObjects.particles.push(new Particle(collisionBlock.x, collisionBlock.y, collisionBlock.direction));
+            this.respawnEntity(collisionBlock);
+            return;
+        }
+
+        // TODO
+        if (
+            collisionBlock.constructor === SteelWall ||
+            collisionBlock.constructor === BrickWall ||
+            collisionBlock.constructor === House ||
+            collisionBlock.constructor === Water
+        ) {
+            let parentCollection = field.getParentCollection(collisionBlock);
+            parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);
+            return;
+        }
+
+        throw new Error('Not implemented type');
+    }
+
+    respawnEntity(entity: Tank) {
+        if (entity.respawnCount !== 0) {
+            entity.x = entity.spawnPoint.x;
+            entity.y = entity.spawnPoint.y;
+            entity.hp = entity.maxHp;
+            entity.respawnCount--;
+        }
+    }
+
     shellToParticle(shell: Shell, field: Field) {
-        field.shell.splice(field.shell.indexOf(shell), 1);
+        field.mapObjects.shell.splice(field.mapObjects.shell.indexOf(shell), 1);
         let spawnPoint = new Point(0, 0);
         const particleWidth = new Particle(spawnPoint.x, spawnPoint.y, shell.direction).size;
         const sizeDelta = particleWidth - shell.size;
@@ -71,6 +98,6 @@ export default class CollisionHandler {
                 break;
         }
         let particle = new Particle(spawnPoint.x, spawnPoint.y, shell.direction);
-        field.particles.push(particle);
+        field.mapObjects.particles.push(particle);
     }
 }

@@ -7,17 +7,21 @@ import SteelWall from '../../gameObjects/steel-wall';
 import Figure from '../../gameClasses/figure';
 import BrickWall from '../../gameObjects/brick-wall';
 import Base from '../../gameObjects/base';
-import EntityClasses from './constObjects/entityClasses';
+import { EntityClasses, EntityGroups, isObstacle, obstacleType } from './constObjects/entityClasses';
 import House from '../../gameObjects/house';
+import Water from '../../gameObjects/water';
 
 class Field {
-    tanks!: Tank[];
+    mapObjects: {
+        tanks: Tank[];
+        obstacle: obstacleType[];
+        shell: Shell[];
+        base: Base[];
+        particles: Particle[];
+    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [] };
+
     // player: Tank;
-    obstacle!: (SteelWall | BrickWall | Base | Tank)[];
-    shell: Shell[] = [];
-    base: Base[] = [];
-    houses: House[] = [];
-    particles: Particle[] = [];
+
     mapSize: { width: number; height: number };
     constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
         // TODO choosenMap
@@ -28,24 +32,38 @@ class Field {
         this.buildFirstTypeMap();
     }
 
+    getAllMapObjects(): [Base[], obstacleType[], Tank[], Shell[], Particle[]] {
+        return [
+            this.mapObjects.base,
+            this.mapObjects.obstacle,
+            this.mapObjects.tanks,
+            this.mapObjects.shell,
+            this.mapObjects.particles,
+        ];
+    }
+
     buildFirstTypeMap = () => {
-        this.tanks = [new Tank(120, 700), new Tank(350, 20)];
-        this.obstacle = [];
+        this.mapObjects.tanks = [new Tank(120, 700), new Tank(350, 20)];
+        this.mapObjects.obstacle = [];
+
+        let steelWallSize = new SteelWall(0, 0).size;
+        let brickWallSize = new SteelWall(0, 0).size;
+
         for (let index = 0; index < 5; index++) {
-            this.obstacle.push(new SteelWall(350 + index * 50, 670));
+            this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 670));
         }
         for (let index = 0; index < 5; index++) {
-            this.obstacle.push(new SteelWall(350 + index * 50, 80));
+            this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 80));
         }
         for (let index = 0; index < 65; index++) {
-            this.obstacle.push(new BrickWall(index * 50, 620));
+            this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 620));
         }
         for (let index = 0; index < 65; index++) {
-            this.obstacle.push(new BrickWall(index * 50, 130));
+            this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 130));
         }
         // this.player = this.tanks[0];
-        this.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
-        this.houses = [new House(450, 350)];
+        this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
+        this.mapObjects.obstacle.push(new House(450, 350));
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
@@ -70,10 +88,11 @@ class Field {
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
         return (
-            this.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
-            this.houses.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
-            this.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
-            this.tanks.find((tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank))
+            this.mapObjects.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
+            this.mapObjects.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
+            this.mapObjects.tanks.find(
+                (tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank)
+            )
         );
     }
 
@@ -100,50 +119,68 @@ class Field {
         );
     }
 
-    getParentCollection(child: GameObject | string) {
-        let className = typeof child === 'string' ? child : child.constructor.name;
-        switch (className) {
-            case EntityClasses.SteelWall:
-            case EntityClasses.BrickWall:
-                return this.obstacle;
-            case EntityClasses.Base:
-                return this.base;
-            case EntityClasses.Tank:
-                return this.tanks;
-            case EntityClasses.Shell:
-                return this.shell;
-            case EntityClasses.Particle:
-                return this.particles;
-            case EntityClasses.House:
-                return this.houses;
-            default:
-                alert(child.constructor.name);
-                throw Error('Unknown type');
+    getParentCollection(child: obstacleType): obstacleType[];
+    getParentCollection(child: Shell): Shell[];
+    getParentCollection(child: Base): Base[];
+    getParentCollection(child: Particle): Particle[];
+    getParentCollection(child: Tank): Tank[];
+    getParentCollection(
+        child: obstacleType | Shell | Base | Particle | Tank
+    ): obstacleType[] | Shell[] | Base[] | Particle[] | Tank[] {
+        // if (isObstacle(child)) {
+        //     let a = child;
+        //     return this.mapObjects.obstacle;
+        // }
+
+        // TODO
+
+        if (
+            child.constructor === SteelWall ||
+            child.constructor === BrickWall ||
+            child.constructor === House ||
+            child.constructor === Water
+        ) {
+            return this.mapObjects.obstacle;
         }
+
+        if (child.constructor === Base) {
+            return this.mapObjects.base;
+        }
+        if (child.constructor === Tank) {
+            return this.mapObjects.tanks;
+        }
+        if (child.constructor === Shell) {
+            return this.mapObjects.shell;
+        }
+        if (child.constructor === Particle) {
+            return this.mapObjects.particles;
+        }
+        alert(child.constructor.name);
+        throw Error('Unknown type');
     }
 
-    createEntity(entityClass: string, coords: Array<[number, number]>) {
-        switch (entityClass) {
-            case EntityClasses.SteelWall:
-            case EntityClasses.BrickWall:
-            case EntityClasses.Base:
-                // for (const coord of coords) {
-                //     this.obstacle.push;
-                // }
-                break;
-            case EntityClasses.Tank:
-                return this.tanks;
-            case EntityClasses.Shell:
-                return this.shell;
-            case EntityClasses.Particle:
-                return this.particles;
-            case EntityClasses.House:
-                return this.houses;
-            default:
-                alert(entityClass);
-                throw Error('Unknown type');
-        }
-    }
+    // createEntity(entityClass: string, coords: Array<[number, number]>) {
+    //     switch (entityClass) {
+    //         case EntityClasses.SteelWall:
+    //         case EntityClasses.BrickWall:
+    //         case EntityClasses.House:
+    //         case EntityClasses.Base:
+    //             // for (const coord of coords) {
+    //             //     this.obstacle.push;
+    //             // }
+    //             break;
+    //         case EntityClasses.Tank:
+    //             return this.mapObjects.tanks;
+    //         case EntityClasses.Shell:
+    //             return this.mapObjects.shell;
+    //         case EntityClasses.Particle:
+    //             return this.mapObjects.particles;
+
+    //         default:
+    //             alert(entityClass);
+    //             throw Error('Unknown type');
+    //     }
+    // }
 }
 
 export default Field;
