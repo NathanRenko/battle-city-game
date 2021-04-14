@@ -13,11 +13,7 @@ import { obstacleType } from './constObjects/entityClasses';
 import Field from './Field';
 
 export default class CollisionHandler {
-    handleShellСollision(
-        collisionBlock: Tank | obstacleType | Base | undefined,
-        gameObject: Shell,
-        field: Field
-    ) {
+    handleShellСollision(collisionBlock: Tank | obstacleType | Base | undefined, gameObject: Shell, field: Field) {
         this.shellToParticle(gameObject, field);
         if (collisionBlock) {
             if ('hp' in collisionBlock) {
@@ -55,8 +51,7 @@ export default class CollisionHandler {
         if (
             collisionBlock.constructor === SteelWall ||
             collisionBlock.constructor === BrickWall ||
-            collisionBlock.constructor === House ||
-            collisionBlock.constructor === Water
+            collisionBlock.constructor === House
         ) {
             let parentCollection = field.getParentCollection(collisionBlock);
             parentCollection.splice(parentCollection.indexOf(collisionBlock), 1);

@@ -26,15 +26,10 @@ enum EntityGroups {
     particles,
 }
 
-type obstacleType = SteelWall | BrickWall | House | Water;
+type obstacleType = SteelWall | BrickWall | House;
 
 function isObstacle(entity: obstacleType): entity is obstacleType {
-    return (
-        entity.constructor === SteelWall ||
-        entity.constructor === BrickWall ||
-        entity.constructor === House ||
-        entity.constructor === Water
-    );
+    return entity.constructor === SteelWall || entity.constructor === BrickWall || entity.constructor === House;
 }
 
 export { EntityClasses, EntityGroups, isObstacle };

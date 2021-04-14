@@ -18,7 +18,8 @@ class Field {
         shell: Shell[];
         base: Base[];
         particles: Particle[];
-    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [] };
+        water: Water[];
+    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [] };
 
     // player: Tank;
 
@@ -32,10 +33,11 @@ class Field {
         this.buildFirstTypeMap();
     }
 
-    getAllMapObjects(): [Base[], obstacleType[], Tank[], Shell[], Particle[]] {
+    getAllMapObjects(): [Base[], obstacleType[], Water[], Tank[], Shell[], Particle[]] {
         return [
             this.mapObjects.base,
             this.mapObjects.obstacle,
+            this.mapObjects.water,
             this.mapObjects.tanks,
             this.mapObjects.shell,
             this.mapObjects.particles,
@@ -43,7 +45,7 @@ class Field {
     }
 
     buildFirstTypeMap = () => {
-        this.mapObjects.tanks = [new Tank(120, 700), new Tank(350, 20)];
+        this.mapObjects.tanks = [new Tank(120, 700), new Tank(120, 20)];
         this.mapObjects.obstacle = [];
 
         let steelWallSize = new SteelWall(0, 0).size;
@@ -64,6 +66,7 @@ class Field {
         // this.player = this.tanks[0];
         this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
         this.mapObjects.obstacle.push(new House(450, 350));
+        this.mapObjects.water.push(new Water(600, 350));
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
@@ -87,12 +90,16 @@ class Field {
     }
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
+        let isShell = gameObject.constructor === Shell;
         return (
             this.mapObjects.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
             this.mapObjects.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
             this.mapObjects.tanks.find(
                 (tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank)
-            )
+            ) ||
+            (isShell
+                ? undefined
+                : this.mapObjects.water.find((water) => this.hasObstacleCollision(gameObject, minimalStep, water)))
         );
     }
 
@@ -124,9 +131,10 @@ class Field {
     getParentCollection(child: Base): Base[];
     getParentCollection(child: Particle): Particle[];
     getParentCollection(child: Tank): Tank[];
+    getParentCollection(child: Water): Water[];
     getParentCollection(
-        child: obstacleType | Shell | Base | Particle | Tank
-    ): obstacleType[] | Shell[] | Base[] | Particle[] | Tank[] {
+        child: obstacleType | Shell | Base | Particle | Tank | Water
+    ): obstacleType[] | Shell[] | Base[] | Particle[] | Tank[] | Water {
         // if (isObstacle(child)) {
         //     let a = child;
         //     return this.mapObjects.obstacle;
@@ -134,12 +142,7 @@ class Field {
 
         // TODO
 
-        if (
-            child.constructor === SteelWall ||
-            child.constructor === BrickWall ||
-            child.constructor === House ||
-            child.constructor === Water
-        ) {
+        if (child.constructor === SteelWall || child.constructor === BrickWall || child.constructor === House) {
             return this.mapObjects.obstacle;
         }
 
@@ -148,6 +151,9 @@ class Field {
         }
         if (child.constructor === Tank) {
             return this.mapObjects.tanks;
+        }
+        if (child.constructor === Water) {
+            return this.mapObjects.water;
         }
         if (child.constructor === Shell) {
             return this.mapObjects.shell;

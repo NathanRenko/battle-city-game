@@ -7,6 +7,7 @@ import io from 'socket.io-client';
 import Store from '../store';
 import Base from '../../gameObjects/base';
 import backToMainMenu from '../StageSwitcher';
+import GameObject from '../../gameClasses/gameObject';
 
 class ModelHandler {
     field: Field;
@@ -14,6 +15,8 @@ class ModelHandler {
     entityHandler!: EntityHandlers;
     socketId!: number;
     playerBase!: Base;
+
+    needDestroy!: GameObject | undefined;
 
     constructor(field: Field) {
         this.field = field;
@@ -48,12 +51,74 @@ class ModelHandler {
         }
     }
 
+    findBestWay(dt: number) {
+        let start = { x: this.field.mapObjects.tanks[1].x, y: this.field.mapObjects.tanks[1].y };
+        let target = { x: this.field.mapObjects.tanks[0].x, y: this.field.mapObjects.tanks[0].y };
+        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
+        const playerSpeed = 5;
+        const shift = Math.round(playerSpeed * dt * 10);
+
+        const movement: { [index: string]: Point } = {
+            ArrowDown: new Point(0, shift),
+            ArrowUp: new Point(0, -shift),
+            ArrowLeft: new Point(-shift, 0),
+            ArrowRight: new Point(shift, 0),
+        };
+        if (start.y < target.y) {
+            // this.needDestroy = this.field.findCollisionBlock(movement[moves[0]], this.field.mapObjects.tanks[1])
+            if (this.field.findCollisionBlock(movement[moves[0]], this.field.mapObjects.tanks[1])) {
+                return moves[0];
+            }
+        }
+        if (start.y > target.y) {
+            if (!this.field.findCollisionBlock(movement[moves[1]], this.field.mapObjects.tanks[1])) {
+                return moves[1];
+            }
+        }
+        if (start.x > target.x) {
+            if (!this.field.findCollisionBlock(movement[moves[2]], this.field.mapObjects.tanks[1])) {
+                return moves[2];
+            }
+        }
+        if (start.x < target.x) {
+            if (this.field.findCollisionBlock(movement[moves[3]], this.field.mapObjects.tanks[1]) !== undefined) {
+                return moves[3];
+            }
+        }
+        return moves[3];
+    }
+
     frameEngine(dt: number) {
         this.handleMovementKeyPressing(dt);
         this.handleShotPress();
         this.handleShellsMovement(dt);
         this.handleParticleChanging(dt);
+        let allowBot = false;
         if (Store.isSinglePlayer) {
+            if (allowBot) {
+                // BOTS
+                const playerSpeed = 5;
+                const shift = Math.round(playerSpeed * dt * 10);
+                let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
+                const movement: { [index: string]: Point } = {
+                    ArrowDown: new Point(0, shift),
+                    ArrowUp: new Point(0, -shift),
+                    ArrowLeft: new Point(-shift, 0),
+                    ArrowRight: new Point(shift, 0),
+                };
+
+                // let way = moves[Math.floor(Math.random() * moves.length)];
+                let way = this.findBestWay(dt) || 'ArrowDown';
+                this.entityHandler.handleTankMovements(
+                    this.field.mapObjects.tanks[1],
+                    buttonsToDirections[way],
+                    movement[way]
+                );
+                if (this.entityHandler.canShoot(this.field.mapObjects.tanks[1])) {
+                    this.entityHandler.makeShoot(this.field.mapObjects.tanks[1]);
+                }
+            }
+
             return;
         } else {
             Store.socket.emit('move', { player: this.field.mapObjects.tanks[this.socketId] });

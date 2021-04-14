@@ -6,6 +6,7 @@ import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
 import SteelWall from '../../gameObjects/steel-wall';
 import Tank from '../../gameObjects/tank';
+import Water from '../../gameObjects/water';
 import CollisionHandler from './collisionHandler';
 import { entityDirections, buttonsToDirections } from './constObjects/DirectionHandler';
 import Field from './Field';

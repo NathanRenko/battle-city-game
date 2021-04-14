@@ -1,18 +1,17 @@
 import GameObject from '../gameClasses/gameObject';
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 import Point from '../gameClasses/Point';
+import { entityDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler';
 
 class Water extends GameObject {
-    animationStep = [EntitySkins.hit1, EntitySkins.hit2, EntitySkins.hit3];
+    animationStep = [EntitySkins.water, EntitySkins.water, EntitySkins.water];
     size = 50;
     skin = this.animationStep[0];
     timeCreation = 0;
-    direction: string;
     animationOver = false;
 
-    constructor(x: number, y: number, shootDirection: string) {
+    constructor(x: number, y: number) {
         super(x, y);
-        this.direction = shootDirection;
     }
 
     changeStep(dt: number) {
