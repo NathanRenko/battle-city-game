@@ -10,6 +10,7 @@ import Base from '../../gameObjects/base';
 import { EntityClasses, EntityGroups, isObstacle, obstacleType } from './constObjects/entityClasses';
 import House from '../../gameObjects/house';
 import Water from '../../gameObjects/water';
+import { entityDirections } from './constObjects/DirectionHandler';
 
 class Field {
     mapObjects: {
@@ -66,7 +67,7 @@ class Field {
         // this.player = this.tanks[0];
         this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
         this.mapObjects.obstacle.push(new House(450, 350));
-        this.mapObjects.water.push(new Water(600, 350));
+        this.mapObjects.water.push(new Water(600, 350, entityDirections.Left));
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {

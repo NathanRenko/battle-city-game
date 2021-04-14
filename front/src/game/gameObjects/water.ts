@@ -9,9 +9,11 @@ class Water extends GameObject {
     skin = this.animationStep[0];
     timeCreation = 0;
     animationOver = false;
+    direction: entityDirections;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, direction: entityDirections) {
         super(x, y);
+        this.direction = direction;
     }
 
     changeStep(dt: number) {
