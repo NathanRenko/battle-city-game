@@ -8,6 +8,7 @@ import Store from '../store';
 import Base from '../../gameObjects/base';
 import backToMainMenu from '../StageSwitcher';
 import GameObject from '../../gameClasses/gameObject';
+import Tank from '../../gameObjects/tank';
 
 class ModelHandler {
     field: Field;
@@ -18,12 +19,16 @@ class ModelHandler {
 
     needDestroy!: GameObject | undefined;
 
+    bot!: { tank: Tank; way: string; pathLeft: number };
+
     constructor(field: Field) {
         this.field = field;
         this.InputHandler = new InputHandler();
         if (Store.isSinglePlayer) {
             this.entityHandler = new EntityHandlers(this.field, this.field.mapObjects.tanks[0]);
             this.playerBase = this.field.mapObjects.base[0];
+
+            this.bot = { tank: this.field.mapObjects.tanks[1], way: '', pathLeft: 0 };
             return;
         } else {
             // TODO
@@ -93,35 +98,63 @@ class ModelHandler {
         this.handleShotPress();
         this.handleShellsMovement(dt);
         this.handleParticleChanging(dt);
-        let allowBot = false;
+        let allowBot = true;
         if (Store.isSinglePlayer) {
             if (allowBot) {
-                // BOTS
-                const playerSpeed = 5;
-                const shift = Math.round(playerSpeed * dt * 10);
-                let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
-                const movement: { [index: string]: Point } = {
-                    ArrowDown: new Point(0, shift),
-                    ArrowUp: new Point(0, -shift),
-                    ArrowLeft: new Point(-shift, 0),
-                    ArrowRight: new Point(shift, 0),
-                };
-
-                // let way = moves[Math.floor(Math.random() * moves.length)];
-                let way = this.findBestWay(dt) || 'ArrowDown';
-                this.entityHandler.handleTankMovements(
-                    this.field.mapObjects.tanks[1],
-                    buttonsToDirections[way],
-                    movement[way]
-                );
-                if (this.entityHandler.canShoot(this.field.mapObjects.tanks[1])) {
-                    this.entityHandler.makeShoot(this.field.mapObjects.tanks[1]);
-                }
+                this.handleBotActions(dt);
             }
 
             return;
         } else {
             Store.socket.emit('move', { player: this.field.mapObjects.tanks[this.socketId] });
+        }
+    }
+
+    handleBotActions(dt: number) {
+        // BOTS
+        const playerSpeed = 5;
+        const shift = Math.round(playerSpeed * dt * 10);
+        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
+        const movement: { [index: string]: Point } = {
+            ArrowDown: new Point(0, shift),
+            ArrowUp: new Point(0, -shift),
+            ArrowLeft: new Point(-shift, 0),
+            ArrowRight: new Point(shift, 0),
+        };
+
+        if (this.bot.pathLeft <= 0) {
+            let percent = Math.random() * 100;
+            switch (true) {
+                case percent < 50:
+                    this.bot.way = moves[0];
+                    break;
+                case percent < 70:
+                    this.bot.way = moves[2];
+                    break;
+                case percent < 90:
+                    this.bot.way = moves[3];
+                    break;
+                case percent <= 100:
+                    this.bot.way = moves[1];
+                    break;
+                default:
+                    break;
+            }
+            // this.bot.way = moves[Math.floor(Math.random() * moves.length)];
+            let max = 200;
+            let min = 100;
+            this.bot.pathLeft = Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        this.bot.pathLeft -= shift;
+        // let way = this.findBestWay(dt) || 'ArrowDown';
+        this.entityHandler.handleTankMovements(
+            this.field.mapObjects.tanks[1],
+            buttonsToDirections[this.bot.way],
+            movement[this.bot.way]
+        );
+        let percent = Math.random() * 100;
+        if (this.entityHandler.canShoot(this.field.mapObjects.tanks[1]) && percent > 70) {
+            this.entityHandler.makeShoot(this.field.mapObjects.tanks[1]);
         }
     }
 
