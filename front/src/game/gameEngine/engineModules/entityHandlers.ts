@@ -13,12 +13,10 @@ import Field from './Field';
 
 class EntityHandlers {
     field: Field;
-    currentPlayer: Tank;
     collisionHandler: CollisionHandler;
 
-    constructor(field: Field, currentPlayer: Tank) {
+    constructor(field: Field) {
         this.field = field;
-        this.currentPlayer = currentPlayer;
         this.collisionHandler = new CollisionHandler();
     }
 

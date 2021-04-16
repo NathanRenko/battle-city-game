@@ -9,6 +9,7 @@ import Base from '../../gameObjects/base';
 import backToMainMenu from '../StageSwitcher';
 import GameObject from '../../gameClasses/gameObject';
 import Tank from '../../gameObjects/tank';
+import Bot from '../../gameObjects/bot';
 
 class ModelHandler {
     field: Field;
@@ -16,81 +17,50 @@ class ModelHandler {
     entityHandler!: EntityHandlers;
     socketId!: number;
     playerBase!: Base;
-
+    currentPlayer!: Tank;
     needDestroy!: GameObject | undefined;
 
-    bot!: { tank: Tank; way: string; pathLeft: number };
+    bot!: Bot;
 
     constructor(field: Field) {
         this.field = field;
         this.InputHandler = new InputHandler();
         if (Store.isSinglePlayer) {
-            this.entityHandler = new EntityHandlers(this.field, this.field.mapObjects.tanks[0]);
-            this.playerBase = this.field.mapObjects.base[0];
-
-            this.bot = { tank: this.field.mapObjects.tanks[1], way: '', pathLeft: 0 };
+            this.initPlayer(0, 0);
+            this.bot = new Bot(this.field.mapObjects.tanks[1], this.field, this.entityHandler, 'chaotic');
             return;
         } else {
             // TODO
             this.socketId = Store.playerNumber;
             console.log('socket: ' + this.socketId);
-
-            this.entityHandler = new EntityHandlers(this.field, this.field.mapObjects.tanks[this.socketId]);
-            this.playerBase = this.field.mapObjects.base[this.socketId];
-            Store.socket.on('move', (event: any, ...args: any) => {
-                this.field.mapObjects.tanks[1 - this.socketId].x = event[0].player.x;
-                this.field.mapObjects.tanks[1 - this.socketId].y = event[0].player.y;
-                this.field.mapObjects.tanks[1 - this.socketId].direction = event[0].player.direction;
-            });
-            Store.socket.on('shoot', (event: any, ...args: any) => {
-                this.entityHandler.makeShoot(this.field.mapObjects.tanks[1 - this.socketId]);
-            });
-
-            Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
-                backToMainMenu('Your opponent disconnected.');
-                Store.socket.disconnect();
-            });
-
-            // this.socketId - underfined, т.к. socket.on выполняется позже
-            console.log('socket: ' + this.socketId);
+            this.initPlayer(this.socketId, this.socketId);
+            this.setupSocket();
         }
     }
 
-    findBestWay(dt: number) {
-        let start = { x: this.field.mapObjects.tanks[1].x, y: this.field.mapObjects.tanks[1].y };
-        let target = { x: this.field.mapObjects.tanks[0].x, y: this.field.mapObjects.tanks[0].y };
-        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
-        const playerSpeed = 5;
-        const shift = Math.round(playerSpeed * dt * 10);
+    initPlayer(playerId: number, baseId: number) {
+        this.entityHandler = new EntityHandlers(this.field);
+        this.currentPlayer = this.field.mapObjects.tanks[playerId];
+        this.playerBase = this.field.mapObjects.base[baseId];
+    }
 
-        const movement: { [index: string]: Point } = {
-            ArrowDown: new Point(0, shift),
-            ArrowUp: new Point(0, -shift),
-            ArrowLeft: new Point(-shift, 0),
-            ArrowRight: new Point(shift, 0),
-        };
-        if (start.y < target.y) {
-            // this.needDestroy = this.field.findCollisionBlock(movement[moves[0]], this.field.mapObjects.tanks[1])
-            if (this.field.findCollisionBlock(movement[moves[0]], this.field.mapObjects.tanks[1])) {
-                return moves[0];
-            }
-        }
-        if (start.y > target.y) {
-            if (!this.field.findCollisionBlock(movement[moves[1]], this.field.mapObjects.tanks[1])) {
-                return moves[1];
-            }
-        }
-        if (start.x > target.x) {
-            if (!this.field.findCollisionBlock(movement[moves[2]], this.field.mapObjects.tanks[1])) {
-                return moves[2];
-            }
-        }
-        if (start.x < target.x) {
-            if (this.field.findCollisionBlock(movement[moves[3]], this.field.mapObjects.tanks[1]) !== undefined) {
-                return moves[3];
-            }
-        }
-        return moves[3];
+    setupSocket() {
+        Store.socket.on('move', (event: any, ...args: any) => {
+            this.field.mapObjects.tanks[1 - this.socketId].x = event[0].player.x;
+            this.field.mapObjects.tanks[1 - this.socketId].y = event[0].player.y;
+            this.field.mapObjects.tanks[1 - this.socketId].direction = event[0].player.direction;
+        });
+        Store.socket.on('shoot', (event: any, ...args: any) => {
+            this.entityHandler.makeShoot(this.field.mapObjects.tanks[1 - this.socketId]);
+        });
+
+        Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
+            backToMainMenu('Your opponent disconnected.');
+            Store.socket.disconnect();
+        });
+
+        // this.socketId - underfined, т.к. socket.on выполняется позже
+        console.log('socket: ' + this.socketId);
     }
 
     frameEngine(dt: number) {
@@ -98,63 +68,13 @@ class ModelHandler {
         this.handleShotPress();
         this.handleShellsMovement(dt);
         this.handleParticleChanging(dt);
-        let allowBot = true;
         if (Store.isSinglePlayer) {
-            if (allowBot) {
-                this.handleBotActions(dt);
+            if (this.bot) {
+                this.bot.handleBotActions(dt);
             }
-
             return;
         } else {
             Store.socket.emit('move', { player: this.field.mapObjects.tanks[this.socketId] });
-        }
-    }
-
-    handleBotActions(dt: number) {
-        // BOTS
-        const playerSpeed = 5;
-        const shift = Math.round(playerSpeed * dt * 10);
-        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
-        const movement: { [index: string]: Point } = {
-            ArrowDown: new Point(0, shift),
-            ArrowUp: new Point(0, -shift),
-            ArrowLeft: new Point(-shift, 0),
-            ArrowRight: new Point(shift, 0),
-        };
-
-        if (this.bot.pathLeft <= 0) {
-            let percent = Math.random() * 100;
-            switch (true) {
-                case percent < 50:
-                    this.bot.way = moves[0];
-                    break;
-                case percent < 70:
-                    this.bot.way = moves[2];
-                    break;
-                case percent < 90:
-                    this.bot.way = moves[3];
-                    break;
-                case percent <= 100:
-                    this.bot.way = moves[1];
-                    break;
-                default:
-                    break;
-            }
-            // this.bot.way = moves[Math.floor(Math.random() * moves.length)];
-            let max = 200;
-            let min = 100;
-            this.bot.pathLeft = Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        this.bot.pathLeft -= shift;
-        // let way = this.findBestWay(dt) || 'ArrowDown';
-        this.entityHandler.handleTankMovements(
-            this.field.mapObjects.tanks[1],
-            buttonsToDirections[this.bot.way],
-            movement[this.bot.way]
-        );
-        let percent = Math.random() * 100;
-        if (this.entityHandler.canShoot(this.field.mapObjects.tanks[1]) && percent > 70) {
-            this.entityHandler.makeShoot(this.field.mapObjects.tanks[1]);
         }
     }
 
@@ -174,13 +94,13 @@ class ModelHandler {
 
     handleShotPress() {
         if (this.InputHandler.isDown(' ')) {
-            if (this.entityHandler.canShoot(this.entityHandler.currentPlayer)) {
-                this.entityHandler.makeShoot(this.entityHandler.currentPlayer);
+            if (this.entityHandler.canShoot(this.currentPlayer)) {
+                this.entityHandler.makeShoot(this.currentPlayer);
                 if (Store.isSinglePlayer) {
                     return;
                 } else {
                     Store.socket.emit('shoot', {
-                        player: this.entityHandler.currentPlayer.direction,
+                        player: this.currentPlayer.direction,
                     });
                 }
             }
@@ -210,7 +130,7 @@ class ModelHandler {
 
     handleMovements(button: any, step: Point) {
         if (this.InputHandler.isDown(button)) {
-            this.entityHandler.handleTankMovements(this.entityHandler.currentPlayer, buttonsToDirections[button], step);
+            this.entityHandler.handleTankMovements(this.currentPlayer, buttonsToDirections[button], step);
             return true;
         }
         return false;

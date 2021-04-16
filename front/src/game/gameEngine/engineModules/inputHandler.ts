@@ -11,7 +11,7 @@ class InputHandler {
         document.addEventListener('keyup', (e) => this.setKey(e, false));
     }
 
-    setKey(event: KeyboardEvent, isKeyDown: boolean) {
+    private setKey(event: KeyboardEvent, isKeyDown: boolean) {
         const key = event.key;
         if (key in this.movementKeys) {
             if (!this.inputs.includes(key) && isKeyDown) {

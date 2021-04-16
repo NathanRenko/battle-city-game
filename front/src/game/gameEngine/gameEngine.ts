@@ -74,7 +74,7 @@ class GameEngine {
             Store.socket.disconnect();
         }
 
-        if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.entityHandler.currentPlayer.hp === 0) {
+        if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.currentPlayer.hp === 0) {
             backToMainMenu('You were defeated.');
         } else {
             backToMainMenu('Victory!');
