@@ -18,6 +18,7 @@ class ModelHandler {
     socketId!: number;
     playerBase!: Base;
     currentPlayer!: Tank;
+    opponent!: Tank;
     needDestroy!: GameObject | undefined;
 
     bots!: Bot[];
@@ -44,17 +45,18 @@ class ModelHandler {
     initPlayer(playerId: number, baseId: number) {
         this.entityHandler = new EntityHandlers(this.field);
         this.currentPlayer = this.field.mapObjects.tanks[playerId];
+        this.opponent = this.field.mapObjects.tanks[1 - playerId];
         this.playerBase = this.field.mapObjects.base[baseId];
     }
 
     setupSocket() {
         Store.socket.on('move', (event: any, ...args: any) => {
-            this.field.mapObjects.tanks[1 - this.socketId].x = event[0].player.x;
-            this.field.mapObjects.tanks[1 - this.socketId].y = event[0].player.y;
-            this.field.mapObjects.tanks[1 - this.socketId].direction = event[0].player.direction;
+            this.opponent.x = event[0].player.x;
+            this.opponent.y = event[0].player.y;
+            this.opponent.direction = event[0].player.direction;
         });
         Store.socket.on('shoot', (event: any, ...args: any) => {
-            this.entityHandler.makeShoot(this.field.mapObjects.tanks[1 - this.socketId]);
+            this.entityHandler.makeShoot(this.opponent);
         });
 
         Store.socket.once('opponent disconnected', (event: any, ...args: any) => {

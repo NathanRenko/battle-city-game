@@ -61,15 +61,15 @@ class GameEngine {
             return (
                 this.field.mapObjects.base[0].hp === 0 ||
                 this.field.mapObjects.base[1].hp === 0 ||
-                (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
+                (this.ModelHandler.currentPlayer.respawnCount === 0 && this.ModelHandler.currentPlayer.hp === 0) ||
                 this.ModelHandler.bots.length === 0
             );
         } else {
             return (
                 this.field.mapObjects.base[0].hp === 0 ||
                 this.field.mapObjects.base[1].hp === 0 ||
-                (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
-                (this.field.mapObjects.tanks[1].respawnCount === 0 && this.field.mapObjects.tanks[1].hp === 0)
+                (this.ModelHandler.currentPlayer.respawnCount === 0 && this.ModelHandler.currentPlayer.hp === 0) ||
+                (this.ModelHandler.opponent.respawnCount === 0 && this.ModelHandler.opponent.hp === 0)
             );
         }
         // TODO improve rules
@@ -86,6 +86,8 @@ class GameEngine {
     finishGame() {
         if (!Store.isSinglePlayer) {
             Store.socket.off('opponent disconnected');
+            Store.socket.off('move');
+            Store.socket.off('shoot');
             Store.socket.disconnect();
         }
 

@@ -36,8 +36,8 @@ class Field {
                 }
                 if (symbol.startsWith('bs')) {
                     // @ts-ignore
-                    const baseSide: 0 | 1 = symbol.split('bs')[1];
-                    this.mapObjects.base.push(new Base(x * tileSize, y * tileSize, baseSide));
+                    const baseSide: 0 | 1 = parseInt(symbol.split('bs')[1]) - 1;
+                    this.mapObjects.base[baseSide] = new Base(x * tileSize, y * tileSize, baseSide);
                     continue;
                 }
                 if (symbol === 'b') {
