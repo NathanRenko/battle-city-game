@@ -11,6 +11,7 @@ import Point from '../gameClasses/Point';
 import Base from '../gameObjects/base';
 import Store from './store';
 import backToMainMenu from './StageSwitcher';
+import Bot from '../gameObjects/bot';
 
 class GameEngine {
     canvasContext: CanvasRenderingContext2D;
@@ -21,7 +22,7 @@ class GameEngine {
     enemyBaseHp = document.getElementById('enemyBaseHp');
     tankHp = document.getElementById('tankHp');
     skinCollection!: SkinCollection;
-
+    gameFinishRules = { singlePlayer: {}, multiPlayer: {} };
     constructor() {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         // @ts-ignore
@@ -50,14 +51,28 @@ class GameEngine {
         }
     }
 
+    isTankAlive(owner: Tank | Bot) {
+        //@ts-ignore
+        return !(owner.respawnCount === 0 && owner.hp === 0);
+    }
+
     checkIsGameOver() {
+        if (Store.isSinglePlayer) {
+            return (
+                this.field.mapObjects.base[0].hp === 0 ||
+                this.field.mapObjects.base[1].hp === 0 ||
+                (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
+                this.ModelHandler.bots.length === 0
+            );
+        } else {
+            return (
+                this.field.mapObjects.base[0].hp === 0 ||
+                this.field.mapObjects.base[1].hp === 0 ||
+                (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
+                (this.field.mapObjects.tanks[1].respawnCount === 0 && this.field.mapObjects.tanks[1].hp === 0)
+            );
+        }
         // TODO improve rules
-        return (
-            this.field.mapObjects.base[0].hp === 0 ||
-            this.field.mapObjects.base[1].hp === 0 ||
-            (this.field.mapObjects.tanks[0].respawnCount === 0 && this.field.mapObjects.tanks[0].hp === 0) ||
-            (this.field.mapObjects.tanks[1].respawnCount === 0 && this.field.mapObjects.tanks[1].hp === 0)
-        );
     }
 
     init() {
@@ -124,6 +139,10 @@ class GameEngine {
 
             if (isDirectionable) {
                 for (const entity of entityCollection) {
+                    // TODO
+                    // if (entity.constructor === Tank && !this.isTankAlive(entity)) {
+                    //     continue;
+                    // }
                     // @ts-ignore
                     this.drawRotatedEntity(this.canvasContext, entity);
                     if ('maxHp' in entity) {

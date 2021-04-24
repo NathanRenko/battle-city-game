@@ -43,7 +43,7 @@ export default class CollisionHandler {
         if (collisionBlock.constructor === Tank) {
             collisionBlock.deathAudio.play();
             field.mapObjects.particles.push(new Particle(collisionBlock.x, collisionBlock.y, collisionBlock.direction));
-            this.respawnEntity(collisionBlock);
+            this.respawnEntity(collisionBlock, field);
             return;
         }
 
@@ -61,12 +61,21 @@ export default class CollisionHandler {
         throw new Error('Not implemented type');
     }
 
-    respawnEntity(entity: Tank) {
-        if (entity.respawnCount !== 0) {
+    respawnEntity(entity: Tank, field: Field) {
+        if (entity.respawnCount > 0) {
             entity.x = entity.spawnPoint.x;
             entity.y = entity.spawnPoint.y;
             entity.hp = entity.maxHp;
             entity.respawnCount--;
+        }
+        // TODO
+        else {
+            let parentCollection = field.getParentCollection(entity);
+            // delete parentCollection[parentCollection.indexOf(entity)]
+            parentCollection.splice(parentCollection.indexOf(entity), 1);
+
+            //@ts-ignore
+            // entity = undefined;
         }
     }
 

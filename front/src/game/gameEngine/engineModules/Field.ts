@@ -11,6 +11,8 @@ import { EntityClasses, EntityGroups, isObstacle, obstacleType } from './constOb
 import House from '../../gameObjects/house';
 import Water from '../../gameObjects/water';
 import { entityDirections } from './constObjects/DirectionHandler';
+import Store from '../store';
+import mapCollection from './constObjects/mapCollection';
 
 class Field {
     mapObjects: {
@@ -24,6 +26,46 @@ class Field {
 
     // player: Tank;
 
+    generateMap(map: string[][]) {
+        const tileSize = 50;
+        for (let y = 0; y < map.length; y++) {
+            for (let x = 0; x < map[y].length; x++) {
+                let symbol = map[y][x];
+                if (symbol === '.') {
+                    continue;
+                }
+                if (symbol.startsWith('bs')) {
+                    // @ts-ignore
+                    const baseSide: 0 | 1 = symbol.split('bs')[1];
+                    this.mapObjects.base.push(new Base(x * tileSize, y * tileSize, baseSide));
+                    continue;
+                }
+                if (symbol === 'b') {
+                    this.mapObjects.obstacle.push(new BrickWall(x * tileSize, y * tileSize));
+                    continue;
+                }
+                if (symbol === 's') {
+                    this.mapObjects.obstacle.push(new SteelWall(x * tileSize, y * tileSize));
+                    continue;
+                }
+                if (symbol === 'h') {
+                    this.mapObjects.obstacle.push(new House(x * tileSize, y * tileSize));
+                    continue;
+                }
+                if (symbol === 'w') {
+                    this.mapObjects.water.push(new Water(x * tileSize, y * tileSize, entityDirections.Left));
+                    continue;
+                }
+                if (symbol.startsWith('t')) {
+                    const tankNumber: number = parseInt(symbol.split('t')[1]);
+                    console.log('tank number: ' + (tankNumber - 1));
+                    this.mapObjects.tanks[tankNumber - 1] = new Tank(x * tileSize, y * tileSize);
+                    continue;
+                }
+            }
+        }
+    }
+
     mapSize: { width: number; height: number };
     constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
         // TODO choosenMap
@@ -31,6 +73,13 @@ class Field {
         if (choosenMap) {
             // insert some logic
         }
+        if (Store.isSinglePlayer) {
+            this.generateMap(mapCollection.map1SinglePlayer);
+        } else {
+            this.generateMap(mapCollection.map1Multiplayer);
+        }
+        // alert(this.map.every((row) => row.length === 20));
+        // alert(this.map[1].length);
         this.buildFirstTypeMap();
     }
 
@@ -46,28 +95,27 @@ class Field {
     }
 
     buildFirstTypeMap = () => {
-        this.mapObjects.tanks = [new Tank(120, 700), new Tank(120, 20)];
-        this.mapObjects.obstacle = [];
-
-        let steelWallSize = new SteelWall(0, 0).size;
-        let brickWallSize = new SteelWall(0, 0).size;
-
-        for (let index = 0; index < 5; index++) {
-            this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 670));
-        }
-        for (let index = 0; index < 5; index++) {
-            this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 80));
-        }
-        for (let index = 0; index < 65; index++) {
-            this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 620));
-        }
-        for (let index = 0; index < 65; index++) {
-            this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 130));
-        }
-        // this.player = this.tanks[0];
-        this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
-        this.mapObjects.obstacle.push(new House(450, 350));
-        this.mapObjects.water.push(new Water(600, 350, entityDirections.Left));
+        // this.mapObjects.tanks = [new Tank(120, 700), new Tank(120, 20)];
+        // this.mapObjects.obstacle = [];
+        // let steelWallSize = new SteelWall(0, 0).size;
+        // let brickWallSize = new SteelWall(0, 0).size;
+        // for (let index = 0; index < 5; index++) {
+        //     this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 670));
+        // }
+        // for (let index = 0; index < 5; index++) {
+        //     this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 80));
+        // }
+        // for (let index = 0; index < 65; index++) {
+        //     this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 620));
+        // }
+        // for (let index = 0; index < 65; index++) {
+        //     this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 130));
+        // }
+        // // this.player = this.tanks[0];
+        // this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
+        // this.mapObjects.obstacle.push(new House(450, 350));
+        // this.mapObjects.water.push(new Water(600, 350, entityDirections.Left));
+        // this.generateMap(this.map);
     };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {

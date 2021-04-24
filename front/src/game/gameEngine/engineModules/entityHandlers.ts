@@ -42,7 +42,7 @@ class EntityHandlers {
         if (availableStep.x === 0 && availableStep.y === 0) {
             this.collisionHandler.handleShellСollision(collisionBlock, shell, this.field);
         } else {
-            shell.applyStep(availableStep);
+            shell.applyStep(step);
         }
     }
 

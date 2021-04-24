@@ -20,14 +20,14 @@ class Bot {
     }
 
     findBestWay(dt: number) {
-        let start = { x: this.field.mapObjects.tanks[1].x, y: this.field.mapObjects.tanks[1].y };
+        let start = { x: this.tank.x, y: this.tank.y };
         let target = { x: this.field.mapObjects.tanks[0].x, y: this.field.mapObjects.tanks[0].y };
-        if (Math.random() > 0.99) {
-            console.log('-----------');
-            console.log(start);
-            console.log(target);
-            console.log('-----------');
-        }
+        // if (Math.random() > 0.99) {
+        //     console.log('-----------');
+        //     console.log(start);
+        //     console.log(target);
+        //     console.log('-----------');
+        // }
         let deltaX = Math.abs(target.x - start.x);
         let deltaY = Math.abs(target.y - start.y);
         let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
@@ -58,8 +58,6 @@ class Bot {
                 return moves[1];
             }
         }
-
-        console.log('ded');
     }
 
     handleBotActions(dt: number) {
@@ -109,8 +107,8 @@ class Bot {
         this.entityHandler.handleTankMovements(this.tank, buttonsToDirections[this.way], movement[this.way]);
 
         let percent = Math.random() * 100;
-        if (this.entityHandler.canShoot(this.field.mapObjects.tanks[1]) && percent > 70) {
-            this.entityHandler.makeShoot(this.field.mapObjects.tanks[1]);
+        if (this.entityHandler.canShoot(this.tank) && percent > 70) {
+            this.entityHandler.makeShoot(this.tank);
         }
     }
 }

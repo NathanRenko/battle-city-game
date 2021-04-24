@@ -20,14 +20,17 @@ class ModelHandler {
     currentPlayer!: Tank;
     needDestroy!: GameObject | undefined;
 
-    bot!: Bot;
+    bots!: Bot[];
 
     constructor(field: Field) {
         this.field = field;
         this.InputHandler = new InputHandler();
         if (Store.isSinglePlayer) {
             this.initPlayer(0, 0);
-            this.bot = new Bot(this.field.mapObjects.tanks[1], this.field, this.entityHandler, 'chaotic');
+            this.bots = [];
+            this.bots.push(new Bot(this.field.mapObjects.tanks[1], this.field, this.entityHandler, 'chaotic'));
+            this.bots.push(new Bot(this.field.mapObjects.tanks[2], this.field, this.entityHandler, 'chaotic'));
+            this.bots.push(new Bot(this.field.mapObjects.tanks[3], this.field, this.entityHandler, 'playerPursuing'));
             return;
         } else {
             // TODO
@@ -68,9 +71,23 @@ class ModelHandler {
         this.handleShotPress();
         this.handleShellsMovement(dt);
         this.handleParticleChanging(dt);
+
         if (Store.isSinglePlayer) {
-            if (this.bot) {
-                this.bot.handleBotActions(dt);
+            for (const bot of this.bots) {
+                // if (!(bot.tank.respawnCount === 0 && bot.tank.hp === 0)) {
+                if (this.field.mapObjects.tanks.indexOf(bot.tank) !== -1) {
+                    bot.handleBotActions(dt);
+                } else {
+                    this.bots.splice(this.bots.indexOf(bot), 1);
+                }
+                // if (!bot.tank) {
+                //     // this.bots.splice(this.bots.indexOf(bot), 1);
+                // } else {
+                //     if (Math.random() > 0.98) {
+                //         console.log(bot.tank);
+                //     }
+                //     bot.handleBotActions(dt);
+                // }
             }
             return;
         } else {
