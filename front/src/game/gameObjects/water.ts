@@ -4,9 +4,10 @@ import Point from '../gameClasses/Point';
 import { entityDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler';
 
 class Water extends GameObject {
-    animationStep = [EntitySkins.water, EntitySkins.water, EntitySkins.water];
+    stateList = [EntitySkins.water1, EntitySkins.water2];
+    animationStep = 0;
     size = 50;
-    skin = this.animationStep[0];
+    skin = this.stateList[0];
     timeCreation = 0;
     animationOver = false;
     direction: entityDirections;
@@ -16,12 +17,13 @@ class Water extends GameObject {
         this.direction = direction;
     }
 
-    changeStep(dt: number) {
-        this.timeCreation += dt * 9;
-        if (this.timeCreation > 2) {
-            this.animationOver = true;
-        } else {
-            this.skin = this.animationStep[Math.round(this.timeCreation)];
+    changeAnimationStep(dt: number) {
+        this.timeCreation += dt;
+        console.log(dt);
+        if (this.timeCreation > 0.1) {
+            this.animationStep = 1 - this.animationStep;
+            this.skin = this.stateList[this.animationStep];
+            this.timeCreation = 0;
         }
     }
 }

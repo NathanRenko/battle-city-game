@@ -19,6 +19,69 @@ class Bot {
         this.algorithm = algorithm;
     }
 
+    handleBotActions(dt: number) {
+        // BOTS
+        const playerSpeed = 5;
+        const shift = Math.round(playerSpeed * dt * 10);
+        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
+        const movement: { [index: string]: Point } = {
+            ArrowDown: new Point(0, shift),
+            ArrowUp: new Point(0, -shift),
+            ArrowLeft: new Point(-shift, 0),
+            ArrowRight: new Point(shift, 0),
+        };
+
+        //@ts-ignore
+        if (this.algorithm === 'chaotic') {
+            if (this.pathLeft <= 0 || this.hasCollision(movement[this.way])) {
+                this.pathLeft = 0;
+                let percent = Math.random() * 100;
+                switch (true) {
+                    case percent < 50 && !this.hasCollision(movement[moves[0]]):
+                        this.way = moves[0];
+                        break;
+                    case percent < 70 && !this.hasCollision(movement[moves[2]]):
+                        this.way = moves[2];
+                        break;
+                    case percent < 90 && !this.hasCollision(movement[moves[3]]):
+                        this.way = moves[3];
+                        break;
+                    case percent <= 100:
+                        this.way = moves[1];
+                        break;
+                    default:
+                        break;
+                }
+                // this.bot.way = moves[Math.floor(Math.random() * moves.length)];
+                let max = 200;
+                let min = 100;
+                const distanceList = [100, 150, 200, 250];
+                let anotherPath = distanceList[Math.floor(Math.random() * distanceList.length)];
+                this.pathLeft = Math.floor(Math.random() * (max - min + 1)) + min;
+                this.pathLeft = anotherPath;
+            }
+            this.pathLeft -= shift;
+        }
+
+        if (this.algorithm === 'playerPursuing') {
+            this.way = this.findBestWay(dt) || 'ArrowDown';
+        }
+
+        this.entityHandler.handleTankMovements(this.tank, buttonsToDirections[this.way], movement[this.way]);
+
+        let percent = Math.random() * 100;
+        if (this.entityHandler.canShoot(this.tank) && percent > 70) {
+            this.entityHandler.makeShoot(this.tank);
+        }
+    }
+
+    hasCollision(move: Point) {
+        return (
+            this.field.findCollisionBlock(move, this.tank) !== undefined ||
+            this.field.hasBoundsCollision(this.tank, move, this.field.mapSize)
+        );
+    }
+
     findBestWay(dt: number) {
         let start = { x: this.tank.x, y: this.tank.y };
         let target = { x: this.field.mapObjects.tanks[0].x, y: this.field.mapObjects.tanks[0].y };
@@ -57,58 +120,6 @@ class Bot {
                 // }
                 return moves[1];
             }
-        }
-    }
-
-    handleBotActions(dt: number) {
-        // BOTS
-        const playerSpeed = 5;
-        const shift = Math.round(playerSpeed * dt * 10);
-        let moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
-        const movement: { [index: string]: Point } = {
-            ArrowDown: new Point(0, shift),
-            ArrowUp: new Point(0, -shift),
-            ArrowLeft: new Point(-shift, 0),
-            ArrowRight: new Point(shift, 0),
-        };
-
-        //@ts-ignore
-        if (this.algorithm === 'chaotic') {
-            if (this.pathLeft <= 0) {
-                let percent = Math.random() * 100;
-                switch (true) {
-                    case percent < 50:
-                        this.way = moves[0];
-                        break;
-                    case percent < 70:
-                        this.way = moves[2];
-                        break;
-                    case percent < 90:
-                        this.way = moves[3];
-                        break;
-                    case percent <= 100:
-                        this.way = moves[1];
-                        break;
-                    default:
-                        break;
-                }
-                // this.bot.way = moves[Math.floor(Math.random() * moves.length)];
-                let max = 200;
-                let min = 100;
-                this.pathLeft = Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-            this.pathLeft -= shift;
-        }
-
-        if (this.algorithm === 'playerPursuing') {
-            this.way = this.findBestWay(dt) || 'ArrowDown';
-        }
-
-        this.entityHandler.handleTankMovements(this.tank, buttonsToDirections[this.way], movement[this.way]);
-
-        let percent = Math.random() * 100;
-        if (this.entityHandler.canShoot(this.tank) && percent > 70) {
-            this.entityHandler.makeShoot(this.tank);
         }
     }
 }

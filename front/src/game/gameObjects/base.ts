@@ -16,7 +16,7 @@ class Base extends GameObject implements IHealth {
         super(x, y);
         this.team = team;
 
-        this.deathAudio = getAudio('./assets/sounds/399303__deleted-user-5405837__explosion-012.mp3');
+        this.deathAudio = getAudio('./assets/sounds/explosion1.mp3');
     }
 
     setDeathState() {

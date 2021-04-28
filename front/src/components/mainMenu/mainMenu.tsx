@@ -7,34 +7,35 @@ import Store from '../../game/gameEngine/store';
 import MapChooser from '../mapChooser/mapChooser';
 
 function MainMenu() {
-  const startGame = () => {
-    findPlayer();
-  };
-  const startTestGame = () => {
-    Store.isSinglePlayer = true;
-    ReactDOM.render(
-      <GameSection></GameSection>,
-      document.getElementById("root")
+    const startGame = () => {
+        //@ts-ignore
+        Store.playerName = document.querySelector('#playerName')?.value || 'Unknow Soldier';
+        findPlayer();
+    };
+    const startTestGame = () => {
+        //@ts-ignore
+        Store.playerName = document.querySelector('#playerName')?.value || 'Unknow Soldier';
+        Store.isSinglePlayer = true;
+        ReactDOM.render(<MapChooser></MapChooser>, document.querySelector('.mainMenuContainer'));
+    };
+    return (
+        <div className='mainMenuContainer'>
+            <label htmlFor=''>
+                Enter your name:
+                <input className='nameInput' type='text' id={'playerName'} />
+            </label>
+            <button className='playButton' onClick={startTestGame}>
+                Test Game
+            </button>
+            <button className='playButton' onClick={startGame}>
+                Find Game
+            </button>
+        </div>
     );
-  };
-  return (
-    <div className="mainMenuContainer">
-      <label htmlFor="">
-        Enter your name:
-        <input className="nameInput" type="text" />
-      </label>
-      <button className="playButton" onClick={startTestGame}>
-        Test Game
-      </button>
-      <button className="playButton" onClick={startGame}>
-        Find Game
-      </button>
-    </div>
-  );
 }
 
 function WaitingTable() {
-  let [seconds, changeSeconds] = useState(10);
+    let [seconds, changeSeconds] = useState(10);
 
     useEffect(() => {
         if (seconds > 0) {
@@ -57,11 +58,12 @@ function startGame() {
 }
 
 function findPlayer() {
+    Store.isSinglePlayer = false;
     Store.socket = io('ws://localhost:3001', {
         reconnectionDelayMax: 10000,
         auth: {
             token: '123',
-            username: Math.random(),
+            username: Store.playerName,
         },
         query: {},
     });
@@ -79,8 +81,8 @@ function findPlayer() {
         startGame();
     });
     ReactDOM.render(<p>Поиск игрока...</p>, document.querySelector('.mainMenuContainer'));
-    Store.socket.on('start', () => {
-        Store.isSinglePlayer = false;
+    Store.socket.on('start', (args: any) => {
+        Store.opponentName = args.usernames[Store.playerNumber];
         ReactDOM.render(<WaitingTable />, document.querySelector('.mainMenuContainer'));
     });
 }

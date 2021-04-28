@@ -9,21 +9,29 @@ import { getAudio } from '../gameEngine/engineModules/Utils';
 class Tank extends GameObject implements IHealth, IDirection {
     direction: entityDirections = entityDirections.Up;
     size = 35;
-    skin = EntitySkins.Tank;
+
     respawnCount = 2;
     hp = 2;
     maxHp = this.hp;
     lastShooted: number = 0;
     spawnPoint: Point;
+    team: 0 | 1;
     shootAudio: HTMLAudioElement;
     deathAudio: HTMLAudioElement;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, team: 0 | 1) {
         super(x, y);
         this.spawnPoint = new Point(x, y);
-
-        this.shootAudio = getAudio('./assets/sounds/146730__leszek-szary__shoot.wav');
-        this.deathAudio = getAudio('./assets/sounds/399303__deleted-user-5405837__explosion-012.mp3');
+        this.team = team;
+        if (team === 0) {
+            this.skin = EntitySkins.TankFirst;
+        } else {
+            this.skin = EntitySkins.TankSecond;
+        }
+        const soundList = ['./assets/sounds/shoot1.wav', './assets/sounds/shoot2.wav', './assets/sounds/shoot3.wav'];
+        let selectedSound = soundList[Math.floor(Math.random() * soundList.length)];
+        this.shootAudio = getAudio('./assets/sounds/shoot1.wav');
+        this.deathAudio = getAudio('./assets/sounds/explosion3.wav');
     }
 
     applyStep(shift: Point) {

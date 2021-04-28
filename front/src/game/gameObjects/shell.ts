@@ -6,10 +6,12 @@ class Shell extends GameObject {
     size = 6;
     direction: string;
     skin = EntitySkins.Shell;
+    team: 0 | 1;
 
-    constructor(x: number, y: number, shootDirection: string) {
+    constructor(x: number, y: number, shootDirection: string, team: 0 | 1) {
         super(x, y);
         this.direction = shootDirection;
+        this.team = team;
     }
 
     applyStep(shift: Point) {

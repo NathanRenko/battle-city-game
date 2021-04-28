@@ -5,6 +5,7 @@ import Particle from '../../../gameObjects/particle';
 import Shell from '../../../gameObjects/shell';
 import SteelWall from '../../../gameObjects/steel-wall';
 import Tank from '../../../gameObjects/tank';
+import Tree from '../../../gameObjects/tree';
 import Water from '../../../gameObjects/water';
 
 enum EntityClasses {
@@ -26,10 +27,15 @@ enum EntityGroups {
     particles,
 }
 
-type obstacleType = SteelWall | BrickWall | House;
+type obstacleType = SteelWall | BrickWall | House | Tree;
 
 function isObstacle(entity: obstacleType): entity is obstacleType {
-    return entity.constructor === SteelWall || entity.constructor === BrickWall || entity.constructor === House;
+    return (
+        entity.constructor === SteelWall ||
+        entity.constructor === BrickWall ||
+        entity.constructor === House ||
+        entity.constructor === Tree
+    );
 }
 
 export { EntityClasses, EntityGroups, isObstacle };

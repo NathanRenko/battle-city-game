@@ -1,6 +1,9 @@
 import Store from '../../game/gameEngine/store';
 import Map from '../map/map';
 import './mapChooser.css';
+import ReactDOM from 'react-dom';
+import React from 'react';
+import GameSection from '../gameSection/gameSection';
 
 function MapChooser(props: any) {
     return (
@@ -16,8 +19,13 @@ function MapChooser(props: any) {
 }
 
 function chooseMap(event: React.ChangeEvent<HTMLInputElement>) {
-    console.log(event.target.value);
-    Store.socket.emit('vote', event.target.value);
+    if (Store.isSinglePlayer) {
+        Store.choosenMap = event.target.value;
+        ReactDOM.render(<GameSection></GameSection>, document.getElementById('root'));
+    } else {
+        console.log(event.target.value);
+        Store.socket.emit('vote', event.target.value);
+    }
 }
 
 export default MapChooser;

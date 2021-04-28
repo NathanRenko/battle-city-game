@@ -13,9 +13,14 @@ import { obstacleType } from './constObjects/entityClasses';
 import Field from './Field';
 
 export default class CollisionHandler {
-    handleShellСollision(collisionBlock: Tank | obstacleType | Base | undefined, gameObject: Shell, field: Field) {
-        this.shellToParticle(gameObject, field);
+    handleShellСollision(collisionBlock: Tank | obstacleType | Base | undefined, shell: Shell, field: Field) {
+        this.shellToParticle(shell, field);
         if (collisionBlock) {
+            if ('team' in collisionBlock) {
+                if (collisionBlock.team === shell.team) {
+                    return;
+                }
+            }
             if ('hp' in collisionBlock) {
                 this.decreaseHp(collisionBlock, field);
             }
@@ -29,6 +34,7 @@ export default class CollisionHandler {
                 collisionBlock.changeState();
             }
         }
+        
         if (collisionBlock.hp === 0) {
             this.deathHandler(collisionBlock, field);
         }

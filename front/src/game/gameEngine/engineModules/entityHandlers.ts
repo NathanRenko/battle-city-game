@@ -2,6 +2,7 @@ import GameObject from '../../gameClasses/gameObject';
 import Point from '../../gameClasses/Point';
 import Base from '../../gameObjects/base';
 import BrickWall from '../../gameObjects/brick-wall';
+import House from '../../gameObjects/house';
 import Particle from '../../gameObjects/particle';
 import Shell from '../../gameObjects/shell';
 import SteelWall from '../../gameObjects/steel-wall';
@@ -46,6 +47,10 @@ class EntityHandlers {
         }
     }
 
+    handleHouseFireAnimation(house: House, dt: number) {
+        house.changeAnimationStep(dt);
+    }
+
     canShoot(tank: Tank) {
         let now = Date.now();
         if ((now - tank.lastShooted) / 1000 < 1) {
@@ -75,7 +80,7 @@ class EntityHandlers {
                 spawnPoint = new Point(shootPlayer.x - shellSize, shootPlayer.y + sizeDelta / 2);
                 break;
         }
-        let shell = new Shell(spawnPoint.x, spawnPoint.y, shootPlayer.direction);
+        let shell = new Shell(spawnPoint.x, spawnPoint.y, shootPlayer.direction, shootPlayer.team);
         this.field.mapObjects.shell.push(shell);
     }
 }

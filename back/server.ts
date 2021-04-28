@@ -45,10 +45,17 @@ io.on('connection', (socket) => {
     const socketsAmount = Array.from(io.sockets.sockets).length;
     if (socketsAmount % 2 === 0) {
         const roomName = uuidv4();
-        Array.from(io.sockets.sockets)[socketsAmount - 1][1].join(roomName);
-        Array.from(io.sockets.sockets)[socketsAmount - 2][1].join(roomName);
+
+        const player1 = Array.from(io.sockets.sockets)[socketsAmount - 1][1];
+        const player2 = Array.from(io.sockets.sockets)[socketsAmount - 2][1];
+        player1.join(roomName);
+        player2.join(roomName);
+
+        const username1 = users.find((user) => user.userID === player1.id).username;
+        const username2 = users.find((user) => user.userID === player2.id).username;
+        console.log([username1, username2]);
         roomData.set(roomName, { userVotes: new Map(), readySockets: 0 });
-        io.to(roomName).emit('start');
+        io.to(roomName).emit('start', { usernames: [username1, username2] });
     }
 });
 

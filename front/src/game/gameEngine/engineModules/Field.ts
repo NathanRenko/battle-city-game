@@ -13,6 +13,8 @@ import Water from '../../gameObjects/water';
 import { entityDirections } from './constObjects/DirectionHandler';
 import Store from '../store';
 import mapCollection from './constObjects/mapCollection';
+import Foliage from '../../gameObjects/foliage';
+import Tree from '../../gameObjects/tree';
 
 class Field {
     mapObjects: {
@@ -22,9 +24,32 @@ class Field {
         base: Base[];
         particles: Particle[];
         water: Water[];
-    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [] };
+        foliage: Foliage[];
+    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [], foliage: [] };
 
     // player: Tank;
+
+    mapSize: { width: number; height: number };
+    constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
+        // TODO choosenMap
+        this.mapSize = { width: mapWidth, height: mapHeight };
+
+        if (Store.isSinglePlayer) {
+            if (choosenMap === 'first') {
+                this.generateMap(mapCollection.map1SinglePlayer);
+            } else {
+                this.generateMap(mapCollection.map2SinglePlayer);
+            }
+        } else {
+            if (choosenMap === 'first') {
+                this.generateMap(mapCollection.map1Multiplayer);
+            } else {
+                this.generateMap(mapCollection.map1Multiplayer);
+            }
+        }
+        // alert(this.map.every((row) => row.length === 20));
+        // alert(this.map[1].length);
+    }
 
     generateMap(map: string[][]) {
         const tileSize = 50;
@@ -49,41 +74,38 @@ class Field {
                     continue;
                 }
                 if (symbol === 'h') {
-                    this.mapObjects.obstacle.push(new House(x * tileSize, y * tileSize));
+                    this.mapObjects.obstacle.push(new House(x * tileSize, y * tileSize, Store.choosenMap));
                     continue;
                 }
                 if (symbol === 'w') {
                     this.mapObjects.water.push(new Water(x * tileSize, y * tileSize, entityDirections.Left));
                     continue;
                 }
+                if (symbol.startsWith('T')) {
+                    //@ts-ignore
+                    const color: 'a' | 'o' = symbol[1];
+                    this.mapObjects.obstacle.push(new Tree(x * tileSize, y * tileSize, color));
+                }
+                if (symbol.startsWith('f')) {
+                    //@ts-ignore
+                    const color: 'g' | 'y' = symbol[1];
+                    this.mapObjects.foliage.push(new Foliage(x * tileSize, y * tileSize, color));
+                }
                 if (symbol.startsWith('t')) {
                     const tankNumber: number = parseInt(symbol.split('t')[1]);
                     console.log('tank number: ' + (tankNumber - 1));
-                    this.mapObjects.tanks[tankNumber - 1] = new Tank(x * tileSize, y * tileSize);
+                    this.mapObjects.tanks[tankNumber - 1] = new Tank(
+                        x * tileSize,
+                        y * tileSize,
+                        tankNumber === 1 ? 0 : 1
+                    );
                     continue;
                 }
             }
         }
     }
 
-    mapSize: { width: number; height: number };
-    constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
-        // TODO choosenMap
-        this.mapSize = { width: mapWidth, height: mapHeight };
-        if (choosenMap) {
-            // insert some logic
-        }
-        if (Store.isSinglePlayer) {
-            this.generateMap(mapCollection.map1SinglePlayer);
-        } else {
-            this.generateMap(mapCollection.map1Multiplayer);
-        }
-        // alert(this.map.every((row) => row.length === 20));
-        // alert(this.map[1].length);
-        this.buildFirstTypeMap();
-    }
-
-    getAllMapObjects(): [Base[], obstacleType[], Water[], Tank[], Shell[], Particle[]] {
+    getAllMapObjects(): [Base[], obstacleType[], Water[], Tank[], Shell[], Particle[], Foliage[]] {
         return [
             this.mapObjects.base,
             this.mapObjects.obstacle,
@@ -91,32 +113,9 @@ class Field {
             this.mapObjects.tanks,
             this.mapObjects.shell,
             this.mapObjects.particles,
+            this.mapObjects.foliage,
         ];
     }
-
-    buildFirstTypeMap = () => {
-        // this.mapObjects.tanks = [new Tank(120, 700), new Tank(120, 20)];
-        // this.mapObjects.obstacle = [];
-        // let steelWallSize = new SteelWall(0, 0).size;
-        // let brickWallSize = new SteelWall(0, 0).size;
-        // for (let index = 0; index < 5; index++) {
-        //     this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 670));
-        // }
-        // for (let index = 0; index < 5; index++) {
-        //     this.mapObjects.obstacle.push(new SteelWall(350 + index * steelWallSize, 80));
-        // }
-        // for (let index = 0; index < 65; index++) {
-        //     this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 620));
-        // }
-        // for (let index = 0; index < 65; index++) {
-        //     this.mapObjects.obstacle.push(new BrickWall(index * brickWallSize, 130));
-        // }
-        // // this.player = this.tanks[0];
-        // this.mapObjects.base = [new Base(450, 730, 0), new Base(450, 10, 1)];
-        // this.mapObjects.obstacle.push(new House(450, 350));
-        // this.mapObjects.water.push(new Water(600, 350, entityDirections.Left));
-        // this.generateMap(this.map);
-    };
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
         let minimalStep = Object.assign({}, step);
@@ -191,7 +190,12 @@ class Field {
 
         // TODO
 
-        if (child.constructor === SteelWall || child.constructor === BrickWall || child.constructor === House) {
+        if (
+            child.constructor === SteelWall ||
+            child.constructor === BrickWall ||
+            child.constructor === House ||
+            child.constructor === Tree
+        ) {
             return this.mapObjects.obstacle;
         }
 

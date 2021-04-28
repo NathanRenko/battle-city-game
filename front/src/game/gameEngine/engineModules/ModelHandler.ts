@@ -10,6 +10,7 @@ import backToMainMenu from '../StageSwitcher';
 import GameObject from '../../gameClasses/gameObject';
 import Tank from '../../gameObjects/tank';
 import Bot from '../../gameObjects/bot';
+import House from '../../gameObjects/house';
 
 class ModelHandler {
     field: Field;
@@ -51,9 +52,9 @@ class ModelHandler {
 
     setupSocket() {
         Store.socket.on('move', (event: any, ...args: any) => {
-            this.opponent.x = event[0].player.x;
-            this.opponent.y = event[0].player.y;
-            this.opponent.direction = event[0].player.direction;
+            this.opponent.x = event[0].x;
+            this.opponent.y = event[0].y;
+            this.opponent.direction = event[0].direction;
         });
         Store.socket.on('shoot', (event: any, ...args: any) => {
             this.entityHandler.makeShoot(this.opponent);
@@ -73,7 +74,8 @@ class ModelHandler {
         this.handleShotPress();
         this.handleShellsMovement(dt);
         this.handleParticleChanging(dt);
-
+        this.handleHouseCollectionAnimation(dt);
+        this.handleWaterAnimation(dt);
         if (Store.isSinglePlayer) {
             for (const bot of this.bots) {
                 // if (!(bot.tank.respawnCount === 0 && bot.tank.hp === 0)) {
@@ -93,7 +95,11 @@ class ModelHandler {
             }
             return;
         } else {
-            Store.socket.emit('move', { player: this.field.mapObjects.tanks[this.socketId] });
+            Store.socket.emit('move', {
+                x: this.currentPlayer.x,
+                y: this.currentPlayer.y,
+                direction: this.currentPlayer.direction,
+            });
         }
     }
 
@@ -118,9 +124,7 @@ class ModelHandler {
                 if (Store.isSinglePlayer) {
                     return;
                 } else {
-                    Store.socket.emit('shoot', {
-                        player: this.currentPlayer.direction,
-                    });
+                    Store.socket.emit('shoot');
                 }
             }
         }
@@ -144,6 +148,22 @@ class ModelHandler {
     handleParticleChanging(dt: number) {
         for (const particle of this.field.mapObjects.particles) {
             this.entityHandler.handleParticle(particle, dt);
+        }
+    }
+
+    handleHouseCollectionAnimation(dt: number) {
+        for (const obstacle of this.field.mapObjects.obstacle) {
+            if (obstacle.constructor === House) {
+                if (obstacle.stateNumber !== 0) {
+                    this.entityHandler.handleHouseFireAnimation(obstacle, dt);
+                }
+            }
+        }
+    }
+
+    handleWaterAnimation(dt: number) {
+        for (const water of this.field.mapObjects.water) {
+            water.changeAnimationStep(dt);
         }
     }
 

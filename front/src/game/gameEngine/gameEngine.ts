@@ -18,18 +18,33 @@ class GameEngine {
     field!: Field;
     ModelHandler!: ModelHandler;
     lastFrameTime!: number;
-    baseHp = document.getElementById('hp');
-    enemyBaseHp = document.getElementById('enemyBaseHp');
-    tankHp = document.getElementById('tankHp');
+
+    respawnCountPanel = document.getElementById('respawnCount');
+    enemyCountPanel = document.getElementById('enemyCount');
+
+    opponentRespawnCountPanel = document.getElementById('opponentRespawnCount');
+    opponentNamePanel = document.getElementById('opponentName');
+
     skinCollection!: SkinCollection;
     gameFinishRules = { singlePlayer: {}, multiPlayer: {} };
     constructor() {
         canvas = document.querySelector('.gameField') as HTMLCanvasElement;
         // @ts-ignore
         this.canvasContext = canvas.getContext('2d');
-        let backgroundImage = './assets/images/RPG_Nature_Tileset_Autumn.png';
+        let backgroundImage: string;
+        if (Store.choosenMap === 'first') {
+            backgroundImage = './assets/images/RPG_Nature_Tileset_Autumn.png';
+        } else {
+            backgroundImage = './assets/images/street.png';
+        }
+
         canvas.style.backgroundImage = `url(${backgroundImage})`;
         canvas.style.backgroundRepeat = 'repeat';
+        if (!Store.isSinglePlayer) {
+            if (this.opponentNamePanel) {
+                this.opponentNamePanel.textContent = Store.opponentName;
+            }
+        }
         this.init();
         this.start();
     }
@@ -99,26 +114,24 @@ class GameEngine {
     }
 
     updateGameInfo() {
-        if (
-            this.baseHp &&
-            this.field.mapObjects.base[0] &&
-            this.baseHp.textContent !== this.field.mapObjects.base[0].hp.toString()
-        ) {
-            this.baseHp.textContent = this.field.mapObjects.base[0].hp.toString();
+        if (this.respawnCountPanel) {
+            //@ts-ignore
+            this.respawnCountPanel.textContent = this.ModelHandler.currentPlayer.respawnCount || '0';
         }
-        if (
-            this.enemyBaseHp &&
-            this.field.mapObjects.base[1] &&
-            this.enemyBaseHp.textContent !== this.field.mapObjects.base[1].hp.toString()
-        ) {
-            this.enemyBaseHp.textContent = this.field.mapObjects.base[1].hp.toString();
-        }
-        if (
-            this.tankHp &&
-            this.field.mapObjects.tanks[0] &&
-            this.tankHp.textContent !== this.field.mapObjects.tanks[0].hp.toString()
-        ) {
-            this.tankHp.textContent = this.field.mapObjects.tanks[0].hp.toString();
+        if (Store.isSinglePlayer) {
+            if (this.enemyCountPanel) {
+                //@ts-ignore
+                this.enemyCountPanel.textContent = this.ModelHandler.bots.length || '';
+            }
+        } else {
+            if (this.opponentRespawnCountPanel) {
+                //@ts-ignore
+                this.opponentRespawnCountPanel.textContent = this.ModelHandler.opponent.respawnCount || '0';
+            }
+            if (this.opponentNamePanel) {
+                //@ts-ignore
+                this.opponentNamePanel.textContent = Store.opponentName || '';
+            }
         }
     }
 
