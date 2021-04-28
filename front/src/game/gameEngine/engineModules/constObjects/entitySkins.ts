@@ -4,7 +4,7 @@ const EntitySkins = {
     Base: assetsRoot + 'base.svg',
     BaseHit: assetsRoot + 'base-hit.svg',
     BrickWall: assetsRoot + 'brick-wall.svg',
-    SteelWall: assetsRoot + 'steel-wall.svg',
+    SteelWall: assetsRoot + 'steel-wall.png',
     TankFirst: assetsRoot + 'tank.svg',
     TankSecond: assetsRoot + 'tank_2.svg',
     Shell: assetsRoot + 'shell.svg',
