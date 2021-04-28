@@ -6,7 +6,6 @@ import { buttonsToDirections, entityDirections } from './constObjects/DirectionH
 import io from 'socket.io-client';
 import Store from '../store';
 import Base from '../../gameObjects/base';
-import backToMainMenu from '../StageSwitcher';
 import GameObject from '../../gameClasses/gameObject';
 import Tank from '../../gameObjects/tank';
 import Bot from '../../gameObjects/bot';
@@ -61,7 +60,7 @@ class ModelHandler {
         });
 
         Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
-            backToMainMenu('Your opponent disconnected.');
+            Store.openModal('Your opponent disconnected.');
             Store.socket.disconnect();
         });
 

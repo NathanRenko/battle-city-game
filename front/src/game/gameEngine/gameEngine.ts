@@ -10,7 +10,6 @@ import Figure from '../gameClasses/figure';
 import Point from '../gameClasses/Point';
 import Base from '../gameObjects/base';
 import Store from './store';
-import backToMainMenu from './StageSwitcher';
 import Bot from '../gameObjects/bot';
 
 class GameEngine {
@@ -105,11 +104,11 @@ class GameEngine {
             Store.socket.off('shoot');
             Store.socket.disconnect();
         }
-
+        
         if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.currentPlayer.hp === 0) {
-            backToMainMenu('You were defeated.');
+            Store.openModal('You were defeated.');
         } else {
-            backToMainMenu('Victory!');
+            Store.openModal('Victory!');
         }
     }
 
