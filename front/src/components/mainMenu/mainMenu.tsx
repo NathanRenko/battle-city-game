@@ -21,14 +21,14 @@ function MainMenu() {
     return (
         <div className='mainMenuContainer'>
             <label htmlFor=''>
-                Enter your name:
+                Введите имя:
                 <input className='nameInput' type='text' id={'playerName'} />
             </label>
             <button className='playButton' onClick={startTestGame}>
-                Test Game
+                Одиночная игра
             </button>
             <button className='playButton' onClick={startGame}>
-                Find Game
+                Мультиплеер
             </button>
         </div>
     );

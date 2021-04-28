@@ -104,11 +104,11 @@ class GameEngine {
             Store.socket.off('shoot');
             Store.socket.disconnect();
         }
-        
+
         if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.currentPlayer.hp === 0) {
-            Store.openModal('You were defeated.');
+            Store.openModal('Поражение.');
         } else {
-            Store.openModal('Victory!');
+            Store.openModal('Победа!');
         }
     }
 

@@ -51,7 +51,7 @@ function GameSection() {
                     <div className={'flexContainer'}>
                         <p className={'gameResult'}>{gameResult}</p>
                         <button className='playButton' onClick={backToMainMenu}>
-                            Back to Main Menu
+                            Главное меню
                         </button>
                     </div>
                 </Modal>
