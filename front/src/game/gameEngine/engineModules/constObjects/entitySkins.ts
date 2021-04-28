@@ -31,6 +31,8 @@ const EntitySkins = {
     foilageYellow: assetsRoot + 'bush_yellow.svg',
     treeOak: assetsRoot + 'oak_tree.svg',
     treeApple: assetsRoot + 'apple_tree.svg',
+    bridgeUp: assetsRoot + 'apple_tree.svg',
+    bridgeLeft: assetsRoot + 'oak_tree.svg',
 };
 
 export default EntitySkins;

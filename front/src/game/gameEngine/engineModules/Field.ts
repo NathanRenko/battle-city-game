@@ -15,6 +15,7 @@ import Store from '../store';
 import mapCollection from './constObjects/mapCollection';
 import Foliage from '../../gameObjects/foliage';
 import Tree from '../../gameObjects/tree';
+import Bridge from '../../gameObjects/bridge';
 
 class Field {
     mapObjects: {
@@ -25,7 +26,8 @@ class Field {
         particles: Particle[];
         water: Water[];
         foliage: Foliage[];
-    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [], foliage: [] };
+        bridges: Bridge[];
+    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [], foliage: [], bridges: [] };
 
     // player: Tank;
 
@@ -81,6 +83,11 @@ class Field {
                     this.mapObjects.water.push(new Water(x * tileSize, y * tileSize, entityDirections.Left));
                     continue;
                 }
+                if (symbol.startsWith('B')) {
+                    //@ts-ignore
+                    const side: 'l' | 'u' = symbol[1];
+                    this.mapObjects.bridges.push(new Bridge(x * tileSize, y * tileSize, side));
+                }
                 if (symbol.startsWith('T')) {
                     //@ts-ignore
                     const color: 'a' | 'o' = symbol[1];
@@ -105,11 +112,12 @@ class Field {
         }
     }
 
-    getAllMapObjects(): [Base[], obstacleType[], Water[], Tank[], Shell[], Particle[], Foliage[]] {
+    getAllMapObjects(): [Base[], obstacleType[], Water[], Bridge[], Tank[], Shell[], Particle[], Foliage[]] {
         return [
             this.mapObjects.base,
             this.mapObjects.obstacle,
             this.mapObjects.water,
+            this.mapObjects.bridges,
             this.mapObjects.tanks,
             this.mapObjects.shell,
             this.mapObjects.particles,
