@@ -60,7 +60,7 @@ class ModelHandler {
         });
 
         Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
-            Store.openModal('Your opponent disconnected.');
+            Store.openModal('Оппонент отключился.');
             Store.socket.disconnect();
         });
 
