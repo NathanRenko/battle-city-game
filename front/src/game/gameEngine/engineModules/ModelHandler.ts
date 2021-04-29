@@ -34,7 +34,6 @@ class ModelHandler {
             this.bots.push(new Bot(this.field.mapObjects.tanks[3], this.field, this.entityHandler, 'playerPursuing'));
             return;
         } else {
-            // TODO
             this.socketId = Store.playerNumber;
             console.log('socket: ' + this.socketId);
             this.initPlayer(this.socketId, this.socketId);
@@ -62,7 +61,6 @@ class ModelHandler {
             Store.openModal('Оппонент отключился.');
             Store.socket.disconnect();
         });
-        // this.socketId - underfined, т.к. socket.on выполняется позже
         console.log('socket: ' + this.socketId);
     }
 
@@ -75,20 +73,11 @@ class ModelHandler {
         this.handleWaterAnimation(dt);
         if (Store.isSinglePlayer) {
             for (const bot of this.bots) {
-                // if (!(bot.tank.respawnCount === 0 && bot.tank.hp === 0)) {
                 if (this.field.mapObjects.tanks.indexOf(bot.tank) !== -1) {
                     bot.handleBotActions(dt);
                 } else {
                     this.bots.splice(this.bots.indexOf(bot), 1);
                 }
-                // if (!bot.tank) {
-                //     // this.bots.splice(this.bots.indexOf(bot), 1);
-                // } else {
-                //     if (Math.random() > 0.98) {
-                //         console.log(bot.tank);
-                //     }
-                //     bot.handleBotActions(dt);
-                // }
             }
             return;
         } else {

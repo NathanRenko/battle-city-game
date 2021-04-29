@@ -29,11 +29,8 @@ class Field {
         bridges: Bridge[];
     } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [], foliage: [], bridges: [] };
 
-    // player: Tank;
-
     mapSize: { width: number; height: number };
     constructor(mapWidth: number, mapHeight: number, choosenMap: string) {
-        // TODO choosenMap
         this.mapSize = { width: mapWidth, height: mapHeight };
 
         if (Store.isSinglePlayer) {
@@ -49,8 +46,6 @@ class Field {
                 this.generateMap(mapCollection.map2Multiplayer);
             }
         }
-        // alert(this.map.every((row) => row.length === 20));
-        // alert(this.map[1].length);
     }
 
     generateMap(map: string[][]) {
@@ -127,7 +122,6 @@ class Field {
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
         let minimalStep = Object.assign({}, step);
-        // let minimalStep = { ...step };
         let collisionBlock = this.findCollisionBlock(minimalStep, gameObject);
         while (
             (collisionBlock && this.hasObstacleCollision(gameObject, minimalStep, collisionBlock)) ||
@@ -146,7 +140,7 @@ class Field {
     }
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
-        let isShell = gameObject.constructor === Shell;
+        const isShell = gameObject.constructor === Shell;
         return (
             this.mapObjects.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle)) ||
             this.mapObjects.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base)) ||
@@ -191,13 +185,6 @@ class Field {
     getParentCollection(
         child: obstacleType | Shell | Base | Particle | Tank | Water
     ): obstacleType[] | Shell[] | Base[] | Particle[] | Tank[] | Water {
-        // if (isObstacle(child)) {
-        //     let a = child;
-        //     return this.mapObjects.obstacle;
-        // }
-
-        // TODO
-
         if (
             child.constructor === SteelWall ||
             child.constructor === BrickWall ||
@@ -225,29 +212,6 @@ class Field {
         alert(child.constructor.name);
         throw Error('Unknown type');
     }
-
-    // createEntity(entityClass: string, coords: Array<[number, number]>) {
-    //     switch (entityClass) {
-    //         case EntityClasses.SteelWall:
-    //         case EntityClasses.BrickWall:
-    //         case EntityClasses.House:
-    //         case EntityClasses.Base:
-    //             // for (const coord of coords) {
-    //             //     this.obstacle.push;
-    //             // }
-    //             break;
-    //         case EntityClasses.Tank:
-    //             return this.mapObjects.tanks;
-    //         case EntityClasses.Shell:
-    //             return this.mapObjects.shell;
-    //         case EntityClasses.Particle:
-    //             return this.mapObjects.particles;
-
-    //         default:
-    //             alert(entityClass);
-    //             throw Error('Unknown type');
-    //     }
-    // }
 }
 
 export default Field;

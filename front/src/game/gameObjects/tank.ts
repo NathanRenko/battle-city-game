@@ -28,8 +28,7 @@ class Tank extends GameObject implements IHealth, IDirection {
         } else {
             this.skin = EntitySkins.TankSecond;
         }
-        const soundList = ['./assets/sounds/shoot1.wav', './assets/sounds/shoot2.wav', './assets/sounds/shoot3.wav'];
-        let selectedSound = soundList[Math.floor(Math.random() * soundList.length)];
+
         this.shootAudio = getAudio('./assets/sounds/shoot1.wav');
         this.deathAudio = getAudio('./assets/sounds/explosion3.wav');
     }

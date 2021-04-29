@@ -34,7 +34,7 @@ export default class CollisionHandler {
                 collisionBlock.changeState();
             }
         }
-        
+
         if (collisionBlock.hp === 0) {
             this.deathHandler(collisionBlock, field);
         }
@@ -53,7 +53,6 @@ export default class CollisionHandler {
             return;
         }
 
-        // TODO
         if (
             collisionBlock.constructor === SteelWall ||
             collisionBlock.constructor === BrickWall ||
@@ -73,15 +72,9 @@ export default class CollisionHandler {
             entity.y = entity.spawnPoint.y;
             entity.hp = entity.maxHp;
             entity.respawnCount--;
-        }
-        // TODO
-        else {
+        } else {
             let parentCollection = field.getParentCollection(entity);
-            // delete parentCollection[parentCollection.indexOf(entity)]
             parentCollection.splice(parentCollection.indexOf(entity), 1);
-
-            //@ts-ignore
-            // entity = undefined;
         }
     }
 
@@ -105,7 +98,6 @@ export default class CollisionHandler {
                 break;
             default:
                 throw new Error();
-                break;
         }
         let particle = new Particle(spawnPoint.x, spawnPoint.y, shell.direction);
         field.mapObjects.particles.push(particle);

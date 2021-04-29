@@ -1,5 +1,3 @@
-// const img =  require('../../assets/battle-city-tank.jpg');
-
 class GameObject {
     x: number;
     y: number;

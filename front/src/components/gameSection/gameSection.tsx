@@ -9,7 +9,6 @@ import MainMenu from '../mainMenu/mainMenu';
 
 Modal.setAppElement('#root');
 function GameSection() {
-    let subtitle = 1;
     const customStyles = {
         content: {
             top: '50%',
@@ -29,9 +28,7 @@ function GameSection() {
         setIsOpen(true);
     }
     Store.openModal = openModal;
-    function afterOpenModal() {
-        // references are now sync'd and can be accessed.
-    }
+    function afterOpenModal() {}
     const backToMainMenu = () => {
         ReactDOM.render(<MainMenu></MainMenu>, document.getElementById('root'));
     };

@@ -88,7 +88,6 @@ class GameEngine {
                 (this.ModelHandler.opponent.respawnCount === 0 && this.ModelHandler.opponent.hp === 0)
             );
         }
-        // TODO improve rules
     }
 
     init() {
@@ -155,10 +154,6 @@ class GameEngine {
 
             if (isDirectionable) {
                 for (const entity of entityCollection) {
-                    // TODO
-                    // if (entity.constructor === Tank && !this.isTankAlive(entity)) {
-                    //     continue;
-                    // }
                     // @ts-ignore
                     this.drawRotatedEntity(this.canvasContext, entity);
                     if ('maxHp' in entity) {
@@ -199,9 +194,6 @@ class GameEngine {
         );
 
         context.restore();
-        // if ('maxHp' in entity) {
-        //     this.drawHpBar(context, entity);
-        // }
     }
 
     drawHpBar(context: CanvasRenderingContext2D, entity: Tank | Base) {
@@ -250,18 +242,10 @@ class GameEngine {
                     throw new Error();
             }
 
-            // context.translate(entity.x + entity.size / 2, entity.y + entity.size / 2);
-            // context.rotate((directionToAngle[entity.direction] * Math.PI) / 180);
             context.fillRect(x, y, width, height);
         } else {
             context.fillRect(entity.x, entity.y + entity.size + margin, hpPercent * entity.size, hpBarH);
         }
-        // @ts-ignore
-        // context.fillText(entity.hp, spawnPoint.x, spawnPoint.y, width, height);
-
-        // if ('maxHp' in entity) {
-        //     this.drawHpBar(context, entity);
-        // }
     }
 
     drawEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {

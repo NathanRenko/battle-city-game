@@ -6,7 +6,7 @@ class Particle extends GameObject {
     animationStep = [EntitySkins.hit1, EntitySkins.hit2, EntitySkins.hit3];
     size = 50;
     skin = this.animationStep[0];
-    timeCreation = 0;
+    timePassed = 0;
     direction: string;
     animationOver = false;
 
@@ -16,11 +16,11 @@ class Particle extends GameObject {
     }
 
     changeStep(dt: number) {
-        this.timeCreation += dt * 9;
-        if (this.timeCreation > 2) {
+        this.timePassed += dt * 9;
+        if (this.timePassed > 2) {
             this.animationOver = true;
         } else {
-            this.skin = this.animationStep[Math.round(this.timeCreation)];
+            this.skin = this.animationStep[Math.round(this.timePassed)];
         }
     }
 }

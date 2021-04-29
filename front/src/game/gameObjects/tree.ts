@@ -4,9 +4,9 @@ import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
 class Tree extends GameObject {
     size = 50;
 
-    constructor(x: number, y: number, color: 'o' | 'a') {
+    constructor(x: number, y: number, type: 'o' | 'a') {
         super(x, y);
-        if (color === 'o') {
+        if (type === 'o') {
             this.skin = EntitySkins.treeOak;
         } else {
             this.skin = EntitySkins.treeApple;

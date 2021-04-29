@@ -10,7 +10,7 @@ class House extends GameObject implements IHealth {
     hp = 4;
     stateNumber = 0;
     animationStep = 0;
-    past = 0;
+    timePassed = 0;
 
     constructor(x: number, y: number, chosenMap: string) {
         super(x, y);
@@ -33,11 +33,11 @@ class House extends GameObject implements IHealth {
     }
 
     changeAnimationStep(dt: number) {
-        this.past += dt;
-        if (this.past > 0.1) {
+        this.timePassed += dt;
+        if (this.timePassed > 0.1) {
             this.animationStep = 1 - this.animationStep;
             this.skin = this.stateList[this.stateNumber][this.animationStep];
-            this.past = 0;
+            this.timePassed = 0;
         }
     }
 

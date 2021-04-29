@@ -30,9 +30,7 @@ class EntityHandlers {
 
     handleTankMovements(tank: Tank, direction: entityDirections, step: Point) {
         let [availableStep, collisionBlock] = this.field.getMinimalStep(step, tank);
-        if (availableStep.x === 0 && availableStep.y === 0) {
-            // this.handleСollision();
-        } else {
+        if (!(availableStep.x === 0 && availableStep.y === 0)) {
             tank.applyStep(availableStep);
         }
         tank.changeDirection(direction);
@@ -52,7 +50,7 @@ class EntityHandlers {
     }
 
     canShoot(tank: Tank) {
-        let now = Date.now();
+        const now = Date.now();
         if ((now - tank.lastShooted) / 1000 < 1) {
             return false;
         } else {

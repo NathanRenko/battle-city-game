@@ -12,10 +12,6 @@ function MapChooser(props: any) {
         <div className={'cardChoseContainer'}>
             <Map src={firstMap} onClick={chooseMap} change={chooseMap} value={'first'} />
             <Map src={secondMap} onClick={chooseMap} change={chooseMap} value={'second'} />
-
-            {/* {props.children} */}
-            {/* <img className={'card'} src={'./assets/map1.png'} />
-            <img className={'card'} src={'./assets/map2.png'} /> */}
         </div>
     );
 }

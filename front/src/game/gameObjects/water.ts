@@ -8,7 +8,7 @@ class Water extends GameObject {
     animationStep = 0;
     size = 50;
     skin = this.stateList[0];
-    timeCreation = 0;
+    timePassed = 0;
     animationOver = false;
     direction: entityDirections;
 
@@ -18,11 +18,11 @@ class Water extends GameObject {
     }
 
     changeAnimationStep(dt: number) {
-        this.timeCreation += dt;
-        if (this.timeCreation > 0.1) {
+        this.timePassed += dt;
+        if (this.timePassed > 0.1) {
             this.animationStep = 1 - this.animationStep;
             this.skin = this.stateList[this.animationStep];
-            this.timeCreation = 0;
+            this.timePassed = 0;
         }
     }
 }
