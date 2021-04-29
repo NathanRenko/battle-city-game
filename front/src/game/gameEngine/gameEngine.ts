@@ -31,6 +31,8 @@ class GameEngine {
         // @ts-ignore
         this.canvasContext = canvas.getContext('2d');
         let backgroundImage: string;
+        console.log('Store.choosenMap');
+        console.log(Store.choosenMap);
         if (Store.choosenMap === 'first') {
             backgroundImage = './assets/images/RPG_Nature_Tileset_Autumn.png';
         } else {

@@ -46,7 +46,7 @@ class Field {
             if (choosenMap === 'first') {
                 this.generateMap(mapCollection.map1Multiplayer);
             } else {
-                this.generateMap(mapCollection.map1Multiplayer);
+                this.generateMap(mapCollection.map2Multiplayer);
             }
         }
         // alert(this.map.every((row) => row.length === 20));

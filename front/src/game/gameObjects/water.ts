@@ -19,7 +19,6 @@ class Water extends GameObject {
 
     changeAnimationStep(dt: number) {
         this.timeCreation += dt;
-        console.log(dt);
         if (this.timeCreation > 0.1) {
             this.animationStep = 1 - this.animationStep;
             this.skin = this.stateList[this.animationStep];

@@ -3,6 +3,8 @@ const assetsRoot = './assets/images/';
 const EntitySkins = {
     Base: assetsRoot + 'base.svg',
     BaseHit: assetsRoot + 'base-hit.svg',
+    BaseStar: assetsRoot + 'base_star_A.svg',
+    BaseStarHit: assetsRoot + 'base_star_B.svg',
     BrickWall: assetsRoot + 'brick-wall.svg',
     SteelWall: assetsRoot + 'steel-wall.png',
     TankFirst: assetsRoot + 'tank.svg',

@@ -6,7 +6,7 @@ import { getAudio } from '../gameEngine/engineModules/Utils';
 class Base extends GameObject implements IHealth {
     static size = 50;
     size = Base.size;
-    skin = EntitySkins.Base;
+
     hp = 5;
     maxHp = this.hp;
     team: 0 | 1;
@@ -15,12 +15,20 @@ class Base extends GameObject implements IHealth {
     constructor(x: number, y: number, team: 0 | 1) {
         super(x, y);
         this.team = team;
-
+        if (team === 0) {
+            this.skin = EntitySkins.BaseStar;
+        } else {
+            this.skin = EntitySkins.Base;
+        }
         this.deathAudio = getAudio('./assets/sounds/explosion1.mp3');
     }
 
     setDeathState() {
-        this.skin = EntitySkins.BaseHit;
+        if (this.team === 0) {
+            this.skin = EntitySkins.BaseStarHit;
+        } else {
+            this.skin = EntitySkins.BaseHit;
+        }
     }
 }
 

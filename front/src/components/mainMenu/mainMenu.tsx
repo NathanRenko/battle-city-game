@@ -77,7 +77,7 @@ function findPlayer() {
     Store.socket.on('voteEnd', (args: any) => {
         console.log('start');
         console.log(args);
-        Store.choosenMap = args;
+        Store.choosenMap = args[0];
         startGame();
     });
     ReactDOM.render(<p>Поиск игрока...</p>, document.querySelector('.mainMenuContainer'));

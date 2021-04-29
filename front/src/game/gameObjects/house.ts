@@ -34,7 +34,6 @@ class House extends GameObject implements IHealth {
 
     changeAnimationStep(dt: number) {
         this.past += dt;
-        console.log(dt);
         if (this.past > 0.1) {
             this.animationStep = 1 - this.animationStep;
             this.skin = this.stateList[this.stateNumber][this.animationStep];
