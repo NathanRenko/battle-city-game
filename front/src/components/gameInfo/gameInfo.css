@@ -1,5 +1,5 @@
 .infoPanel {
-    margin: 0;
+    margin: 0 0 10px 0;
 }
 
 .infoContainer {
@@ -8,6 +8,11 @@
     padding: 5px;
     align-content: center;
     flex-direction: column;
+    justify-content: center;
     color: white;
     background-color: #393636;
+}
+
+.infoContainer > label {
+    border-bottom: 1px solid white;
 }

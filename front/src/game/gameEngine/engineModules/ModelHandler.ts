@@ -58,12 +58,10 @@ class ModelHandler {
         Store.socket.on('shoot', (event: any, ...args: any) => {
             this.entityHandler.makeShoot(this.opponent);
         });
-
         Store.socket.once('opponent disconnected', (event: any, ...args: any) => {
             Store.openModal('Оппонент отключился.');
             Store.socket.disconnect();
         });
-
         // this.socketId - underfined, т.к. socket.on выполняется позже
         console.log('socket: ' + this.socketId);
     }

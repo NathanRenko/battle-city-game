@@ -6,10 +6,12 @@ import React from 'react';
 import GameSection from '../gameSection/gameSection';
 
 function MapChooser(props: any) {
+    const firstMap = Store.isSinglePlayer? './assets/images/map1.png' : './assets/images/multi1_map.png';
+    const secondMap = Store.isSinglePlayer? './assets/images/map2.png' : './assets/images/multi2_map.png';
     return (
         <div className={'cardChoseContainer'}>
-            <Map src={'./assets/images/map1.png'} onClick={chooseMap} change={chooseMap} value={'first'} />
-            <Map src={'./assets/images/map2.png'} onClick={chooseMap} change={chooseMap} value={'second'} />
+            <Map src={firstMap} onClick={chooseMap} change={chooseMap} value={'first'} />
+            <Map src={secondMap} onClick={chooseMap} change={chooseMap} value={'second'} />
 
             {/* {props.children} */}
             {/* <img className={'card'} src={'./assets/map1.png'} />
