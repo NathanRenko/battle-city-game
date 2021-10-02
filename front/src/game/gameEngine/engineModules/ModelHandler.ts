@@ -19,6 +19,7 @@ class ModelHandler {
     opponent!: Tank
     bots!: Bot[]
     store: IGameStore
+    gameIsOver: boolean = false
     constructor(field: Field, store: IGameStore) {
         this.field = field
         this.InputHandler = new InputHandler()
@@ -74,13 +75,7 @@ class ModelHandler {
         this.handleHouseCollectionAnimation(dt)
         this.handleWaterAnimation(dt)
         if (this.store.isSinglePlayer) {
-            for (const bot of this.bots) {
-                if (this.field.mapObjects.tanks.includes(bot.tank)) {
-                    bot.handleBotActions(dt)
-                } else {
-                    this.bots.splice(this.bots.indexOf(bot), 1)
-                }
-            }
+            this.handleBotActions(dt)
         } else {
             // @ts-ignore
             this.store.socket.emit('move', {
@@ -88,6 +83,35 @@ class ModelHandler {
                 y: this.currentPlayer.y,
                 direction: this.currentPlayer.direction,
             })
+        }
+        this.gameIsOver = this.checkIsGameOver()
+    }
+
+    handleBotActions(dt: number) {
+        for (const bot of this.bots) {
+            if (this.field.mapObjects.tanks.includes(bot.tank)) {
+                bot.handleBotActions(dt)
+            } else {
+                this.bots.splice(this.bots.indexOf(bot), 1)
+            }
+        }
+    }
+
+    checkIsGameOver() {
+        if (this.store.isSinglePlayer) {
+            return (
+                this.field.mapObjects.base[0].hp === 0
+                || this.field.mapObjects.base[1].hp === 0
+                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
+                || this.bots.length === 0
+            )
+        } else {
+            return (
+                this.field.mapObjects.base[0].hp === 0
+                || this.field.mapObjects.base[1].hp === 0
+                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
+                || (this.opponent.respawnCount === 0 && this.opponent.hp === 0)
+            )
         }
     }
 

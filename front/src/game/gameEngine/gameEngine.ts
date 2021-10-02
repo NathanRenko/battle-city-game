@@ -33,11 +33,6 @@ class GameEngine {
         this.store.canvasRef.current.style.backgroundImage = `url(${backgroundImage})`
         // @ts-ignore
         this.store.canvasRef.current.style.backgroundRepeat = 'repeat'
-        if (!this.store.isSinglePlayer) {
-            if (this.store.textInfo.opponentName) {
-                this.store.textInfo.opponentName = this.store.opponentName
-            }
-        }
         this.initFields()
     }
 
@@ -48,31 +43,13 @@ class GameEngine {
     }
 
     doGameEngineCycle() {
-        if (this.checkIsGameOver()) {
+        if (this.ModelHandler.gameIsOver) {
             this.finishGame()
         } else {
             this.updateModel()
             this.draw()
             this.updateGameInfo()
             requestAnimationFrame(() => this.doGameEngineCycle())
-        }
-    }
-
-    checkIsGameOver() {
-        if (this.store.isSinglePlayer) {
-            return (
-                this.field.mapObjects.base[0].hp === 0
-                || this.field.mapObjects.base[1].hp === 0
-                || (this.ModelHandler.currentPlayer.respawnCount === 0 && this.ModelHandler.currentPlayer.hp === 0)
-                || this.ModelHandler.bots.length === 0
-            )
-        } else {
-            return (
-                this.field.mapObjects.base[0].hp === 0
-                || this.field.mapObjects.base[1].hp === 0
-                || (this.ModelHandler.currentPlayer.respawnCount === 0 && this.ModelHandler.currentPlayer.hp === 0)
-                || (this.ModelHandler.opponent.respawnCount === 0 && this.ModelHandler.opponent.hp === 0)
-            )
         }
     }
 
@@ -106,12 +83,11 @@ class GameEngine {
     }
 
     updateGameInfo() {
-        this.store.textInfo.respawnCount = this.ModelHandler.currentPlayer.respawnCount.toString() || '0'
+        this.store.setRespawnCount(this.ModelHandler.currentPlayer.respawnCount.toString() || '0')
         if (this.store.isSinglePlayer) {
-            this.store.textInfo.enemyCount = this.ModelHandler.bots.length.toString() || ''
+            this.store.setEnemyCount(this.ModelHandler.bots.length.toString() || '')
         } else {
-            this.store.textInfo.opponentRespawnCount = this.ModelHandler.opponent.respawnCount.toString() || '0'
-            this.store.textInfo.opponentName = this.store.opponentName || ''
+            this.store.setOpponentRespawnCount(this.ModelHandler.opponent.respawnCount.toString() || '0')
         }
     }
 

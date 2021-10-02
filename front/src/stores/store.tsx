@@ -1,6 +1,7 @@
-import { createContext, FC, RefObject, useContext } from 'react'
+import { createContext, FC, RefObject, useContext, useRef } from 'react'
 
-import { useLocalObservable } from 'mobx-react-lite'
+import { makeAutoObservable } from 'mobx'
+import { useObserver } from 'mobx-react-lite'
 
 const GameContext = createContext<IGameStore>(null!)
 
@@ -8,10 +9,9 @@ export interface ITextInfo {
     respawnCount: string
     enemyCount: string
     opponentRespawnCount: string
-    opponentName: string
 }
 
-export interface IGameStore {
+export class IGameStore {
     socket?: SocketIOClient.Socket
     playerNumber?: number
     isSinglePlayer: boolean
@@ -21,30 +21,47 @@ export interface IGameStore {
     openModal?: (message: string) => unknown
     canvasRef: RefObject<HTMLCanvasElement> | null
     textInfo: ITextInfo
+
+    constructor() {
+        makeAutoObservable(this)
+        this.socket = undefined
+        this.playerNumber = undefined
+        this.isSinglePlayer = true
+        this.choosenMap = undefined
+        this.playerName = ''
+        this.opponentName = ''
+        this.canvasRef = null
+        this.textInfo = {
+            enemyCount: '0',
+            respawnCount: '0',
+            opponentRespawnCount: '0'
+        }
+    }
+
+    setEnemyCount(count: string) {
+        this.textInfo.enemyCount = count
+    }
+
+    setRespawnCount(count: string) {
+        this.textInfo.respawnCount = count
+    }
+
+    setOpponentRespawnCount(count: string) {
+        this.textInfo.opponentRespawnCount = count
+    }
 }
 
 export const GameContextProvider: FC<{}> = (props) => {
-    const store: IGameStore = useLocalObservable(() => ({
-        socket: undefined,
-        playerNumber: undefined,
-        isSinglePlayer: true,
-        choosenMap: undefined,
-        playerName: '',
-        opponentName: '',
-        canvasRef: null,
-        textInfo: {
-            enemyCount: '0',
-            respawnCount: '0',
-            opponentRespawnCount: '0',
-            opponentName: ''
-        }
-    }))
+    const store = useRef<IGameStore>(new IGameStore())
 
-    return (
-        <GameContext.Provider value={store}>
-            {props.children}
-        </GameContext.Provider>
-    )
+    return useObserver(() => {
+        if (!store) { return null }
+        return (
+            <GameContext.Provider value={store.current}>
+                {props.children}
+            </GameContext.Provider>
+        )
+    })
 }
 
 export function useGameLocalStore() {

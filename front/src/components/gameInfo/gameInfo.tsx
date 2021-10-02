@@ -3,31 +3,31 @@ import { FC } from 'react'
 
 import { useObserver } from 'mobx-react-lite'
 
-import { ITextInfo, useGameLocalStore } from '../../stores/store'
+import { IGameStore, useGameLocalStore } from '../../stores/store'
 
 function GameInfo() {
     const store = useGameLocalStore()
     return useObserver(() =>
         <div className={'infoContainer'}>
-            {getTextInfoProps(store.textInfo, store.isSinglePlayer).map((textInfoItem, i) =>
+            {getTextInfoProps(store, store.isSinglePlayer).map((textInfoItem, i) =>
                 <LabeledSpan key={i} label={textInfoItem.label} value={textInfoItem.value}/>
             )}
         </div>
     )
 }
 
-function getTextInfoProps(textInfo: ITextInfo, isSinglePlayer: boolean): IProps[] {
+function getTextInfoProps(store: IGameStore, isSinglePlayer: boolean): IProps[] {
     if (isSinglePlayer) {
         return [
-            { label: 'Осталось возрождений:', value: textInfo.respawnCount },
-            { label: 'Осталось врагов:', value: textInfo.enemyCount },
+            { label: 'Осталось возрождений:', value: store.textInfo.respawnCount },
+            { label: 'Осталось врагов:', value: store.textInfo.enemyCount },
         ]
     }
 
     return [
-        { label: 'Осталось возрождений:', value: textInfo.respawnCount },
-        { label: 'Возрождений у оппонента:', value: textInfo.opponentRespawnCount },
-        { label: 'Имя оппонента:', value: textInfo.opponentName },
+        { label: 'Осталось возрождений:', value: store.textInfo.respawnCount },
+        { label: 'Возрождений у оппонента:', value: store.textInfo.opponentRespawnCount },
+        { label: 'Имя оппонента:', value: store.opponentName },
     ]
 }
 
