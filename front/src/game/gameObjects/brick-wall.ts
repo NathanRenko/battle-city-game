@@ -1,11 +1,11 @@
-import GameObject from "../gameClasses/gameObject";
-import EntitySkins from "../gameEngine/engineModules/constObjects/entitySkins";
-import { IHealth } from "../gameEngine/engineModules/interfaces/interfaces";
+import GameObject from '../gameClasses/gameObject'
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import { IHealth } from '../gameEngine/engineModules/interfaces/interfaces'
 
 class BrickWall extends GameObject implements IHealth {
-  size = 50;
-  skin = EntitySkins.BrickWall;
-  hp = 1;
+    size = 50
+    skin = EntitySkins.BrickWall
+    hp = 1
 }
 
-export default BrickWall;
+export default BrickWall

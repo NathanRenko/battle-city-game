@@ -1,17 +1,17 @@
-import GameObject from '../gameClasses/gameObject';
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
+import GameObject from '../gameClasses/gameObject'
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
 class Tree extends GameObject {
-    size = 50;
+    size = 50
 
     constructor(x: number, y: number, type: 'o' | 'a') {
-        super(x, y);
+        super(x, y)
         if (type === 'o') {
-            this.skin = EntitySkins.treeOak;
+            this.skin = EntitySkins.treeOak
         } else {
-            this.skin = EntitySkins.treeApple;
+            this.skin = EntitySkins.treeApple
         }
     }
 }
 
-export default Tree;
+export default Tree

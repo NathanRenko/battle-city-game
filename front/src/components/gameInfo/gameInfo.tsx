@@ -1,28 +1,50 @@
-import Store from '../../game/gameEngine/store';
-import './gameInfo.css';
+import './gameInfo.css'
+import { FC } from 'react'
+
+import { useObserver } from 'mobx-react-lite'
+
+import { ITextInfo, useGameLocalStore } from '../../stores/store'
 
 function GameInfo() {
-    if (Store.isSinglePlayer) {
-        return (
-            <div className={'infoContainer'}>
-                <label>Осталось возрождений:</label>
-                <span className='infoPanel' id={'respawnCount'}></span>
-                <label>Осталось врагов:</label>
-                <span className='infoPanel' id={'enemyCount'}></span>
-            </div>
-        );
-    } else {
-        return (
-            <div className={'infoContainer'}>
-                <label>Осталось возрождений:</label>
-                <span className='infoPanel' id={'respawnCount'}></span>
-                <label>Возрождений у оппонента:</label>
-                <span className='infoPanel' id={'opponentRespawnCount'}></span>
-                <label>Имя оппонента:</label>
-                <span className='infoPanel' id={'opponentName'}></span>
-            </div>
-        );
-    }
+    const store = useGameLocalStore()
+    return useObserver(() =>
+        <div className={'infoContainer'}>
+            {getTextInfoProps(store.textInfo, store.isSinglePlayer).map((textInfoItem, i) =>
+                <LabeledSpan key={i} label={textInfoItem.label} value={textInfoItem.value}/>
+            )}
+        </div>
+    )
 }
 
-export default GameInfo;
+function getTextInfoProps(textInfo: ITextInfo, isSinglePlayer: boolean): IProps[] {
+    if (isSinglePlayer) {
+        return [
+            { label: 'Осталось возрождений:', value: textInfo.respawnCount },
+            { label: 'Осталось врагов:', value: textInfo.enemyCount },
+        ]
+    }
+
+    return [
+        { label: 'Осталось возрождений:', value: textInfo.respawnCount },
+        { label: 'Возрождений у оппонента:', value: textInfo.opponentRespawnCount },
+        { label: 'Имя оппонента:', value: textInfo.opponentName },
+    ]
+}
+
+interface IProps {
+    label: string
+    value: string | undefined
+}
+
+const LabeledSpan: FC<IProps> = (props) => {
+    return (
+        <>
+            <label>{props.label}</label>
+            <span className='infoPanel'>
+                {props.value}
+            </span>
+        </>
+    )
+}
+
+export default GameInfo

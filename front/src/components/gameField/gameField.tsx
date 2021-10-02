@@ -1,13 +1,19 @@
-import "./gameField.css";
-import { useEffect } from "react";
-import GameEngine from "../../game/gameEngine/gameEngine";
+import './gameField.css'
+import { useEffect, useRef } from 'react'
+
+import GameEngine from '../../game/gameEngine/gameEngine'
+import { useGameLocalStore } from '../../stores/store'
 
 function GameField() {
-  let engine: GameEngine;
-  useEffect(() => {
-    engine = new GameEngine();
-  }, []);
-  return <canvas width="1000" height="800" className="gameField"></canvas>;
+    const store = useGameLocalStore()
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+
+    useEffect(() => {
+        store.canvasRef = canvasRef
+        const engine = new GameEngine(store)
+        engine.start()
+    }, [])
+    return <canvas ref={canvasRef} width="1000" height="800" className="gameField"/>
 }
 
-export default GameField;
+export default GameField

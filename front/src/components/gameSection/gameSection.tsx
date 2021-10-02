@@ -1,14 +1,15 @@
-import GameField from '../gameField/gameField';
-import GameInfo from '../gameInfo/gameInfo';
-import Modal from 'react-modal';
-import React from 'react';
-import './gameSection.css';
-import Store from '../../game/gameEngine/store';
-import ReactDOM from 'react-dom';
-import MainMenu from '../mainMenu/mainMenu';
+import React from 'react'
+import Modal from 'react-modal'
+import { useHistory } from 'react-router-dom'
 
-Modal.setAppElement('#root');
+import { useGameLocalStore } from '../../stores/store'
+import GameField from '../gameField/gameField'
+import GameInfo from '../gameInfo/gameInfo'
+import './gameSection.css'
+
+Modal.setAppElement('#root')
 function GameSection() {
+    const store = useGameLocalStore()
     const customStyles = {
         content: {
             top: '50%',
@@ -20,28 +21,24 @@ function GameSection() {
             color: 'white',
             backgroundColor: '#393636',
         },
-    };
-    const [modalIsOpen, setIsOpen] = React.useState(false);
-    const [gameResult, setGameResult] = React.useState('');
-    function openModal(message: string) {
-        setGameResult(message);
-        setIsOpen(true);
     }
-    Store.openModal = openModal;
-    function afterOpenModal() {}
+    const [modalIsOpen, setIsOpen] = React.useState(false)
+    const [gameResult, setGameResult] = React.useState('')
+    const history = useHistory()
+    store.openModal = (message: string) => {
+        setGameResult(message)
+        setIsOpen(true)
+    }
     const backToMainMenu = () => {
-        ReactDOM.render(<MainMenu></MainMenu>, document.getElementById('root'));
-    };
-    function closeModal() {
-        setIsOpen(false);
+        // ReactDOM.render(<MainMenu/>, document.getElementById('root'));
+        history.push('/main-menu')
     }
     return (
         <div className={'gameSectionContainer'}>
             <div className={'modalContainer'}>
                 <Modal
                     isOpen={modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
+                    onRequestClose={() => setIsOpen(false)}
                     contentLabel='Example Modal'
                     style={customStyles}
                 >
@@ -53,11 +50,10 @@ function GameSection() {
                     </div>
                 </Modal>
             </div>
-
-            <GameInfo></GameInfo>
-            <GameField></GameField>
+            <GameInfo/>
+            <GameField/>
         </div>
-    );
+    )
 }
 
-export default GameSection;
+export default GameSection

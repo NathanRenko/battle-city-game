@@ -1,17 +1,17 @@
-import GameObject from '../gameClasses/gameObject';
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins';
+import GameObject from '../gameClasses/gameObject'
+import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
 class Bridge extends GameObject {
-    size = 50;
+    size = 50
 
     constructor(x: number, y: number, side: 'l' | 'u') {
-        super(x, y);
+        super(x, y)
         if (side === 'l') {
-            this.skin = EntitySkins.bridgeLeft;
+            this.skin = EntitySkins.bridgeLeft
         } else {
-            this.skin = EntitySkins.bridgeUp;
+            this.skin = EntitySkins.bridgeUp
         }
     }
 }
 
-export default Bridge;
+export default Bridge

@@ -1,6 +1,6 @@
-const assetsRoot = './assets/images/';
+const assetsRoot = './assets/images/'
 
-const EntitySkins = {
+const EntitySkins: Record<string, string> = {
     Base: assetsRoot + 'base.svg',
     BaseHit: assetsRoot + 'base-hit.svg',
     BaseStar: assetsRoot + 'base_star_A.svg',
@@ -35,6 +35,6 @@ const EntitySkins = {
     treeApple: assetsRoot + 'apple_tree.svg',
     bridgeUp: assetsRoot + 'bridge.png',
     bridgeLeft: assetsRoot + 'bridge_turned.png',
-};
+}
 
-export default EntitySkins;
+export default EntitySkins

@@ -1,9 +1,9 @@
-import { entityDirections } from '../constObjects/DirectionHandler';
+import { entityDirections } from '../constObjects/DirectionHandler'
 
 export interface IHealth {
-    hp: number;
+    hp: number
 }
 
 export interface IDirection {
-    direction: entityDirections;
+    direction: entityDirections
 }

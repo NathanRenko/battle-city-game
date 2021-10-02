@@ -1,0 +1,138 @@
+{
+  "extends": [
+    "standard-with-typescript",
+    "plugin:react-hooks/recommended"
+  ],
+  "rules": {
+    "indent": [
+      "off"
+    ],
+    "@typescript-eslint/indent": [
+      "error",
+      4,
+      {
+        "SwitchCase": 0
+      }
+    ],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "@typescript-eslint/space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "off"
+    ],
+    "@typescript-eslint/promise-function-async": [
+      "off"
+    ],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ],
+    "@typescript-eslint/prefer-nullish-coalescing": [
+      "off"
+    ],
+    "@typescript-eslint/strict-boolean-expressions": [
+      "off"
+    ],
+    "@typescript-eslint/restrict-template-expressions": [
+      "off"
+    ],
+    "@typescript-eslint/no-floating-promises": [
+      "off"
+    ],
+    "@typescript-eslint/no-extraneous-class": [
+      "off"
+    ],
+    "@typescript-eslint/triple-slash-reference": [
+      "off"
+    ],
+    "@typescript-eslint/no-non-null-assertion": [
+      "off"
+    ],
+    "@typescript-eslint/method-signature-style": [
+      "off"
+    ],
+    "@typescript-eslint/array-type": [
+      "off"
+    ],
+    "@typescript-eslint/prefer-ts-expect-error": [
+      "off"
+    ],
+    "@typescript-eslint/no-invalid-void-type": [
+      "off"
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "operator-linebreak": [
+      "error",
+      "before"
+    ],
+    "comma-dangle": "off",
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          [
+            "parent",
+            "sibling"
+          ],
+          "index",
+          "unknown"
+        ],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "newlines-between": "always",
+        "pathGroups": [
+          {
+            "pattern": "react*",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "{@kl,@skbkontur}/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "**/*.module.scss",
+            "group": "index",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": [
+          "react*"
+        ]
+      }
+    ]
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  }
+}

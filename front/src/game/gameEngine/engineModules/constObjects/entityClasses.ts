@@ -1,12 +1,7 @@
-import Base from '../../../gameObjects/base';
-import BrickWall from '../../../gameObjects/brick-wall';
-import House from '../../../gameObjects/house';
-import Particle from '../../../gameObjects/particle';
-import Shell from '../../../gameObjects/shell';
-import SteelWall from '../../../gameObjects/steel-wall';
-import Tank from '../../../gameObjects/tank';
-import Tree from '../../../gameObjects/tree';
-import Water from '../../../gameObjects/water';
+import BrickWall from '../../../gameObjects/brick-wall'
+import House from '../../../gameObjects/house'
+import SteelWall from '../../../gameObjects/steel-wall'
+import Tree from '../../../gameObjects/tree'
 
 enum EntityClasses {
     Base,
@@ -27,16 +22,16 @@ enum EntityGroups {
     particles,
 }
 
-type obstacleType = SteelWall | BrickWall | House | Tree;
+type obstacleType = SteelWall | BrickWall | House | Tree
 
 function isObstacle(entity: obstacleType): entity is obstacleType {
     return (
-        entity.constructor === SteelWall ||
-        entity.constructor === BrickWall ||
-        entity.constructor === House ||
-        entity.constructor === Tree
-    );
+        entity.constructor === SteelWall
+        || entity.constructor === BrickWall
+        || entity.constructor === House
+        || entity.constructor === Tree
+    )
 }
 
-export { EntityClasses, EntityGroups, isObstacle };
-export type { obstacleType };
+export { EntityClasses, EntityGroups, isObstacle }
+export type { obstacleType }
