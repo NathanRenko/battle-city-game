@@ -1,7 +1,7 @@
 import GameObject from '../gameClasses/gameObject'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
-class Bridge extends GameObject {
+export class Bridge extends GameObject {
     size = 50
 
     constructor(x: number, y: number, side: 'l' | 'u') {
@@ -13,5 +13,3 @@ class Bridge extends GameObject {
         }
     }
 }
-
-export default Bridge

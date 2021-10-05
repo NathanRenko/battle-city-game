@@ -2,10 +2,14 @@ import GameObject from '../gameClasses/gameObject'
 import Point from '../gameClasses/Point'
 import { entityDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
-import { IDirection, IHealth } from '../gameEngine/engineModules/interfaces/interfaces'
+import { KnownSections } from '../gameEngine/engineModules/GameObjectsConfiguration'
+import { IDirection, IHealth, IRespawnable } from '../gameEngine/engineModules/interfaces/interfaces'
+import MapHandler from '../gameEngine/engineModules/MapHandler'
 import { getAudio } from '../gameEngine/engineModules/Utils'
+import { Particle } from './particle'
+import { TankShell } from './tankShell'
 
-class Tank extends GameObject implements IHealth, IDirection {
+export class Tank extends GameObject implements IHealth, IDirection, IRespawnable {
     direction: entityDirections = entityDirections.Up
     size = 35
 
@@ -32,6 +36,15 @@ class Tank extends GameObject implements IHealth, IDirection {
         this.deathAudio = getAudio('./assets/sounds/explosion3.wav')
     }
 
+    handleTankMovements(field: MapHandler, direction: entityDirections, step: Point) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [availableStep, collisionBlock] = field.getMinimalStep(step, this)
+        if (!(availableStep.x === 0 && availableStep.y === 0)) {
+            this.applyStep(availableStep)
+        }
+        this.changeDirection(direction)
+    }
+
     applyStep(shift: Point) {
         this.x += shift.x
         this.y += shift.y
@@ -41,9 +54,68 @@ class Tank extends GameObject implements IHealth, IDirection {
         this.direction = direction
     }
 
+    deathHandler(field: MapHandler) {
+        this.deathAudio.play()
+        const particle = new Particle(this.x, this.y, this.direction)
+        field.gameMap.addEntity(KnownSections.particles, particle)
+        this.respawnEntity(field)
+    }
+
+    respawnEntity(field: MapHandler) {
+        if (this.respawnCount > 0) {
+            this.x = this.spawnPoint.x
+            this.y = this.spawnPoint.y
+            this.hp = this.maxHp
+            this.respawnCount--
+        } else {
+            field.gameMap.deleteEntity(this)
+        }
+    }
+
+    decreaseHp(field: MapHandler) {
+        if (this.hp !== 0) {
+            this.hp--
+        }
+
+        if (this.hp === 0) {
+            this.deathHandler(field)
+        }
+    }
+
     getPlayerPosition() {
         return { x: this.x, y: this.y, width: this.size, height: this.size }
     }
-}
 
-export default Tank
+    makeShoot(field: MapHandler) {
+        this.shootAudio.play()
+        let spawnPoint = new Point(0, 0)
+        const shellSize = 8
+        const sizeDelta = this.size - shellSize
+        switch (this.direction) {
+        case entityDirections.Up:
+            spawnPoint = new Point(this.x + sizeDelta / 2, this.y - shellSize)
+            break
+        case entityDirections.Right:
+            spawnPoint = new Point(this.x + this.size, this.y + sizeDelta / 2)
+            break
+        case entityDirections.Down:
+            spawnPoint = new Point(this.x + sizeDelta / 2, this.y + this.size)
+            break
+        case entityDirections.Left:
+            spawnPoint = new Point(this.x - shellSize, this.y + sizeDelta / 2)
+            break
+        }
+        const shell = new TankShell(spawnPoint.x, spawnPoint.y, this.direction, this.team)
+        field.gameMap.addEntity(KnownSections.tankShell, shell)
+    }
+
+    canShoot() {
+        const now = Date.now()
+        if ((now - this.lastShooted) / 1000 < 1) {
+            return false
+        } else {
+            this.lastShooted = now
+            return true
+        }
+    }
+}

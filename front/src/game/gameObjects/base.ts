@@ -1,9 +1,10 @@
 import GameObject from '../gameClasses/gameObject'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 import { IHealth } from '../gameEngine/engineModules/interfaces/interfaces'
+import MapHandler from '../gameEngine/engineModules/MapHandler'
 import { getAudio } from '../gameEngine/engineModules/Utils'
 
-class Base extends GameObject implements IHealth {
+export class Base extends GameObject implements IHealth {
     static size = 50
     size = Base.size
 
@@ -30,6 +31,19 @@ class Base extends GameObject implements IHealth {
             this.skin = EntitySkins.BaseHit
         }
     }
-}
 
-export default Base
+    deathHandler(field: MapHandler) {
+        this.deathAudio.play()
+        this.setDeathState()
+    }
+
+    decreaseHp(field: MapHandler) {
+        if (this.hp !== 0) {
+            this.hp--
+        }
+
+        if (this.hp === 0) {
+            this.deathHandler(field)
+        }
+    }
+}

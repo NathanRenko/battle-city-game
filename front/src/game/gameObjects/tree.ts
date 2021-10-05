@@ -1,7 +1,7 @@
 import GameObject from '../gameClasses/gameObject'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
-class Tree extends GameObject {
+export class Tree extends GameObject {
     size = 50
 
     constructor(x: number, y: number, type: 'o' | 'a') {
@@ -13,5 +13,3 @@ class Tree extends GameObject {
         }
     }
 }
-
-export default Tree

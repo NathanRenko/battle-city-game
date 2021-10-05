@@ -1,21 +1,19 @@
 import Point from '../gameClasses/Point'
 import { buttonsToDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler'
-import EntityHandlers from '../gameEngine/engineModules/entityHandlers'
-import Field from '../gameEngine/engineModules/Field'
-import Tank from './tank'
+import { KnownSections } from '../gameEngine/engineModules/GameObjectsConfiguration'
+import MapHandler from '../gameEngine/engineModules/MapHandler'
+import { Tank } from './tank'
 
-class Bot {
+export class Bot {
     tank: Tank
     way: string = ''
     pathLeft: number = 0
-    field: Field
-    entityHandler: EntityHandlers
+    field: MapHandler
     algorithm: 'chaotic' | 'playerPursuing'
 
-    constructor(tank: Tank, field: Field, entityHandler: EntityHandlers, algorithm: 'chaotic' | 'playerPursuing') {
+    constructor(tank: Tank, field: MapHandler, algorithm: 'chaotic' | 'playerPursuing') {
         this.tank = tank
         this.field = field
-        this.entityHandler = entityHandler
         this.algorithm = algorithm
     }
 
@@ -63,12 +61,10 @@ class Bot {
         if (this.algorithm === 'playerPursuing') {
             this.way = this.findBestWay(dt) || 'ArrowDown'
         }
-
-        this.entityHandler.handleTankMovements(this.tank, buttonsToDirections[this.way], movement[this.way])
-
+        this.tank.handleTankMovements(this.field, buttonsToDirections[this.way], movement[this.way])
         const percent = Math.random() * 100
-        if (this.entityHandler.canShoot(this.tank) && percent > 70) {
-            this.entityHandler.makeShoot(this.tank)
+        if (this.tank.canShoot() && percent > 70) {
+            this.tank.makeShoot(this.field)
         }
     }
 
@@ -81,7 +77,9 @@ class Bot {
 
     findBestWay(dt: number) {
         const start = { x: this.tank.x, y: this.tank.y }
-        const target = { x: this.field.mapObjects.tanks[0].x, y: this.field.mapObjects.tanks[0].y }
+
+        const targetTank = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)[0]
+        const target = { x: targetTank.x, y: targetTank.y }
         const deltaX = Math.abs(target.x - start.x)
         const deltaY = Math.abs(target.y - start.y)
         const moves = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight']
@@ -101,5 +99,3 @@ class Bot {
         }
     }
 }
-
-export default Bot

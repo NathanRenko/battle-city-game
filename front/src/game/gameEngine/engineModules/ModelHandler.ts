@@ -1,18 +1,14 @@
 import { IGameStore } from '../../../stores/store'
 import Point from '../../gameClasses/Point'
-import Base from '../../gameObjects/base'
-import Bot from '../../gameObjects/bot'
-import House from '../../gameObjects/house'
-import Tank from '../../gameObjects/tank'
+import { Base, Bot, House, Particle, Tank, TankShell } from '../../gameObjects'
 import { buttonsToDirections, entityDirections } from './constObjects/DirectionHandler'
-import EntityHandlers from './entityHandlers'
-import Field from './Field'
+import { KnownSections } from './GameObjectsConfiguration'
 import InputHandler from './inputHandler'
+import MapHandler from './MapHandler'
 
 class ModelHandler {
-    field: Field
+    field: MapHandler
     InputHandler: InputHandler
-    entityHandler!: EntityHandlers
     socketId!: number
     playerBase!: Base
     currentPlayer!: Tank
@@ -20,16 +16,20 @@ class ModelHandler {
     bots!: Bot[]
     store: IGameStore
     gameIsOver: boolean = false
-    constructor(field: Field, store: IGameStore) {
+    constructor(field: MapHandler, store: IGameStore) {
         this.field = field
         this.InputHandler = new InputHandler()
         this.store = store
         if (this.store.isSinglePlayer) {
             this.initPlayer(0, 0)
             this.bots = []
-            this.bots.push(new Bot(this.field.mapObjects.tanks[1], this.field, this.entityHandler, 'chaotic'))
-            this.bots.push(new Bot(this.field.mapObjects.tanks[2], this.field, this.entityHandler, 'chaotic'))
-            this.bots.push(new Bot(this.field.mapObjects.tanks[3], this.field, this.entityHandler, 'playerPursuing'))
+            const tankOnMap = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)
+
+            this.bots.push(new Bot(tankOnMap[1], this.field, 'chaotic'))
+
+            this.bots.push(new Bot(tankOnMap[2], this.field, 'chaotic'))
+
+            this.bots.push(new Bot(tankOnMap[3], this.field, 'playerPursuing'))
         } else {
             // @ts-ignore
             this.socketId = this.store.playerNumber
@@ -40,10 +40,13 @@ class ModelHandler {
     }
 
     initPlayer(playerId: number, baseId: number) {
-        this.entityHandler = new EntityHandlers(this.field)
-        this.currentPlayer = this.field.mapObjects.tanks[playerId]
-        this.opponent = this.field.mapObjects.tanks[1 - playerId]
-        this.playerBase = this.field.mapObjects.base[baseId]
+        const tanksOnMap = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)
+        const bases = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
+        this.currentPlayer = tanksOnMap[playerId]
+
+        this.opponent = tanksOnMap[1 - playerId]
+
+        this.playerBase = bases[baseId]
     }
 
     setupSocket() {
@@ -55,7 +58,7 @@ class ModelHandler {
         })
         // @ts-ignore
         this.store.socket.on('shoot', (event: any, ...args: any) => {
-            this.entityHandler.makeShoot(this.opponent)
+            this.opponent.makeShoot(this.field)
         })
         // @ts-ignore
         this.store.socket.once('opponent disconnected', (event: any, ...args: any) => {
@@ -88,8 +91,9 @@ class ModelHandler {
     }
 
     handleBotActions(dt: number) {
+        const tanksOnMap = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)
         for (const bot of this.bots) {
-            if (this.field.mapObjects.tanks.includes(bot.tank)) {
+            if (tanksOnMap.includes(bot.tank)) {
                 bot.handleBotActions(dt)
             } else {
                 this.bots.splice(this.bots.indexOf(bot), 1)
@@ -98,17 +102,22 @@ class ModelHandler {
     }
 
     checkIsGameOver() {
+        const bases = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
         if (this.store.isSinglePlayer) {
             return (
-                this.field.mapObjects.base[0].hp === 0
-                || this.field.mapObjects.base[1].hp === 0
+
+                bases[0].hp === 0
+
+                || bases[1].hp === 0
                 || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
                 || this.bots.length === 0
             )
         } else {
             return (
-                this.field.mapObjects.base[0].hp === 0
-                || this.field.mapObjects.base[1].hp === 0
+
+                bases[0].hp === 0
+
+                || bases[1].hp === 0
                 || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
                 || (this.opponent.respawnCount === 0 && this.opponent.hp === 0)
             )
@@ -131,8 +140,8 @@ class ModelHandler {
 
     handleShotPress() {
         if (this.InputHandler.isDown(' ')) {
-            if (this.entityHandler.canShoot(this.currentPlayer)) {
-                this.entityHandler.makeShoot(this.currentPlayer)
+            if (this.currentPlayer.canShoot()) {
+                this.currentPlayer.makeShoot(this.field)
                 if (!this.store.isSinglePlayer) {
                     // @ts-ignore
                     this.store.socket.emit('shoot')
@@ -151,36 +160,35 @@ class ModelHandler {
             [entityDirections.Left]: new Point(-shellShift, 0),
             [entityDirections.Right]: new Point(shellShift, 0),
         }
-        for (const shell of this.field.mapObjects.shell) {
-            this.entityHandler.handleShellMovements(shell, directions[shell.direction])
+
+        for (const shell of this.field.gameMap.getCollectionByClassName(KnownSections.tankShell)) {
+            (shell as TankShell).handleShellMovements(this.field, directions[shell.direction])
         }
     }
 
     handleParticleChanging(dt: number) {
-        for (const particle of this.field.mapObjects.particles) {
-            this.entityHandler.handleParticle(particle, dt)
+        for (const particle of this.field.gameMap.getCollectionByClassName(KnownSections.particles)) {
+            (particle as Particle).handleAnimation(this.field, dt)
         }
     }
 
     handleHouseCollectionAnimation(dt: number) {
-        for (const obstacle of this.field.mapObjects.obstacle) {
+        for (const obstacle of this.field.gameMap.getCollectionByClassName(KnownSections.obstacle)) {
             if (obstacle.constructor === House) {
-                if (obstacle.stateNumber !== 0) {
-                    this.entityHandler.handleHouseFireAnimation(obstacle, dt)
-                }
+                obstacle.handleAnimation(this.field, dt)
             }
         }
     }
 
     handleWaterAnimation(dt: number) {
-        for (const water of this.field.mapObjects.water) {
+        for (const water of this.field.gameMap.getCollectionByClassName(KnownSections.water)) {
             water.changeAnimationStep(dt)
         }
     }
 
     handleMovements(button: any, step: Point) {
         if (this.InputHandler.isDown(button)) {
-            this.entityHandler.handleTankMovements(this.currentPlayer, buttonsToDirections[button], step)
+            this.currentPlayer.handleTankMovements(this.field, buttonsToDirections[button], step)
             return true
         }
         return false

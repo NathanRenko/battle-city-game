@@ -1,7 +1,7 @@
 import GameObject from '../gameClasses/gameObject'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
-class Foliage extends GameObject {
+export class Foliage extends GameObject {
     size = 50
 
     constructor(x: number, y: number, color: 'g' | 'y') {
@@ -13,5 +13,3 @@ class Foliage extends GameObject {
         }
     }
 }
-
-export default Foliage

@@ -2,7 +2,7 @@ import GameObject from '../gameClasses/gameObject'
 import { entityDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler'
 import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
 
-class Water extends GameObject {
+export class Water extends GameObject {
     stateList = [EntitySkins.water1, EntitySkins.water2]
     animationStep = 0
     size = 50
@@ -25,5 +25,3 @@ class Water extends GameObject {
         }
     }
 }
-
-export default Water

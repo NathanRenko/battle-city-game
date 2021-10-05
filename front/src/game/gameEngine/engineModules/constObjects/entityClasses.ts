@@ -1,7 +1,4 @@
-import BrickWall from '../../../gameObjects/brick-wall'
-import House from '../../../gameObjects/house'
-import SteelWall from '../../../gameObjects/steel-wall'
-import Tree from '../../../gameObjects/tree'
+import { BrickWall, House, SteelWall, Tree } from '../../../gameObjects'
 
 enum EntityClasses {
     Base,

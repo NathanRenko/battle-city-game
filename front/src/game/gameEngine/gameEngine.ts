@@ -1,18 +1,14 @@
 import { IGameStore } from '../../stores/store'
 import GameObject from '../gameClasses/gameObject'
-import Base from '../gameObjects/base'
-import Particle from '../gameObjects/particle'
-import Shell from '../gameObjects/shell'
-import Tank from '../gameObjects/tank'
-import Water from '../gameObjects/water'
+import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
 import { directionToAngle, entityDirections } from './engineModules/constObjects/DirectionHandler'
-import Field from './engineModules/Field'
+import MapHandler from './engineModules/MapHandler'
 import ModelHandler from './engineModules/ModelHandler'
 import SkinCollection from './engineModules/skinCollection'
 
 class GameEngine {
     canvasContext!: CanvasRenderingContext2D
-    field!: Field
+    field!: MapHandler
     ModelHandler!: ModelHandler
     lastFrameTime!: number
     store: IGameStore
@@ -54,7 +50,7 @@ class GameEngine {
     }
 
     initFields() {
-        this.field = new Field(this.store.canvasRef!.current!.width, this.store.canvasRef!.current!.height, this.store.choosenMap!, this.store)
+        this.field = new MapHandler(this.store.canvasRef!.current!.width, this.store.canvasRef!.current!.height, this.store.choosenMap!, this.store)
         this.ModelHandler = new ModelHandler(this.field, this.store)
         this.lastFrameTime = 0
         this.skinCollection = new SkinCollection()
@@ -105,12 +101,11 @@ class GameEngine {
 
     draw() {
         this.canvasContext?.clearRect(0, 0, this.store.canvasRef!.current!.width, this.store.canvasRef!.current!.height)
-        for (const entityCollection of this.field.getAllMapObjects()) {
+        for (const entityCollection of Array.from(this.field.gameMap.getObjectsByOrder())) {
             const isDirectionable = entityCollection.length !== 0 && 'direction' in entityCollection[0]
 
             if (isDirectionable) {
                 for (const entity of entityCollection) {
-                    // @ts-ignore
                     this.drawRotatedEntity(this.canvasContext, entity)
                     if ('maxHp' in entity) {
                         this.drawHpBar(this.canvasContext, entity)
@@ -124,7 +119,7 @@ class GameEngine {
         }
     }
 
-    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank | Water | Shell | Particle) {
+    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank | Water | TankShell | Particle) {
         if (!entity) {
             return
         }

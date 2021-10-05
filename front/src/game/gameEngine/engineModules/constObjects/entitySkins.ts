@@ -9,7 +9,7 @@ const EntitySkins: Record<string, string> = {
     SteelWall: assetsRoot + 'steel-wall.png',
     TankFirst: assetsRoot + 'tank.svg',
     TankSecond: assetsRoot + 'tank_2.svg',
-    Shell: assetsRoot + 'shell.svg',
+    TankShell: assetsRoot + 'shell.svg',
     hit1: assetsRoot + 'hit1.svg',
     hit2: assetsRoot + 'hit2.svg',
     hit3: assetsRoot + 'hit3.svg',

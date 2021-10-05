@@ -2,33 +2,14 @@ import { IGameStore } from '../../../stores/store'
 import Figure from '../../gameClasses/figure'
 import GameObject from '../../gameClasses/gameObject'
 import Point from '../../gameClasses/Point'
-import Base from '../../gameObjects/base'
-import BrickWall from '../../gameObjects/brick-wall'
-import Bridge from '../../gameObjects/bridge'
-import Foliage from '../../gameObjects/foliage'
-import House from '../../gameObjects/house'
-import Particle from '../../gameObjects/particle'
-import Shell from '../../gameObjects/shell'
-import SteelWall from '../../gameObjects/steel-wall'
-import Tank from '../../gameObjects/tank'
-import Tree from '../../gameObjects/tree'
-import Water from '../../gameObjects/water'
+import { Base, BrickWall, Bridge, Foliage, House, SteelWall, Tank, TankShell, Tree, Water } from '../../gameObjects'
 import { entityDirections } from './constObjects/DirectionHandler'
-import { obstacleType } from './constObjects/entityClasses'
 import mapCollection from './constObjects/mapCollection'
+import { GameMap } from './GameMap'
+import { KnownSections } from './GameObjectsConfiguration'
 
-class Field {
-    mapObjects: {
-        tanks: Tank[]
-        obstacle: obstacleType[]
-        shell: Shell[]
-        base: Base[]
-        particles: Particle[]
-        water: Water[]
-        foliage: Foliage[]
-        bridges: Bridge[]
-    } = { tanks: [], obstacle: [], shell: [], base: [], particles: [], water: [], foliage: [], bridges: [] }
-
+class MapHandler {
+    gameMap = new GameMap()
     mapSize: { width: number, height: number }
     store: IGameStore
     constructor(mapWidth: number, mapHeight: number, choosenMap: string, store: IGameStore) {
@@ -60,66 +41,75 @@ class Field {
                 if (symbol.startsWith('bs')) {
                     // @ts-ignore
                     const baseSide: 0 | 1 = parseInt(symbol.split('bs')[1]) - 1
-                    this.mapObjects.base[baseSide] = new Base(x * tileSize, y * tileSize, baseSide)
+                    // constructor name
+                    const className = KnownSections.Base
+                    const obj = new Base(x * tileSize, y * tileSize, baseSide)
+                    this.gameMap.addEntity(className, obj, baseSide)
                     continue
                 }
                 if (symbol === 'b') {
-                    this.mapObjects.obstacle.push(new BrickWall(x * tileSize, y * tileSize))
+                    const className = KnownSections.obstacle
+                    const obj = new BrickWall(x * tileSize, y * tileSize)
+                    this.gameMap.addEntity(className, obj)
                     continue
                 }
                 if (symbol === 's') {
-                    this.mapObjects.obstacle.push(new SteelWall(x * tileSize, y * tileSize))
+                    const className = KnownSections.obstacle
+                    const obj = new SteelWall(x * tileSize, y * tileSize)
+                    this.gameMap.addEntity(className, obj)
                     continue
                 }
                 if (symbol === 'h') {
+                    const className = KnownSections.obstacle
                     // @ts-ignore
-                    this.mapObjects.obstacle.push(new House(x * tileSize, y * tileSize, this.store.choosenMap))
+                    const obj = new House(x * tileSize, y * tileSize, this.store.choosenMap)
+                    this.gameMap.addEntity(className, obj)
                     continue
                 }
                 if (symbol === 'w') {
-                    this.mapObjects.water.push(new Water(x * tileSize, y * tileSize, entityDirections.Left))
+                    const className = KnownSections.water
+                    const obj = new Water(x * tileSize, y * tileSize, entityDirections.Left)
+                    this.gameMap.addEntity(className, obj)
                     continue
                 }
                 if (symbol.startsWith('B')) {
                     // @ts-ignore
                     const side: 'l' | 'u' = symbol[1]
-                    this.mapObjects.bridges.push(new Bridge(x * tileSize, y * tileSize, side))
+                    const className = KnownSections.bridges
+                    const obj = new Bridge(x * tileSize, y * tileSize, side)
+                    this.gameMap.addEntity(className, obj)
+                    continue
                 }
                 if (symbol.startsWith('T')) {
                     // @ts-ignore
                     const color: 'a' | 'o' = symbol[1]
-                    this.mapObjects.obstacle.push(new Tree(x * tileSize, y * tileSize, color))
+                    const className = KnownSections.obstacle
+                    const obj = new Tree(x * tileSize, y * tileSize, color)
+                    this.gameMap.addEntity(className, obj)
+                    continue
                 }
                 if (symbol.startsWith('f')) {
                     // @ts-ignore
                     const color: 'g' | 'y' = symbol[1]
-                    this.mapObjects.foliage.push(new Foliage(x * tileSize, y * tileSize, color))
+                    const className = KnownSections.foliage
+                    const obj = new Foliage(x * tileSize, y * tileSize, color)
+                    this.gameMap.addEntity(className, obj)
+                    continue
                 }
                 if (symbol.startsWith('t')) {
                     const tankNumber: number = parseInt(symbol.split('t')[1])
                     console.log(`tank number: ${tankNumber - 1}`)
-                    this.mapObjects.tanks[tankNumber - 1] = new Tank(
+                    const className = KnownSections.tanks
+                    const obj = new Tank(
                         x * tileSize,
                         y * tileSize,
                         tankNumber === 1 ? 0 : 1
                     )
+                    this.gameMap.addEntity(className, obj, tankNumber - 1)
                     continue
                 }
             }
         }
-    }
-
-    getAllMapObjects(): [Base[], obstacleType[], Water[], Bridge[], Tank[], Shell[], Particle[], Foliage[]] {
-        return [
-            this.mapObjects.base,
-            this.mapObjects.obstacle,
-            this.mapObjects.water,
-            this.mapObjects.bridges,
-            this.mapObjects.tanks,
-            this.mapObjects.shell,
-            this.mapObjects.particles,
-            this.mapObjects.foliage,
-        ]
     }
 
     getMinimalStep(step: Point, gameObject: GameObject): [Point, GameObject | undefined] {
@@ -143,16 +133,16 @@ class Field {
     }
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
-        const isShell = gameObject.constructor === Shell
+        const isShell = gameObject.constructor === TankShell
         return (
-            this.mapObjects.obstacle.find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle))
-            || this.mapObjects.base.find((base) => this.hasObstacleCollision(gameObject, minimalStep, base))
-            || this.mapObjects.tanks.find(
+            this.gameMap.getCollectionByClassName(KnownSections.obstacle).find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle))
+            || this.gameMap.getCollectionByClassName(KnownSections.Base).find((base) => this.hasObstacleCollision(gameObject, minimalStep, base))
+            || this.gameMap.getCollectionByClassName(KnownSections.tanks).find(
                 (tank) => tank !== gameObject && this.hasObstacleCollision(gameObject, minimalStep, tank)
             )
             || (isShell
                 ? undefined
-                : this.mapObjects.water.find((water) => this.hasObstacleCollision(gameObject, minimalStep, water)))
+                : this.gameMap.getCollectionByClassName(KnownSections.water).find((water) => this.hasObstacleCollision(gameObject, minimalStep, water)))
         )
     }
 
@@ -178,43 +168,6 @@ class Field {
             || shiftedRectangle.x > secondRect.getX1()
         )
     }
-
-    getParentCollection(child: obstacleType): obstacleType[];
-    getParentCollection(child: Shell): Shell[];
-    getParentCollection(child: Base): Base[];
-    getParentCollection(child: Particle): Particle[];
-    getParentCollection(child: Tank): Tank[];
-    getParentCollection(child: Water): Water[];
-    getParentCollection(
-        child: obstacleType | Shell | Base | Particle | Tank | Water
-    ): obstacleType[] | Shell[] | Base[] | Particle[] | Tank[] | Water {
-        if (
-            child.constructor === SteelWall
-            || child.constructor === BrickWall
-            || child.constructor === House
-            || child.constructor === Tree
-        ) {
-            return this.mapObjects.obstacle
-        }
-
-        if (child.constructor === Base) {
-            return this.mapObjects.base
-        }
-        if (child.constructor === Tank) {
-            return this.mapObjects.tanks
-        }
-        if (child.constructor === Water) {
-            return this.mapObjects.water
-        }
-        if (child.constructor === Shell) {
-            return this.mapObjects.shell
-        }
-        if (child.constructor === Particle) {
-            return this.mapObjects.particles
-        }
-        alert(child.constructor.name)
-        throw Error('Unknown type')
-    }
 }
 
-export default Field
+export default MapHandler
