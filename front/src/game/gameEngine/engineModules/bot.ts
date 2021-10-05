@@ -1,8 +1,8 @@
 import Point from '../../gameClasses/Point'
 import { Tank } from '../../gameObjects'
-import { buttonsToDirections } from './constObjects/DirectionHandler'
-import { KnownSections } from './GameObjectsConfiguration'
-import MapHandler from './MapHandler'
+import MapHandler from './handlers/MapHandler'
+import { buttonsToDirections } from './Utils/DirectionHandler'
+import { KnownSections } from './Utils/GameObjectsConfiguration'
 
 export class Bot {
     tank: Tank

@@ -12,7 +12,7 @@
 //     Water
 // } from '../../gameObjects'
 
-import { BrickWall, House, SteelWall, Tree } from '../../gameObjects'
+import { BrickWall, House, SteelWall, Tree } from '../../../gameObjects'
 
 export type obstacleType = SteelWall | BrickWall | House | Tree
 

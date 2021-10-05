@@ -1,6 +1,6 @@
 import GameObject from '../gameClasses/gameObject'
-import { entityDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler'
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import { entityDirections } from '../gameEngine/engineModules/Utils/DirectionHandler'
+import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
 export class Water extends GameObject {
     stateList = [EntitySkins.water1, EntitySkins.water2]

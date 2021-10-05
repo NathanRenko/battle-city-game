@@ -1,7 +1,7 @@
 import GameObject from '../gameClasses/gameObject'
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
 import { IHealth } from '../gameEngine/engineModules/interfaces/interfaces'
-import MapHandler from '../gameEngine/engineModules/MapHandler'
+import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
 export class BrickWall extends GameObject implements IHealth {
     size = 50

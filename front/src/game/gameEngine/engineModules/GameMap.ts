@@ -1,5 +1,5 @@
 import GameObject from '../../gameClasses/gameObject'
-import { configuration } from './GameObjectsConfiguration'
+import { configuration } from './Utils/GameObjectsConfiguration'
 
 export class GameMap {
     gameMap = new Map<string, any[]>()

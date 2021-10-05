@@ -1,10 +1,10 @@
 import { IGameStore } from '../../stores/store'
 import GameObject from '../gameClasses/gameObject'
 import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
-import { directionToAngle, entityDirections } from './engineModules/constObjects/DirectionHandler'
-import MapHandler from './engineModules/MapHandler'
-import ModelHandler from './engineModules/ModelHandler'
-import SkinCollection from './engineModules/skinCollection'
+import MapHandler from './engineModules/handlers/MapHandler'
+import ModelHandler from './engineModules/handlers/ModelHandler'
+import { directionToAngle, entityDirections } from './engineModules/Utils/DirectionHandler'
+import SkinCollection from './engineModules/Utils/skinCollection'
 
 class GameEngine {
     canvasContext!: CanvasRenderingContext2D
@@ -79,11 +79,11 @@ class GameEngine {
     }
 
     updateGameInfo() {
-        this.store.setRespawnCount(this.ModelHandler.currentPlayer.respawnCount.toString() || '0')
+        this.store.setRespawnCount(this.ModelHandler.currentPlayer.respawnCount.toString())
         if (this.store.isSinglePlayer) {
-            this.store.setEnemyCount(this.ModelHandler.bots.length.toString() || '')
+            this.store.setEnemyCount(this.ModelHandler.bots.length.toString())
         } else {
-            this.store.setOpponentRespawnCount(this.ModelHandler.opponent.respawnCount.toString() || '0')
+            this.store.setOpponentRespawnCount(this.ModelHandler.opponent.respawnCount.toString())
         }
     }
 

@@ -1,4 +1,4 @@
-import EntitySkins from './constObjects/entitySkins'
+import EntitySkins from './entitySkins'
 
 class SkinCollection {
     cache = new Map()

@@ -1,7 +1,7 @@
 import GameObject from '../gameClasses/gameObject'
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
 import { IAnimated } from '../gameEngine/engineModules/interfaces/interfaces'
-import MapHandler from '../gameEngine/engineModules/MapHandler'
+import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
 export class Particle extends GameObject implements IAnimated {
     animationList = [EntitySkins.hit1, EntitySkins.hit2, EntitySkins.hit3]

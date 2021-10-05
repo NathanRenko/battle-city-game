@@ -1,5 +1,5 @@
-import { entityDirections } from '../constObjects/DirectionHandler'
-import MapHandler from '../MapHandler'
+import MapHandler from '../handlers/MapHandler'
+import { entityDirections } from '../Utils/DirectionHandler'
 
 export abstract class IHealth {
     abstract hp: number

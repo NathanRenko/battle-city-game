@@ -1,5 +1,5 @@
 import GameObject from '../gameClasses/gameObject'
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
 export class Bridge extends GameObject {
     size = 50

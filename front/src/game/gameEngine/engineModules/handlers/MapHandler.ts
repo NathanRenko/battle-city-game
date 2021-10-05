@@ -1,13 +1,13 @@
-import { IGameStore } from '../../../stores/store'
-import Figure from '../../gameClasses/figure'
-import GameObject from '../../gameClasses/gameObject'
-import Point from '../../gameClasses/Point'
-import { Base, BrickWall, Bridge, Foliage, House, SteelWall, Tank, TankShell, Tree, Water } from '../../gameObjects'
-import { entityDirections } from './constObjects/DirectionHandler'
-import mapCollection from './constObjects/mapCollection'
-import { GameMap } from './GameMap'
-import { KnownSections } from './GameObjectsConfiguration'
-import { IObstacle } from './interfaces/interfaces'
+import { IGameStore } from '../../../../stores/store'
+import Figure from '../../../gameClasses/figure'
+import GameObject from '../../../gameClasses/gameObject'
+import Point from '../../../gameClasses/Point'
+import { Base, BrickWall, Bridge, Foliage, House, SteelWall, Tank, TankShell, Tree, Water } from '../../../gameObjects'
+import { GameMap } from '../GameMap'
+import { IObstacle } from '../interfaces/interfaces'
+import { entityDirections } from '../Utils/DirectionHandler'
+import { KnownSections } from '../Utils/GameObjectsConfiguration'
+import mapCollection from '../Utils/mapCollection'
 
 class MapHandler {
     gameMap = new GameMap()

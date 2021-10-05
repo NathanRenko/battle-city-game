@@ -1,8 +1,8 @@
 import GameObject from '../gameClasses/gameObject'
-import EntitySkins from '../gameEngine/engineModules/constObjects/entitySkins'
+import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
 import { IHealth } from '../gameEngine/engineModules/interfaces/interfaces'
-import MapHandler from '../gameEngine/engineModules/MapHandler'
-import { getAudio } from '../gameEngine/engineModules/Utils'
+import { getAudio } from '../gameEngine/engineModules/Utils/audioFunctions'
+import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
 export class Base extends GameObject implements IHealth {
     static size = 50
