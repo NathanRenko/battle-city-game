@@ -7,6 +7,7 @@ import { entityDirections } from './constObjects/DirectionHandler'
 import mapCollection from './constObjects/mapCollection'
 import { GameMap } from './GameMap'
 import { KnownSections } from './GameObjectsConfiguration'
+import { IObstacle } from './interfaces/interfaces'
 
 class MapHandler {
     gameMap = new GameMap()
@@ -41,71 +42,70 @@ class MapHandler {
                 if (symbol.startsWith('bs')) {
                     // @ts-ignore
                     const baseSide: 0 | 1 = parseInt(symbol.split('bs')[1]) - 1
-                    // constructor name
-                    const className = KnownSections.Base
                     const obj = new Base(x * tileSize, y * tileSize, baseSide)
-                    this.gameMap.addEntity(className, obj, baseSide)
+                    const collectionName = KnownSections.Base
+                    this.gameMap.addEntity(collectionName, obj, baseSide)
                     continue
                 }
                 if (symbol === 'b') {
-                    const className = KnownSections.obstacle
                     const obj = new BrickWall(x * tileSize, y * tileSize)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.obstacle
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol === 's') {
-                    const className = KnownSections.obstacle
                     const obj = new SteelWall(x * tileSize, y * tileSize)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.obstacle
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol === 'h') {
-                    const className = KnownSections.obstacle
                     // @ts-ignore
                     const obj = new House(x * tileSize, y * tileSize, this.store.choosenMap)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.obstacle
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol === 'w') {
-                    const className = KnownSections.water
                     const obj = new Water(x * tileSize, y * tileSize, entityDirections.Left)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.water
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol.startsWith('B')) {
                     // @ts-ignore
                     const side: 'l' | 'u' = symbol[1]
-                    const className = KnownSections.bridges
                     const obj = new Bridge(x * tileSize, y * tileSize, side)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.bridges
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol.startsWith('T')) {
                     // @ts-ignore
                     const color: 'a' | 'o' = symbol[1]
-                    const className = KnownSections.obstacle
                     const obj = new Tree(x * tileSize, y * tileSize, color)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.obstacle
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol.startsWith('f')) {
                     // @ts-ignore
                     const color: 'g' | 'y' = symbol[1]
-                    const className = KnownSections.foliage
                     const obj = new Foliage(x * tileSize, y * tileSize, color)
-                    this.gameMap.addEntity(className, obj)
+                    const collectionName = KnownSections.foliage
+                    this.gameMap.addEntity(collectionName, obj)
                     continue
                 }
                 if (symbol.startsWith('t')) {
                     const tankNumber: number = parseInt(symbol.split('t')[1])
+                    const collectionName = KnownSections.tanks
                     console.log(`tank number: ${tankNumber - 1}`)
-                    const className = KnownSections.tanks
                     const obj = new Tank(
                         x * tileSize,
                         y * tileSize,
                         tankNumber === 1 ? 0 : 1
                     )
-                    this.gameMap.addEntity(className, obj, tankNumber - 1)
+                    this.gameMap.addEntity(collectionName, obj, tankNumber - 1)
                     continue
                 }
             }
@@ -134,6 +134,9 @@ class MapHandler {
 
     findCollisionBlock(minimalStep: Point, gameObject: GameObject) {
         const isShell = gameObject.constructor === TankShell
+        const a = gameObject instanceof IObstacle
+        console.log(a)
+        // const d = (Array.from(this.gameMap.getObjectsByOrder()).filter(item => item[0] is IObstacle))
         return (
             this.gameMap.getCollectionByClassName(KnownSections.obstacle).find((obstacle) => this.hasObstacleCollision(gameObject, minimalStep, obstacle))
             || this.gameMap.getCollectionByClassName(KnownSections.Base).find((base) => this.hasObstacleCollision(gameObject, minimalStep, base))

@@ -1,6 +1,5 @@
 import React from 'react'
 import Modal from 'react-modal'
-import { useHistory } from 'react-router-dom'
 
 import { useGameLocalStore } from '../../stores/store'
 import GameField from '../gameField/gameField'
@@ -24,14 +23,12 @@ function GameSection() {
     }
     const [modalIsOpen, setIsOpen] = React.useState(false)
     const [gameResult, setGameResult] = React.useState('')
-    const history = useHistory()
     store.openModal = (message: string) => {
         setGameResult(message)
         setIsOpen(true)
     }
     const backToMainMenu = () => {
-        // ReactDOM.render(<MainMenu/>, document.getElementById('root'));
-        history.push('/main-menu')
+        store.setStage('menu')
     }
     return (
         <div className={'gameSectionContainer'}>

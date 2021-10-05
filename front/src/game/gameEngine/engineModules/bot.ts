@@ -1,8 +1,8 @@
-import Point from '../gameClasses/Point'
-import { buttonsToDirections } from '../gameEngine/engineModules/constObjects/DirectionHandler'
-import { KnownSections } from '../gameEngine/engineModules/GameObjectsConfiguration'
-import MapHandler from '../gameEngine/engineModules/MapHandler'
-import { Tank } from './tank'
+import Point from '../../gameClasses/Point'
+import { Tank } from '../../gameObjects'
+import { buttonsToDirections } from './constObjects/DirectionHandler'
+import { KnownSections } from './GameObjectsConfiguration'
+import MapHandler from './MapHandler'
 
 export class Bot {
     tank: Tank
@@ -68,14 +68,14 @@ export class Bot {
         }
     }
 
-    hasCollision(move: Point) {
+    private hasCollision(move: Point) {
         return (
             this.field.findCollisionBlock(move, this.tank) !== undefined
             || this.field.hasBoundsCollision(this.tank, move, this.field.mapSize)
         )
     }
 
-    findBestWay(dt: number) {
+    private findBestWay(dt: number) {
         const start = { x: this.tank.x, y: this.tank.y }
 
         const targetTank = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)[0]

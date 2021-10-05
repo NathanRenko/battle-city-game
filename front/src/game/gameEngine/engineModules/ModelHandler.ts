@@ -1,6 +1,7 @@
 import { IGameStore } from '../../../stores/store'
 import Point from '../../gameClasses/Point'
-import { Base, Bot, House, Particle, Tank, TankShell } from '../../gameObjects'
+import { Base, House, Particle, Tank, TankShell } from '../../gameObjects'
+import { Bot } from './bot'
 import { buttonsToDirections, entityDirections } from './constObjects/DirectionHandler'
 import { KnownSections } from './GameObjectsConfiguration'
 import InputHandler from './inputHandler'

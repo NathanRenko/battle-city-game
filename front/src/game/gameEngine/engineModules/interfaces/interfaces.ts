@@ -24,3 +24,7 @@ export abstract class IAnimated {
 export abstract class IDirection {
     abstract direction: entityDirections
 }
+
+export abstract class IObstacle {
+
+}

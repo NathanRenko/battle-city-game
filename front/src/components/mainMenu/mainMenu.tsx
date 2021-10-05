@@ -1,8 +1,6 @@
 import './mainMenu.css'
 import { useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
-import { History } from 'history'
 import io from 'socket.io-client'
 
 import { IGameStore, useGameLocalStore } from '../../stores/store'
@@ -12,20 +10,19 @@ function MainMenu() {
     const [waitingState, setWaitingState] = useState(false)
     const playerNameRef = useRef<HTMLInputElement>(null)
     const store = useGameLocalStore()
-    const history = useHistory()
     const startGame = () => {
         store.playerName = playerNameRef.current?.value || 'Unknown Soldier'
         store.isSinglePlayer = false
         setWaitingState(true)
-        findPlayer(store, history)
+        findPlayer(store)
     }
     const startTestGame = () => {
         store.playerName = playerNameRef.current?.value || 'Unknown Soldier'
         store.isSinglePlayer = true
-        history.push('/map-chooser')
+        store.setStage('map-choose')
     }
     return (
-        <div>
+        <>
             {waitingState && <p>Поиск игрока...</p>}
             {!waitingState && (
                 <>
@@ -41,7 +38,7 @@ function MainMenu() {
                     </button>
                 </>
             )}
-        </div>
+        </>
     )
 }
 
@@ -64,7 +61,7 @@ export function WaitingTable() {
     )
 }
 
-function findPlayer(store: IGameStore, history: History) {
+function findPlayer(store: IGameStore) {
     store.socket = io('ws://localhost:3001', {
         reconnectionDelayMax: 10000,
         auth: {
@@ -84,17 +81,17 @@ function findPlayer(store: IGameStore, history: History) {
         console.log('start')
         console.log(args)
         store.choosenMap = args[0]
-        history.push('/game-section')
+        store.setStage('game')
     })
     store.socket.on('start', (args: any) => {
         store.opponentName = args.usernames[store.playerNumber!]
-        history.push('/waiting-table')
+        store.setStage('waiting-table')
     })
 }
 
 function lightUpEnemySelectedCard(choise: string) {
     const allOverlays = Array.from(document.querySelectorAll('.overlay'))
-    console.log(allOverlays)
+    // console.log(allOverlays)
     allOverlays.forEach((item) => (item.textContent = ''))
     const choosenMap = document.querySelector('#overlay_' + choise)
     // @ts-ignore

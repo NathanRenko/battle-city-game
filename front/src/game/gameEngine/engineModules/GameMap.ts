@@ -2,7 +2,7 @@ import GameObject from '../../gameClasses/gameObject'
 import { configuration } from './GameObjectsConfiguration'
 
 export class GameMap {
-    gameMap = new Map<string, (any)[]>()
+    gameMap = new Map<string, any[]>()
 
     constructor() {
         for (const sectionsName of Object.entries(configuration).sort((a, b) => (a[1].layer > b[1].layer) ? 1 : ((b[1].layer > a[1].layer) ? -1 : 0))) {
@@ -25,11 +25,11 @@ export class GameMap {
         return this.gameMap.values()
     }
 
-    addEntity(className: string, classItem: any, position?: number) {
-        if (!this.gameMap.has(className)) {
-            this.gameMap.set(className, [])
+    addEntity(collectionName: string, classItem: any, position?: number) {
+        if (!this.gameMap.has(collectionName)) {
+            this.gameMap.set(collectionName, [])
         }
-        const classCollection = this.gameMap.get(className)
+        const classCollection = this.gameMap.get(collectionName)
         if (!classCollection) {
             return
         }

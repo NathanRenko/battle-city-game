@@ -1,5 +1,4 @@
 export * from './base'
-export * from './bot'
 export * from './brick-wall'
 export * from './bridge'
 export * from './foliage'

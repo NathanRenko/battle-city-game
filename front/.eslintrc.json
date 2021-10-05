@@ -1,7 +1,15 @@
 {
   "extends": [
+    //"react-app",
     "standard-with-typescript",
     "plugin:react-hooks/recommended"
+//    "eslint:recommended"
+//    "plugin:import/recommended",
+//    "plugin:import/typescript"
+  ],
+  "plugins": [
+//    "react",
+//    "@typescript-eslint"
   ],
   "rules": {
     "indent": [
@@ -84,6 +92,13 @@
       "before"
     ],
     "comma-dangle": "off",
+//    "import/no-cycle": [
+//      "warn",
+//      {
+//        "maxDepth": 10,
+//        "ignoreExternal": true
+//      }
+//    ],
     "import/order": [
       "warn",
       {

@@ -37,7 +37,7 @@ export class Tank extends GameObject implements IHealth, IDirection, IRespawnabl
     }
 
     handleTankMovements(field: MapHandler, direction: entityDirections, step: Point) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
         const [availableStep, collisionBlock] = field.getMinimalStep(step, this)
         if (!(availableStep.x === 0 && availableStep.y === 0)) {
             this.applyStep(availableStep)

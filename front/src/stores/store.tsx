@@ -2,9 +2,11 @@ import { createContext, FC, RefObject, useContext, useRef } from 'react'
 
 import { makeAutoObservable } from 'mobx'
 import { useObserver } from 'mobx-react-lite'
+import { Socket } from 'socket.io-client'
+
+import { IStage } from '../Game'
 
 const GameContext = createContext<IGameStore>(null!)
-
 export interface ITextInfo {
     respawnCount: string
     enemyCount: string
@@ -12,7 +14,7 @@ export interface ITextInfo {
 }
 
 export class IGameStore {
-    socket?: SocketIOClient.Socket
+    socket?: typeof Socket
     playerNumber?: number
     isSinglePlayer: boolean
     choosenMap?: string
@@ -21,7 +23,7 @@ export class IGameStore {
     openModal?: (message: string) => unknown
     canvasRef: RefObject<HTMLCanvasElement> | null
     textInfo: ITextInfo
-
+    stage: IStage
     constructor() {
         makeAutoObservable(this)
         this.socket = undefined
@@ -36,6 +38,7 @@ export class IGameStore {
             respawnCount: '0',
             opponentRespawnCount: '0'
         }
+        this.stage = 'menu'
     }
 
     setEnemyCount(count: string) {
@@ -48,6 +51,10 @@ export class IGameStore {
 
     setOpponentRespawnCount(count: string) {
         this.textInfo.opponentRespawnCount = count
+    }
+
+    setStage(stage: IStage) {
+        this.stage = stage
     }
 }
 
