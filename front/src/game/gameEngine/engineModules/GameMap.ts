@@ -5,7 +5,7 @@ export class GameMap {
     gameMap = new Map<string, any[]>()
 
     constructor() {
-        for (const sectionsName of Object.entries(configuration).sort((a, b) => (a[1].layer > b[1].layer) ? 1 : ((b[1].layer > a[1].layer) ? -1 : 0))) {
+        for (const sectionsName of Object.entries(configuration).sort((a, b) => a[1].layer - b[1].layer)) {
             if (!this.gameMap.has(sectionsName[0])) {
                 this.gameMap.set(sectionsName[0], [])
             }

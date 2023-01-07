@@ -34,7 +34,6 @@ class GameEngine {
 
     start() {
         this.lastFrameTime = Date.now()
-        // setInterval(()=>this.gameEngine(), 1000/20)
         requestAnimationFrame(() => this.doGameEngineCycle())
     }
 

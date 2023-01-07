@@ -58,7 +58,7 @@ export class IGameStore {
     }
 }
 
-export const GameContextProvider: FC<{}> = (props) => {
+export const GameContextProvider: FC = (props) => {
     const store = useRef<IGameStore>(new IGameStore())
 
     return useObserver(() => {

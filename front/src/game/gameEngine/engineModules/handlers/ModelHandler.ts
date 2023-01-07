@@ -25,11 +25,8 @@ class ModelHandler {
             this.initPlayer(0, 0)
             this.bots = []
             const tankOnMap = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)
-
             this.bots.push(new Bot(tankOnMap[1], this.field, 'chaotic'))
-
             this.bots.push(new Bot(tankOnMap[2], this.field, 'chaotic'))
-
             this.bots.push(new Bot(tankOnMap[3], this.field, 'playerPursuing'))
         } else {
             // @ts-ignore
@@ -44,9 +41,7 @@ class ModelHandler {
         const tanksOnMap = this.field.gameMap.getCollectionByClassName(KnownSections.tanks)
         const bases = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
         this.currentPlayer = tanksOnMap[playerId]
-
         this.opponent = tanksOnMap[1 - playerId]
-
         this.playerBase = bases[baseId]
     }
 
@@ -106,18 +101,14 @@ class ModelHandler {
         const bases = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
         if (this.store.isSinglePlayer) {
             return (
-
                 bases[0].hp === 0
-
                 || bases[1].hp === 0
                 || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
                 || this.bots.length === 0
             )
         } else {
             return (
-
                 bases[0].hp === 0
-
                 || bases[1].hp === 0
                 || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
                 || (this.opponent.respawnCount === 0 && this.opponent.hp === 0)
@@ -183,7 +174,7 @@ class ModelHandler {
 
     handleWaterAnimation(dt: number) {
         for (const water of this.field.gameMap.getCollectionByClassName(KnownSections.water)) {
-            water.changeAnimationStep(dt)
+            water.handleAnimation(this.field, dt)
         }
     }
 
