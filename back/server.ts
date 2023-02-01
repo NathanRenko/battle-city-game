@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
                     console.log(results);
                     if (results[0] !== results[1]) {
                         io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [
-                            geetRandomArrayElement(results),
+                            getRandomArrayElement(results),
                             'two not same',
                         ]);
                     } else {
@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
                     io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [results[0], 'one']);
                     break;
                 case 0:
-                    io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [geetRandomArrayElement(mapPool), 'zero']);
+                    io.to(Array.from(socket.rooms)[1]).emit('voteEnd', [getRandomArrayElement(mapPool), 'zero']);
                     break;
                 default:
                     break;
@@ -124,7 +124,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function geetRandomArrayElement(arr) {
+function getRandomArrayElement(arr) {
     let key = getRandomInt(0, arr.length - 1);
     return arr[key];
 }
