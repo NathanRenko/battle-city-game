@@ -1,3 +1,4 @@
+import GameObject from '../../../gameClasses/gameObject'
 import MapHandler from '../handlers/MapHandler'
 import { entityDirections } from '../Utils/DirectionHandler'
 
@@ -28,3 +29,5 @@ export abstract class IDirection {
 export abstract class IObstacle {
 
 }
+
+export type HpDrawable = Pick<IHealth, 'hp'> & GameObject & { maxHp: number }

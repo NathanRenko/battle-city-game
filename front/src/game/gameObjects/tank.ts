@@ -1,3 +1,5 @@
+import { Particle } from './particle'
+import { TankShell } from './tankShell'
 import GameObject from '../gameClasses/gameObject'
 import Point from '../gameClasses/Point'
 import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
@@ -6,8 +8,6 @@ import { getAudio } from '../gameEngine/engineModules/Utils/audioFunctions'
 import { entityDirections } from '../gameEngine/engineModules/Utils/DirectionHandler'
 import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 import { KnownSections } from '../gameEngine/engineModules/Utils/GameObjectsConfiguration'
-import { Particle } from './particle'
-import { TankShell } from './tankShell'
 
 export class Tank extends GameObject implements IHealth, IDirection, IRespawnable {
     direction: entityDirections = entityDirections.Up

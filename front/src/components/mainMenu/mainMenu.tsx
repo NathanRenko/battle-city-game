@@ -89,11 +89,11 @@ function findPlayer(store: IGameStore) {
     })
 }
 
-function lightUpEnemySelectedCard(choise: string) {
+function lightUpEnemySelectedCard(choice: string) {
     const allOverlays = Array.from(document.querySelectorAll('.overlay'))
     // console.log(allOverlays)
     allOverlays.forEach((item) => (item.textContent = ''))
-    const choosenMap = document.querySelector('#overlay_' + choise)
+    const choosenMap = document.querySelector('#overlay_' + choice)
     // @ts-ignore
     choosenMap.textContent = 'Выбор вашего оппонента'
 }

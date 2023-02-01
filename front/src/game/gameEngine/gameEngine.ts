@@ -1,10 +1,10 @@
-import { IGameStore } from '../../stores/store'
-import GameObject from '../gameClasses/gameObject'
-import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
 import MapHandler from './engineModules/handlers/MapHandler'
 import ModelHandler from './engineModules/handlers/ModelHandler'
+import { HpDrawable } from './engineModules/interfaces/interfaces'
 import { directionToAngle, entityDirections } from './engineModules/Utils/DirectionHandler'
 import SkinCollection from './engineModules/Utils/skinCollection'
+import { IGameStore } from '../../stores/store'
+import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
 
 class GameEngine {
     canvasContext!: CanvasRenderingContext2D
@@ -136,7 +136,7 @@ class GameEngine {
         context.restore()
     }
 
-    drawHpBar(context: CanvasRenderingContext2D, entity: Tank | Base) {
+    drawHpBar(context: CanvasRenderingContext2D, entity: HpDrawable) {
         if (!entity) {
             return
         }
@@ -188,7 +188,7 @@ class GameEngine {
         }
     }
 
-    drawEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {
+    drawEntity(ctx: CanvasRenderingContext2D, entity: Tank | Base) {
         ctx.drawImage(this.skinCollection.get(entity.skin), entity.x, entity.y, entity.size, entity.size)
         if ('maxHp' in entity) {
             this.drawHpBar(ctx, entity)

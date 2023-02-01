@@ -1,11 +1,11 @@
+import InputHandler from './inputHandler'
+import MapHandler from './MapHandler'
 import { IGameStore } from '../../../../stores/store'
 import Point from '../../../gameClasses/Point'
 import { Base, House, Particle, Tank, TankShell } from '../../../gameObjects'
 import { Bot } from '../bot'
 import { buttonsToDirections, entityDirections } from '../Utils/DirectionHandler'
 import { KnownSections } from '../Utils/GameObjectsConfiguration'
-import InputHandler from './inputHandler'
-import MapHandler from './MapHandler'
 
 class ModelHandler {
     field: MapHandler
