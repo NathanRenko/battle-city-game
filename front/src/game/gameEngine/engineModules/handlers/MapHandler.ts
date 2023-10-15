@@ -41,13 +41,13 @@ class MapHandler {
                 if (symbol.startsWith('bs')) {
                     // @ts-ignore
                     const baseSide: 0 | 1 = parseInt(symbol.split('bs')[1]) - 1
-                    const obj = new Base(x * tileSize, y * tileSize, baseSide)
+                    const obj = new Base(x * tileSize, y * tileSize, baseSide, this)
                     const collectionName = KnownSections.Base
                     this.gameMap.addEntity(collectionName, obj, baseSide)
                     continue
                 }
                 if (symbol === 'b') {
-                    const obj = new BrickWall(x * tileSize, y * tileSize)
+                    const obj = new BrickWall(x * tileSize, y * tileSize, this)
                     const collectionName = KnownSections.obstacle
                     this.gameMap.addEntity(collectionName, obj)
                     continue
@@ -59,8 +59,7 @@ class MapHandler {
                     continue
                 }
                 if (symbol === 'h') {
-                    // @ts-ignore
-                    const obj = new House(x * tileSize, y * tileSize, this.store.choosenMap)
+                    const obj = new House(x * tileSize, y * tileSize, this.store.choosenMap!, this)
                     const collectionName = KnownSections.obstacle
                     this.gameMap.addEntity(collectionName, obj)
                     continue
@@ -102,7 +101,8 @@ class MapHandler {
                     const obj = new Tank(
                         x * tileSize,
                         y * tileSize,
-                        tankNumber === 1 ? 0 : 1
+                        tankNumber === 1 ? 0 : 1,
+                        this
                     )
                     this.gameMap.addEntity(collectionName, obj, tankNumber - 1)
                     continue

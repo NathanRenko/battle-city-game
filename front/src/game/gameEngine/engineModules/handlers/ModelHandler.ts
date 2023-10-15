@@ -98,20 +98,21 @@ class ModelHandler {
     }
 
     checkIsGameOver() {
-        const bases = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
+        // TODO
+        const bases: Base[] = this.field.gameMap.getCollectionByClassName(KnownSections.Base)
         if (this.store.isSinglePlayer) {
             return (
-                bases[0].hp === 0
-                || bases[1].hp === 0
-                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
+                bases[0].hpHandler.hp === 0
+                || bases[1].hpHandler.hp === 0
+                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hpHandler.hp === 0)
                 || this.bots.length === 0
             )
         } else {
             return (
-                bases[0].hp === 0
-                || bases[1].hp === 0
-                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hp === 0)
-                || (this.opponent.respawnCount === 0 && this.opponent.hp === 0)
+                bases[0].hpHandler.hp === 0
+                || bases[1].hpHandler.hp === 0
+                || (this.currentPlayer.respawnCount === 0 && this.currentPlayer.hpHandler.hp === 0)
+                || (this.opponent.respawnCount === 0 && this.opponent.hpHandler.hp === 0)
             )
         }
     }

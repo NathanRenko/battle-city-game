@@ -1,9 +1,10 @@
+import { haveHpHandler, IHpHandler } from './engineModules/handlers/HpHandler'
 import MapHandler from './engineModules/handlers/MapHandler'
 import ModelHandler from './engineModules/handlers/ModelHandler'
-import { HpDrawable } from './engineModules/interfaces/interfaces'
 import { directionToAngle, entityDirections } from './engineModules/Utils/DirectionHandler'
 import SkinCollection from './engineModules/Utils/skinCollection'
 import { IGameStore } from '../../stores/store'
+import GameObject from '../gameClasses/gameObject'
 import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
 
 class GameEngine {
@@ -68,7 +69,7 @@ class GameEngine {
             this.store.socket.disconnect()
         }
 
-        if (this.ModelHandler.playerBase.hp === 0 || this.ModelHandler.currentPlayer.hp === 0) {
+        if (this.ModelHandler.playerBase.hpHandler.hp === 0 || this.ModelHandler.currentPlayer.hpHandler.hp === 0) {
             // @ts-ignore
             this.store.openModal('Поражение.')
         } else {
@@ -106,7 +107,9 @@ class GameEngine {
             if (isDirectionable) {
                 for (const entity of entityCollection) {
                     this.drawRotatedEntity(this.canvasContext, entity)
-                    if ('maxHp' in entity) {
+                    if (haveHpHandler(entity)) {
+                        // TODO
+                        // @ts-ignore
                         this.drawHpBar(this.canvasContext, entity)
                     }
                 }
@@ -136,11 +139,11 @@ class GameEngine {
         context.restore()
     }
 
-    drawHpBar(context: CanvasRenderingContext2D, entity: HpDrawable) {
-        if (!entity) {
+    drawHpBar(context: CanvasRenderingContext2D, entity: IHpHandler & GameObject) {
+        if (!entity || entity.hpHandler.hideHp) {
             return
         }
-        const hpPercent = entity.hp / entity.maxHp
+        const hpPercent = entity.hpHandler.hpPercentage
         if (hpPercent > 0.5) {
             context.fillStyle = 'green'
         } else {
@@ -190,7 +193,7 @@ class GameEngine {
 
     drawEntity(ctx: CanvasRenderingContext2D, entity: Tank | Base) {
         ctx.drawImage(this.skinCollection.get(entity.skin), entity.x, entity.y, entity.size, entity.size)
-        if ('maxHp' in entity) {
+        if (haveHpHandler(entity)) {
             this.drawHpBar(ctx, entity)
         }
     }

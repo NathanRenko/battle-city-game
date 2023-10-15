@@ -3,6 +3,7 @@ import { Particle } from './particle'
 import { Tank } from './tank'
 import GameObject from '../gameClasses/gameObject'
 import Point from '../gameClasses/Point'
+import { haveCollisionHandler } from '../gameEngine/engineModules/handlers/CollisionHandler'
 import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
 import { IDirection } from '../gameEngine/engineModules/interfaces/interfaces'
 import { entityDirections } from '../gameEngine/engineModules/Utils/DirectionHandler'
@@ -51,8 +52,9 @@ export class TankShell extends GameObject implements IDirection {
                     return
                 }
             }
-            if ('hp' in collisionBlock) {
-                collisionBlock.decreaseHp(field)
+
+            if (haveCollisionHandler(collisionBlock)) {
+                collisionBlock.collisionHandler.onCollision({ type: 'damage' })
             }
         }
     }
