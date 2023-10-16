@@ -1,11 +1,11 @@
 import { haveHpHandler, IHpHandler } from './engineModules/handlers/HpHandler'
 import MapHandler from './engineModules/handlers/MapHandler'
 import ModelHandler from './engineModules/handlers/ModelHandler'
+import { haveDirection, IDirection } from './engineModules/interfaces/interfaces'
 import { directionToAngle, entityDirections } from './engineModules/Utils/DirectionHandler'
 import SkinCollection from './engineModules/Utils/skinCollection'
 import { IGameStore } from '../../stores/store'
 import GameObject from '../gameClasses/gameObject'
-import { Base, Particle, Tank, TankShell, Water } from '../gameObjects'
 
 class GameEngine {
     canvasContext!: CanvasRenderingContext2D
@@ -101,27 +101,42 @@ class GameEngine {
 
     draw() {
         this.canvasContext?.clearRect(0, 0, this.store.canvasRef!.current!.width, this.store.canvasRef!.current!.height)
-        for (const entityCollection of Array.from(this.field.gameMap.getObjectsByOrder())) {
-            const isDirectionable = entityCollection.length !== 0 && 'direction' in entityCollection[0]
-
-            if (isDirectionable) {
-                for (const entity of entityCollection) {
+        // const collectionDrawParams = {
+        //     hasDirection: true,
+        //     hasHp: true
+        // }
+        for (const entityCollection of this.field.gameMap.getObjectsByOrder()) {
+            for (const entity of entityCollection) {
+                if (haveDirection(entity)) {
                     this.drawRotatedEntity(this.canvasContext, entity)
-                    if (haveHpHandler(entity)) {
-                        // TODO
-                        // @ts-ignore
-                        this.drawHpBar(this.canvasContext, entity)
-                    }
-                }
-            } else {
-                for (const entity of entityCollection) {
+                } else {
                     this.drawEntity(this.canvasContext, entity)
                 }
+                if (haveHpHandler(entity)) {
+                    this.drawHpBar(this.canvasContext, entity)
+                }
             }
+            // if (entityCollection.length && isDirectionEnum(entityCollection[0])) {
+            //     for (const entity of entityCollection) {
+            //         // TODO
+            //         // @ts-ignore
+            //         this.drawRotatedEntity(this.canvasContext, entity)
+            //         if (haveHpHandler(entity)) {
+            //             this.drawHpBar(this.canvasContext, entity)
+            //         }
+            //     }
+            // } else {
+            //     for (const entity of entityCollection) {
+            //         this.drawEntity(this.canvasContext, entity)
+            //         if (haveHpHandler(entity)) {
+            //             this.drawHpBar(this.canvasContext, entity)
+            //         }
+            //     }
+            // }
         }
     }
 
-    drawRotatedEntity(context: CanvasRenderingContext2D, entity: Tank | Water | TankShell | Particle) {
+    drawRotatedEntity(context: CanvasRenderingContext2D, entity: GameObject & IDirection) {
         if (!entity) {
             return
         }
@@ -191,11 +206,8 @@ class GameEngine {
         }
     }
 
-    drawEntity(ctx: CanvasRenderingContext2D, entity: Tank | Base) {
+    drawEntity(ctx: CanvasRenderingContext2D, entity: GameObject) {
         ctx.drawImage(this.skinCollection.get(entity.skin), entity.x, entity.y, entity.size, entity.size)
-        if (haveHpHandler(entity)) {
-            this.drawHpBar(ctx, entity)
-        }
     }
 }
 

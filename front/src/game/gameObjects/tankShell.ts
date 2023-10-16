@@ -62,7 +62,7 @@ export class TankShell extends GameObject implements IDirection {
     shellToParticle(field: MapHandler) {
         field.gameMap.deleteEntity(this)
         let spawnPoint = new Point(0, 0)
-        const particleWidth = new Particle(spawnPoint.x, spawnPoint.y, this.direction).size
+        const particleWidth = new Particle(spawnPoint.x, spawnPoint.y, this.direction, field).size
         const sizeDelta = particleWidth - this.size
         switch (this.direction) {
         case entityDirections.Up:
@@ -80,7 +80,7 @@ export class TankShell extends GameObject implements IDirection {
         default:
             throw new Error()
         }
-        const particle = new Particle(spawnPoint.x, spawnPoint.y, this.direction)
+        const particle = new Particle(spawnPoint.x, spawnPoint.y, this.direction, field)
         field.gameMap.addEntity(KnownSections.particles, particle)
     }
 }

@@ -1,3 +1,7 @@
+interface GameObject {
+    onTick?(dt: number): void
+}
+
 class GameObject {
     x: number
     y: number

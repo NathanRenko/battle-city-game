@@ -21,8 +21,8 @@ export class GameMap {
         parentCollection.splice(parentCollection.indexOf(entity), 1)
     }
 
-    getObjectsByOrder() {
-        return this.gameMap.values()
+    getObjectsByOrder(): GameObject[][] {
+        return Array.from(this.gameMap.values())
     }
 
     addEntity(collectionName: string, classItem: any, position?: number) {

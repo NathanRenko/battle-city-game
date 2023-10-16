@@ -1,18 +1,16 @@
 import GameObject from '../gameClasses/gameObject'
+import { AnimationHandler, IAnimation, IAnimationHandler } from '../gameEngine/engineModules/handlers/AnimationHandler'
 import { CollisionHandler, ICollision, ICollisionHandler } from '../gameEngine/engineModules/handlers/CollisionHandler'
 import { HpHandler, IHpHandler } from '../gameEngine/engineModules/handlers/HpHandler'
 import MapHandler from '../gameEngine/engineModules/handlers/MapHandler'
-import { IAnimated } from '../gameEngine/engineModules/interfaces/interfaces'
 import EntitySkins from '../gameEngine/engineModules/Utils/entitySkins'
 
-export class House extends GameObject implements IHpHandler, IAnimated, ICollisionHandler {
+export class House extends GameObject implements IHpHandler, ICollisionHandler, IAnimationHandler {
     animationList: string[][]
     size = 100
-    animationOver = false
-    animationStep = 0
-    timePassed = 0
     hpHandler: HpHandler
     collisionHandler: CollisionHandler
+    animationHandler: AnimationHandler
 
     constructor(x: number, y: number, chosenMap: string, field: MapHandler) {
         super(x, y)
@@ -31,35 +29,36 @@ export class House extends GameObject implements IHpHandler, IAnimated, ICollisi
                 [EntitySkins.city_house4_A, EntitySkins.city_house4_B],
             ]
         }
+        const animations: IAnimation[] = [
+            {
+                condition: () => this.hpHandler.hpPercentage === 1,
+                animationList: this.animationList[0]
+            },
+            {
+                condition: () => this.hpHandler.hpPercentage >= 0.75,
+                animationList: this.animationList[1]
+            },
+            {
+                condition: () => this.hpHandler.hpPercentage >= 0.5,
+                animationList: this.animationList[2]
+            },
+            {
+                condition: () => this.hpHandler.hpPercentage >= 0.25,
+                animationList: this.animationList[3]
+            }
+        ]
         this.skin = this.animationList[0][0]
         this.hpHandler = new HpHandler(4, () => this.deathHandler(field))
         this.collisionHandler = new CollisionHandler(this.onCollision.bind(this))
-    }
-
-    changeAnimationStep(dt: number) {
-        this.timePassed += dt
-        if (this.timePassed > 0.1) {
-            // TODO fractional index
-            const animationStateNumber = this.animationList.length * (1 - this.hpHandler.hpPercentage)
-            if (this.animationList[animationStateNumber].length < 2) {
-                return
-            }
-            this.animationStep = 1 - this.animationStep
-            this.skin = this.animationList[animationStateNumber][this.animationStep]
-            this.timePassed = 0
-        }
+        this.animationHandler = new AnimationHandler(animations, this, { animationSpeed: 0.1, isCyclicAnimation: true })
     }
 
     deathHandler(field: MapHandler) {
         field.gameMap.deleteEntity(this)
     }
 
-    handleAnimation(field: MapHandler, dt: number) {
-        // TODO
-        // if (this.stateNumber !== 0) {
-        //     this.changeAnimationStep(dt)
-        // }
-        this.changeAnimationStep(dt)
+    onTick(dt: number) {
+        this.animationHandler.changeAnimationStep(dt)
     }
 
     onCollision(collision: ICollision) {

@@ -69,7 +69,7 @@ export class Tank extends GameObject implements IHpHandler, IDirection, IRespawn
 
     deathHandler(field: MapHandler) {
         this.deathAudio.play()
-        const particle = new Particle(this.x, this.y, this.direction)
+        const particle = new Particle(this.x, this.y, this.direction, field)
         field.gameMap.addEntity(KnownSections.particles, particle)
         this.respawnEntity(field)
     }

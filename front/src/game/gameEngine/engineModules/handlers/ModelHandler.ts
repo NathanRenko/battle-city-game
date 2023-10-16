@@ -2,7 +2,7 @@ import InputHandler from './inputHandler'
 import MapHandler from './MapHandler'
 import { IGameStore } from '../../../../stores/store'
 import Point from '../../../gameClasses/Point'
-import { Base, House, Particle, Tank, TankShell } from '../../../gameObjects'
+import { Base, Tank, TankShell } from '../../../gameObjects'
 import { Bot } from '../bot'
 import { buttonsToDirections, entityDirections } from '../Utils/DirectionHandler'
 import { KnownSections } from '../Utils/GameObjectsConfiguration'
@@ -70,9 +70,7 @@ class ModelHandler {
         this.handleMovementKeyPressing(dt)
         this.handleShotPress()
         this.handleShellsMovement(dt)
-        this.handleParticleChanging(dt)
-        this.handleHouseCollectionAnimation(dt)
-        this.handleWaterAnimation(dt)
+        this.handleAnimation(dt)
         if (this.store.isSinglePlayer) {
             this.handleBotActions(dt)
         } else {
@@ -159,24 +157,12 @@ class ModelHandler {
         }
     }
 
-    handleParticleChanging(dt: number) {
-        for (const particle of this.field.gameMap.getCollectionByClassName(KnownSections.particles)) {
-            (particle as Particle).handleAnimation(this.field, dt)
-        }
-    }
-
-    handleHouseCollectionAnimation(dt: number) {
-        for (const obstacle of this.field.gameMap.getCollectionByClassName(KnownSections.obstacle)) {
-            if (obstacle.constructor === House) {
-                obstacle.handleAnimation(this.field, dt)
-            }
-        }
-    }
-
-    handleWaterAnimation(dt: number) {
-        for (const water of this.field.gameMap.getCollectionByClassName(KnownSections.water)) {
-            water.handleAnimation(this.field, dt)
-        }
+    handleAnimation(dt: number) {
+        const gameObjectsGroups = this.field.gameMap.getObjectsByOrder()
+        gameObjectsGroups.forEach(gameObjects =>
+            gameObjects.forEach(gameObject =>
+                gameObject.onTick?.(dt))
+        )
     }
 
     handleMovements(button: any, step: Point) {
